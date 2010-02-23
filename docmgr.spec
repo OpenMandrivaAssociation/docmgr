@@ -12,7 +12,6 @@ URL:		http://docmgr.org/
 
 Source0:	%{name}-%{version}%{?prerel:-%{prerel}}.tar.gz
 Source1:	docmgr.init
-Source2:	docmgr.sysconfig
 Patch0:		docmgr-1.0-RC6-local-config.patch
 Patch1:		docmgr-1.0-RC6-unified-tmpdir.patch
 Patch2:		docmgr-1.0-RC6-quiet-rm.patch
@@ -61,6 +60,8 @@ revolving around content storage.
 %patch8 -p1 -b .notemp~
 sed -e 's#postgres#docmgr#g' -i scripts/docmgr.pgsql
 
+find -type f |xargs chmod 644
+
 %build
 
 %install
@@ -69,15 +70,15 @@ rm -rf %{buildroot}
 install -d %{buildroot}%{_var}/{www,lib}/docmgr
 cp -r */ *.php %{buildroot}%{webroot}
 rm -rf %{buildroot}%{webroot}/{DOCS,scripts}
-mv %{buildroot}%{webroot}/files %{buildroot}%{_var}/lib/docmgr
+install -d %{buildroot}%{webroot}/config/local
+mv %{buildroot}%{webroot}/files %{buildroot}%{_var}/lib/%{name}
 
-install -m755 %{SOURCE1} -D %{buildroot}%{_initrddir}/docmgr
-install -m644 %{SOURCE2} -D %{buildroot}%{_sysconfdir}/sysconfig/docmgr
-install -m644 scripts/docmgr.pgsql -D %{buildroot}%{_datadir}/docmgr/docmgr.pgsql
+install -m755 %{SOURCE1} -D %{buildroot}%{_initrddir}/%{name}
+install -m644 scripts/docmgr.pgsql -D %{buildroot}%{_datadir}/%{name}/docmgr.pgsql
 
 install -d %{buildroot}%{webappconfdir}
-tee %{buildroot}%{webappconfdir}/docmgr.conf << EOF
-Alias /docmgr %{webroot}
+tee %{buildroot}%{webappconfdir}/%{name}.conf << EOF
+Alias /%{name} %{webroot}
 <Directory "%{webroot}">
   Order allow,deny
   Allow from All
@@ -89,7 +90,31 @@ Alias /docmgr %{webroot}
 </Directory>
 EOF
 
+install -d %{buildroot}%{_sysconfdir}/sysconfig
+tee %{buildroot}%{_sysconfdir}/sysconfig/%{name} << EOF
+FILE_DIR="%{_localstatedir}/lib/%{name}/files"
+# HOST="localhost"
+# ADMIN_EMAIL="root@localhost"
+RELATIVE_URL="/%{name}"
+# SITE_URL="http://localhost/%{name}"
+SITE_PATH="%{webroot}"
+IMPORT_DIR="%{_localstatedir}/lib/%{name}/files/import"
+DB_CHARSET="UTF-8"
+VIEW_CHARSET="UTF-8"
+
+# OpenOffice.org
+OOFFICE_HOST="localhost"
+OOFFICE_PORT="8100"
+# Any additional options to pass to ooffice can be set here
+#OOFFICE_OPTIONS=""
+EOF
+
 find %{buildroot} -name \*~ |xargs rm -f
+
+# ghost files
+for conf in app-config.php config.php ldap-config.php; do
+	touch %{buildroot}%{webroot}/config/local/$conf
+done
 
 %pre
 %_pre_useradd %{name}
@@ -101,14 +126,39 @@ find %{buildroot} -name \*~ |xargs rm -f
 rm -rf %{buildroot}
 
 %files
-%defattr(-,root,root)
+%defattr(644,root,root,755)
 %doc DOCS/AUTHORS 
-%{_initrddir}/docmgr
-%dir %{_datadir}/docmgr
-%{_datadir}/docmgr/docmgr.pgsql
-%config(noreplace) %{_sysconfdir}/sysconfig/docmgr
-%config(noreplace) %{webappconfdir}/docmgr.conf
+%attr(755,root,root) %{_initrddir}/%{name}
+%dir %{_datadir}/%{name}
+%{_datadir}/%{name}/docmgr.pgsql
+%config(noreplace) %{_sysconfdir}/sysconfig/%{name}
+%config %{webappconfdir}/%{name}.conf
 %dir %{webroot}
-%{webroot}/*
-%attr(-,apache,apache) %{_localstatedir}/lib/docmgr/files 
+%{webroot}/apilib
+%{webroot}/app
+%{webroot}/auth
+%{webroot}/bin
+%{webroot}/ckeditor
+%dir %{webroot}/config
+%config %{webroot}/config/app-config.php
+%config %{webroot}/config/config.php
+%config %{webroot}/config/ldap-config.php
+%dir %{webroot}/config/local
+%config(noreplace, missingok) %ghost %{webroot}/config/local/app-config.php
+%config(noreplace, missingok) %ghost %{webroot}/config/local/config.php
+%config(noreplace, missingok) %ghost %{webroot}/config/local/ldap-config.php
+%{webroot}/config/forms
+%{webroot}/config/*.xml
+%{webroot}/controls
+%{webroot}/header
+%{webroot}/javascript
+%{webroot}/jslib
+%{webroot}/lang
+%{webroot}/lib
+%{webroot}/modules
+%{webroot}/themes
+%{webroot}/api.php
+%{webroot}/history.php
+%{webroot}/index.php
+%attr(-,apache,apache) %{_localstatedir}/lib/%{name}/files
 
