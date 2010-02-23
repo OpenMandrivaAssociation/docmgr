@@ -21,6 +21,10 @@ Patch4:		docmgr-1.0-RC6-PyODConverter-1.1.patch
 Patch5:		docmgr-1.0-RC6-PyODConvert-stream.patch
 Patch6:		docmgr-1.0-RC6-fileconvert-ooo-profile.d.patch
 Patch7:		docmgr-1.0-RC6-fix-keepalive-relative-url.patch
+# As DocumentConvert.py now uses streams, we don't need to copy documents
+# to a temporary directory to read them. This will also get rid of an issue
+# with the input document being deleted before reading as well..
+Patch8:		docmgr-1.0-RC6-dont-use-temp-copy-for-ooo-input.patch
 
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap
@@ -54,6 +58,7 @@ revolving around content storage.
 %patch5 -p1 -b .stream~
 %patch6 -p1 -b .ooo~
 %patch7 -p1 -b .relative~
+%patch8 -p1 -b .notemp~
 sed -e 's#postgres#docmgr#g' -i scripts/docmgr.pgsql
 
 %build
