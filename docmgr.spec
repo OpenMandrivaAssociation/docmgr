@@ -11,8 +11,8 @@ Summary:	Web based DMS - Document Management System
 URL:		http://docmgr.org/
 
 Source0:	%{name}-%{version}%{?prerel:-%{prerel}}.tar.gz
-Source7:	docmgr.init
-Source8:	docmgr.sysconfig
+Source1:	docmgr.init
+Source2:	docmgr.sysconfig
 Patch0:		docmgr-1.0-RC6-config-mdkconf.patch
 Patch1:		docmgr-1.0-RC6-unified-tmpdir.patch
 Patch2:		docmgr-1.0-RC6-quiet-rm.patch
@@ -71,8 +71,8 @@ cp -r */ *.php %{buildroot}%{webroot}
 rm -rf %{buildroot}%{webroot}/{DOCS,scripts}
 mv %{buildroot}%{webroot}/files %{buildroot}%{_var}/lib/docmgr
 
-install -m755 %{SOURCE7} -D %{buildroot}%{_initrddir}/docmgr
-install -m644 %{SOURCE8} -D %{buildroot}%{_sysconfdir}/sysconfig/docmgr
+install -m755 %{SOURCE1} -D %{buildroot}%{_initrddir}/docmgr
+install -m644 %{SOURCE2} -D %{buildroot}%{_sysconfdir}/sysconfig/docmgr
 install -m644 scripts/docmgr.pgsql -D %{buildroot}%{_datadir}/docmgr/docmgr.pgsql
 
 install -d %{buildroot}%{webappconfdir}
