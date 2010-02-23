@@ -13,7 +13,7 @@ URL:		http://docmgr.org/
 Source0:	%{name}-%{version}%{?prerel:-%{prerel}}.tar.gz
 Source1:	docmgr.init
 Source2:	docmgr.sysconfig
-Patch0:		docmgr-1.0-RC6-config-mdkconf.patch
+Patch0:		docmgr-1.0-RC6-local-config.patch
 Patch1:		docmgr-1.0-RC6-unified-tmpdir.patch
 Patch2:		docmgr-1.0-RC6-quiet-rm.patch
 Patch3:		docmgr-1.0-RC6-no-dos-eol.patch
