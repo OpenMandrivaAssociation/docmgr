@@ -20,6 +20,7 @@ Patch3:		docmgr-1.0-RC6-no-dos-eol.patch
 Patch4:		docmgr-1.0-RC6-PyODConverter-1.1.patch
 Patch5:		docmgr-1.0-RC6-PyODConvert-stream.patch
 Patch6:		docmgr-1.0-RC6-fileconvert-ooo-profile.d.patch
+Patch7:		docmgr-1.0-RC6-fix-keepalive-relative-url.patch
 
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap
@@ -52,6 +53,7 @@ revolving around content storage.
 %patch4 -p1 -b .doc_conv1.1~
 %patch5 -p1 -b .stream~
 %patch6 -p1 -b .ooo~
+%patch7 -p1 -b .relative~
 sed -e 's#postgres#docmgr#g' -i scripts/docmgr.pgsql
 
 %build
