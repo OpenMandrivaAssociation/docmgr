@@ -24,6 +24,8 @@ Patch7:		docmgr-1.0-RC6-fix-keepalive-relative-url.patch
 # to a temporary directory to read them. This will also get rid of an issue
 # with the input document being deleted before reading as well..
 Patch8:		docmgr-1.0-RC6-dont-use-temp-copy-for-ooo-input.patch
+# Use LC_TIME for date & time format if LOCALE is set
+Patch9:		docmgr-1.0-RC6-locale-use-LC_TIME.patch
 
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap
@@ -58,6 +60,7 @@ revolving around content storage.
 %patch6 -p1 -b .ooo~
 %patch7 -p1 -b .relative~
 %patch8 -p1 -b .notemp~
+%patch9 -p1 -b .locale~
 sed -e 's#postgres#docmgr#g' -i scripts/docmgr.pgsql
 
 find -type f |xargs chmod 644
