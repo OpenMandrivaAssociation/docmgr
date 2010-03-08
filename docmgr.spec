@@ -110,6 +110,7 @@ tee %{buildroot}%{webroot}/config/vendor/config.php << EOF
 ********************************************/
 
 define("DBUSER", "docmgr");
+define("DBNAME", "docmgr");
 define("FILE_DIR", "%{_localstatedir}/lib/%{name}/files");
 define("ADMIN_EMAIL", "root@localhost");
 define("SITE_URL", "http://localhost/%{name}");
@@ -170,6 +171,7 @@ rm -rf %{buildroot}
 %{webroot}/config/forms
 %dir %{webroot}/config/mediawiki
 %{webroot}/config/mediawiki/*.php
+%{webroot}/config/mediawiki/*.inc
 %{webroot}/config/index.php
 %{webroot}/config/*.xml
 %{webroot}/controls
