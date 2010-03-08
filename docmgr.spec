@@ -109,7 +109,7 @@ tee %{buildroot}%{webroot}/config/vendor/config.php << EOF
   otherwise you might loose your configuration when upgrading.
 ********************************************/
 
-define("DB_USER", "docmgr");
+define("DBUSER", "docmgr");
 define("FILE_DIR", "%{_localstatedir}/lib/%{name}/files");
 define("ADMIN_EMAIL", "root@localhost");
 define("SITE_URL", "http://localhost/%{name}");
