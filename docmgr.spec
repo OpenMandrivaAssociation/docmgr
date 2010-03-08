@@ -100,6 +100,7 @@ EOF
 
 install -d %{buildroot}%{webroot}/config/{local/tmp,vendor}
 tee %{buildroot}%{webroot}/config/vendor/config.php << EOF
+<?php
 /********************************************
   DO NOT EDIT THE SETTINGS IN THIS FILE (config/vendor/config.php)!
   Add your own local settings to config/local/config.php in stead,
