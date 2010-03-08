@@ -159,7 +159,7 @@ rm -rf %{buildroot}
 %attr(600, root, root) %config(noreplace, missingok) %ghost %{webroot}/config/local/config.php
 %attr(600, root, root) %config(noreplace, missingok) %ghost %{webroot}/config/local/ldap-config.php
 %dir %{webroot}/config/vendor
-%config %ghost %{webroot}/config/vendor/config.php
+%config %{webroot}/config/vendor/config.php
 %{webroot}/config/forms
 %dir %{webroot}/config/mediawiki
 %{webroot}/config/mediawiki/*.php
