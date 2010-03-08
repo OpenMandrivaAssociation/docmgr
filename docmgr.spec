@@ -30,6 +30,7 @@ Patch10:	docmgr-1.0-RC6-add-mediawiki-derived-installer.patch
 # This is mainly to avoid dependency extractor from adding dependencies on the
 # conditionally included files...
 Patch11:	docmgr-1.0-RC6-conditional-include-function.patch
+Patch12:	docmgr-1.0-RC6-die-if-pg_connect-fails.patch
 
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap
@@ -67,6 +68,7 @@ revolving around content storage.
 %patch9 -p1 -b .locale~
 %patch10 -p1 -b .mw_install~
 %patch11 -p1 -b .cond_include~
+%patch12 -p1 -b .die~
 sed -e 's#postgres#docmgr#g' -i scripts/docmgr.pgsql
 
 find -type f |xargs chmod 644
