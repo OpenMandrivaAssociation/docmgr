@@ -27,6 +27,9 @@ Patch8:		docmgr-1.0-RC6-dont-use-temp-copy-for-ooo-input.patch
 # Use LC_TIME for date & time format if LOCALE is set
 Patch9:		docmgr-1.0-RC6-locale-use-LC_TIME.patch
 Patch10:	docmgr-1.0-RC6-add-mediawiki-derived-installer.patch
+# This is mainly to avoid dependency extractor from adding dependencies on the
+# conditionally included files...
+Patch11:	docmgr-1.0-RC6-conditional-include-function.patch
 
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap
@@ -63,6 +66,7 @@ revolving around content storage.
 %patch8 -p1 -b .notemp~
 %patch9 -p1 -b .locale~
 %patch10 -p1 -b .mw_install~
+%patch11 -p1 -b .cond_include~
 sed -e 's#postgres#docmgr#g' -i scripts/docmgr.pgsql
 
 find -type f |xargs chmod 644
