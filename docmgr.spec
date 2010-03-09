@@ -37,7 +37,17 @@ Requires:	php-zip php-imap
 Requires:	postgresql-server postgresql-contrib-virtual postgresql-plpgsql-virtual
 Requires:	gocr ocrad imagemagick libtiff postfix file 
 Requires:	xpdf xpdf-tools enscript wget zip clamav
-Requires:	openoffice.org-common openoffice.org-pyuno
+# Backport for MES 5 where unfortunately we need to make the package arch
+# specific to get the necessary dependency on the desired OOo package to
+# have the document converter working with 64 bit java...
+%if "%{mdvver}" == "200900" && "%{_lib}" == "lib64"
+%define ext64 64
+%define _enable_debug_packages %{nil}
+%define debug_package %{nil}
+%else
+BuildArch:	noarch
+%endif
+Requires:	openoffice.org%{?ext64}-pyuno
 Requires(pre):	rpm-helper
 Requires(preun):	rpm-helper
 
