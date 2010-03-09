@@ -137,7 +137,7 @@ for conf in app-config.php config.php ldap-config.php; do
 done
 
 %pre
-%_pre_useradd %{name} / /sbin/nologin
+%_pre_useradd %{name} %{_localstatedir}/lib/%{name} /sbin/nologin
 
 %postun
 %_postun_userdel %{name}
@@ -187,5 +187,6 @@ rm -rf %{buildroot}
 %{webroot}/api.php
 %{webroot}/history.php
 %{webroot}/index.php
+%attr(711,docmgr,docmgr) %dir %{_localstatedir}/lib/%{name}
 %attr(-,apache,apache) %{_localstatedir}/lib/%{name}/files
 
