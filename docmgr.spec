@@ -137,7 +137,7 @@ for conf in app-config.php config.php ldap-config.php; do
 done
 
 %pre
-%_pre_useradd %{name}
+%_pre_useradd %{name} / /sbin/nologin
 
 %postun
 %_postun_userdel %{name}
