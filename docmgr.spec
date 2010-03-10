@@ -31,6 +31,7 @@ Patch10:	docmgr-1.0-RC6-add-mediawiki-derived-installer.patch
 # conditionally included files...
 Patch11:	docmgr-1.0-RC6-conditional-include-function.patch
 Patch12:	docmgr-1.0-RC6-die-if-pg_connect-fails.patch
+Patch13:	docmgr-1.0-RC6-set-default-timezone.patch
 
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap
@@ -80,6 +81,7 @@ revolving around content storage.
 %patch10 -p1 -b .mw_install~
 %patch11 -p1 -b .cond_include~
 %patch12 -p1 -b .die~
+%patch13 -p1 -b .timezone~
 sed -e 's#postgres#docmgr#g' -i scripts/docmgr.pgsql
 
 find -type f |xargs chmod 644
