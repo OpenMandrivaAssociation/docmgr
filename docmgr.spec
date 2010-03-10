@@ -125,7 +125,7 @@ define("FILE_DIR", "%{_localstatedir}/lib/%{name}/files");
 define("ADMIN_EMAIL", "root@localhost");
 define("SITE_URL", "http://localhost/%{name}");
 define("SITE_PATH", "%{webroot}");
-define("IMPORT_DIR", IMPORT_DIR . "/import");
+define("IMPORT_DIR", FILE_DIR . "/import");
 define("DB_CHARSET", "UTF-8");
 define("VIEW_CHARSET", "UTF-8");
 EOF
