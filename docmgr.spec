@@ -35,6 +35,8 @@ Patch12:	docmgr-1.0-RC6-die-if-pg_connect-fails.patch
 # when using date() with LC_TIME.
 # TODO: fetch timezone from system (should we perhaps provide a default as well?)
 Patch13:	docmgr-1.0-RC6-set-default-timezone.patch
+# Check that user actually exists before trying to update failed_logins for it
+Patch14:	docmgr-1.0-RC6-check-if-user-exists-for-failed-logins.patch
 
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap
@@ -85,6 +87,7 @@ revolving around content storage.
 %patch11 -p1 -b .cond_include~
 %patch12 -p1 -b .die~
 %patch13 -p1 -b .timezone~
+%patch14 -p1 -b .failed_logins~
 sed -e 's#postgres#docmgr#g' -i scripts/docmgr.pgsql
 
 find -type f |xargs chmod 644
