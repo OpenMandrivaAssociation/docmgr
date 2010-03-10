@@ -35,8 +35,9 @@ Patch12:	docmgr-1.0-RC6-die-if-pg_connect-fails.patch
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap
 Requires:	postgresql-server postgresql-contrib-virtual postgresql-plpgsql-virtual
-Requires:	gocr ocrad imagemagick libtiff postfix file 
+Requires:	gocr ocrad imagemagick libtiff-progs sendmail-command
 Requires:	xpdf xpdf-tools enscript wget zip clamav
+Requires:	wget poppler file
 # Backport for MES 5 where unfortunately we need to make the package arch
 # specific to get the necessary dependency on the desired OOo package to
 # have the document converter working with 64 bit java...
