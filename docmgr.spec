@@ -47,7 +47,7 @@ Requires:	xpdf xpdf-tools enscript wget zip clamav
 %else
 BuildArch:	noarch
 %endif
-Requires:	openoffice.org%{?ext64}-pyuno
+Requires:	openoffice.org%{?ext64}-pyuno openoffice.org%{?ext64}-writer
 Requires(pre):	rpm-helper
 Requires(preun):	rpm-helper
 
