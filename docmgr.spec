@@ -31,6 +31,9 @@ Patch10:	docmgr-1.0-RC6-add-mediawiki-derived-installer.patch
 # conditionally included files...
 Patch11:	docmgr-1.0-RC6-conditional-include-function.patch
 Patch12:	docmgr-1.0-RC6-die-if-pg_connect-fails.patch
+# This will set the default timezone if defined, this to silence php warnings
+# when using date() with LC_TIME.
+# TODO: fetch timezone from system (should we perhaps provide a default as well?)
 Patch13:	docmgr-1.0-RC6-set-default-timezone.patch
 
 Requires:	mod_php php-pgsql php-iconv
