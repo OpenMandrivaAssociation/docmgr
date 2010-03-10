@@ -171,8 +171,8 @@ rm -rf %{buildroot}
 %config %{webroot}/config/app-config.php
 %config %{webroot}/config/config.php
 %config %{webroot}/config/ldap-config.php
-%dir %{webroot}/config/local
-%dir %attr(700,apache,apache) %{webroot}/config/local/tmp
+%attr(711, root, root) %dir %{webroot}/config/local
+%attr(700,apache,apache) %dir %{webroot}/config/local/tmp
 %attr(600, root, root) %config(noreplace, missingok) %ghost %{webroot}/config/local/app-config.php
 %attr(600, root, root) %config(noreplace, missingok) %ghost %{webroot}/config/local/config.php
 %attr(600, root, root) %config(noreplace, missingok) %ghost %{webroot}/config/local/ldap-config.php
