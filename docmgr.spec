@@ -5,7 +5,6 @@ Name:		docmgr
 Version:	1.0
 Release:	%mkrel 0.%{prerel}.1
 License:	GPLv2
-Buildarch:	noarch
 Group:		System/Servers
 Summary:	Web based DMS - Document Management System
 URL:		http://docmgr.org/
