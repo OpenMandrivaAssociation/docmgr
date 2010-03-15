@@ -40,6 +40,7 @@ Patch14:	docmgr-1.0-RC6-check-if-user-exists-for-failed-logins.patch
 # so let's implement it here.
 Patch15:	docmgr-1.0-RC6-restricted-delete.patch
 Patch16:	docmgr-1.0-RC6-use-FILE_DIR-for-process.patch
+Patch17:	docmgr-1.0-RC6-fix-typo.patch
 
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap
@@ -93,6 +94,7 @@ revolving around content storage.
 %patch14 -p1 -b .failed_logins~
 %patch15 -p1 -b .restricted~
 %patch16 -p1 -b .file_dir~
+%patch17 -p1 -b .typo~
 sed -e 's#postgres#docmgr#g' -i scripts/docmgr.pgsql
 
 find -type f |xargs chmod 644
