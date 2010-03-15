@@ -39,6 +39,7 @@ Patch14:	docmgr-1.0-RC6-check-if-user-exists-for-failed-logins.patch
 # The config file mentions RESTRICTED_DELETE, but it's not really implemented,
 # so let's implement it here.
 Patch15:	docmgr-1.0-RC6-restricted-delete.patch
+Patch16:	docmgr-1.0-RC6-use-FILE_DIR-for-process.patch
 
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap
@@ -91,6 +92,7 @@ revolving around content storage.
 %patch13 -p1 -b .timezone~
 %patch14 -p1 -b .failed_logins~
 %patch15 -p1 -b .restricted~
+%patch16 -p1 -b .file_dir~
 sed -e 's#postgres#docmgr#g' -i scripts/docmgr.pgsql
 
 find -type f |xargs chmod 644
