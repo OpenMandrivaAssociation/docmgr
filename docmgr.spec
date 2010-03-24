@@ -22,6 +22,8 @@ Patch7:		docmgr-1.0-RC6-fix-keepalive-relative-url.patch
 # As DocumentConvert.py now uses streams, we don't need to copy documents
 # to a temporary directory to read them. This will also get rid of an issue
 # with the input document being deleted before reading as well..
+# Disabled patch for now as relying on the filename rather than on detecting
+# the mime type seems to be wired too heavily in... :/
 Patch8:		docmgr-1.0-RC6-dont-use-temp-copy-for-ooo-input.patch
 # Use LC_TIME for date & time format if LOCALE is set
 Patch9:		docmgr-1.0-RC6-locale-use-LC_TIME.patch
@@ -85,7 +87,7 @@ revolving around content storage.
 %patch5 -p1 -b .stream~
 %patch6 -p1 -b .ooo~
 %patch7 -p1 -b .relative~
-%patch8 -p1 -b .notemp~
+#%%patch8 -p1 -b .notemp~
 %patch9 -p1 -b .locale~
 %patch10 -p1 -b .mw_install~
 %patch11 -p1 -b .cond_include~
