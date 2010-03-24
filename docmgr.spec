@@ -90,7 +90,7 @@ revolving around content storage.
 %patch5 -p1 -b .stream~
 %patch6 -p1 -b .ooo~
 %patch7 -p1 -b .relative~
-#%%patch8 -p1 -b .notemp~
+%patch8 -p1 -b .notemp~
 %patch9 -p1 -b .locale~
 %patch10 -p1 -b .mw_install~
 %patch11 -p1 -b .cond_include~
