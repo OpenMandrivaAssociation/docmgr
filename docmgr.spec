@@ -43,12 +43,12 @@ Patch14:	docmgr-1.0-RC6-check-if-user-exists-for-failed-logins.patch
 Patch15:	docmgr-1.0-RC6-restricted-delete.patch
 Patch16:	docmgr-1.0-RC6-use-FILE_DIR-for-process.patch
 Patch17:	docmgr-1.0-RC6-fix-typo.patch
-Patch18:	docmgr-1.0-RC6-use-correct-mime-type-for-docx.patch
+Patch18:	docmgr-1.0-RC6-use-correct-mime-types.patch
 # Add absolute path to include_path
 Patch19:	docmgr-1.0-RC6-set-include_path.patch
 
 Requires:	mod_php php-pgsql php-iconv
-Requires:	php-zip php-imap
+Requires:	php-zip php-imap php-fileinfo
 Requires:	postgresql-server postgresql-contrib-virtual postgresql-plpgsql-virtual
 Requires:	gocr ocrad imagemagick libtiff-progs sendmail-command
 Requires:	xpdf xpdf-tools enscript wget zip clamav
@@ -100,7 +100,7 @@ revolving around content storage.
 %patch15 -p1 -b .restricted~
 %patch16 -p1 -b .file_dir~
 %patch17 -p1 -b .typo~
-%patch18 -p1 -b .docx_mimetype~
+%patch18 -p1 -b .mime_types~
 %patch19 -p1 -b .set_include_path~
 sed -e 's#postgres#docmgr#g' -i scripts/docmgr.pgsql
 
