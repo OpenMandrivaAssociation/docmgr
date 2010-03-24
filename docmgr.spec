@@ -44,6 +44,8 @@ Patch15:	docmgr-1.0-RC6-restricted-delete.patch
 Patch16:	docmgr-1.0-RC6-use-FILE_DIR-for-process.patch
 Patch17:	docmgr-1.0-RC6-fix-typo.patch
 Patch18:	docmgr-1.0-RC6-use-correct-mime-type-for-docx.patch
+# Add absolute path to include_path
+Patch19:	docmgr-1.0-RC6-set-include_path.patch
 
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap
@@ -99,6 +101,7 @@ revolving around content storage.
 %patch16 -p1 -b .file_dir~
 %patch17 -p1 -b .typo~
 %patch18 -p1 -b .docx_mimetype~
+%patch19 -p1 -b .set_include_path~
 sed -e 's#postgres#docmgr#g' -i scripts/docmgr.pgsql
 
 find -type f |xargs chmod 644
