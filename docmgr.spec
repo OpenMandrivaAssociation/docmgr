@@ -1,4 +1,4 @@
-%define	prerel	RC6
+%define	prerel	RC8
 %define	webroot	%{_var}/www/docmgr
 
 Name:		docmgr
@@ -11,38 +11,38 @@ URL:		http://docmgr.org/
 
 Source0:	%{name}-%{version}%{?prerel:-%{prerel}}.tar.gz
 Source1:	docmgr.init
-Patch0:		docmgr-1.0-RC6-local-config.patch
-Patch1:		docmgr-1.0-RC6-unified-tmpdir.patch
-Patch2:		docmgr-1.0-RC6-quiet-rm.patch
+Patch0:		docmgr-1.0-RC8-local-config.patch
+Patch1:		docmgr-1.0-RC8-unified-tmpdir.patch
+Patch2:		docmgr-1.0-RC8-quiet-rm.patch
 Patch3:		docmgr-1.0-RC6-no-dos-eol.patch
 Patch4:		docmgr-1.0-RC6-PyODConverter-1.1.patch
 Patch5:		docmgr-1.0-RC6-PyODConvert-stream.patch
 Patch6:		docmgr-1.0-RC6-fileconvert-ooo-profile.d.patch
-Patch7:		docmgr-1.0-RC6-fix-keepalive-relative-url.patch
+#Patch7:		docmgr-1.0-RC6-fix-keepalive-relative-url.patch
 # As DocumentConvert.py now uses streams, we don't need to copy documents
 # to a temporary directory to read them. This will also get rid of an issue
 # with the input document being deleted before reading as well..
 # Disabled patch for now as relying on the filename rather than on detecting
 # the mime type seems to be wired too heavily in... :/
-Patch8:		docmgr-1.0-RC6-dont-use-temp-copy-for-ooo-input.patch
+Patch8:		docmgr-1.0-RC8-dont-use-temp-copy-for-ooo-input.patch
 # Use LC_TIME for date & time format if LOCALE is set
 Patch9:		docmgr-1.0-RC6-locale-use-LC_TIME.patch
 Patch10:	docmgr-1.0-RC6-add-mediawiki-derived-installer.patch
 # This is mainly to avoid dependency extractor from adding dependencies on the
 # conditionally included files...
-Patch11:	docmgr-1.0-RC6-conditional-include-function.patch
+#Patch11:	docmgr-1.0-RC6-conditional-include-function.patch
 Patch12:	docmgr-1.0-RC6-die-if-pg_connect-fails.patch
 # This will set the default timezone if defined, this to silence php warnings
 # when using date() with LC_TIME.
 # TODO: fetch timezone from system (should we perhaps provide a default as well?)
 Patch13:	docmgr-1.0-RC6-set-default-timezone.patch
 # Check that user actually exists before trying to update failed_logins for it
-Patch14:	docmgr-1.0-RC6-check-if-user-exists-for-failed-logins.patch
+Patch14:	docmgr-1.0-RC8-check-if-user-exists-for-failed-logins.patch
 # The config file mentions RESTRICTED_DELETE, but it's not really implemented,
 # so let's implement it here.
 Patch15:	docmgr-1.0-RC6-restricted-delete.patch
 Patch16:	docmgr-1.0-RC6-use-FILE_DIR-for-process.patch
-Patch17:	docmgr-1.0-RC6-fix-typo.patch
+#Patch17:	docmgr-1.0-RC6-fix-typo.patch
 Patch18:	docmgr-1.0-RC6-use-correct-mime-types.patch
 # Add absolute path to include_path
 Patch19:	docmgr-1.0-RC6-set-include_path.patch
@@ -92,17 +92,17 @@ revolving around content storage.
 %patch4 -p1 -b .doc_conv1.1~
 %patch5 -p1 -b .stream~
 %patch6 -p1 -b .ooo~
-%patch7 -p1 -b .relative~
+#%%patch7 -p1 -b .relative~
 %patch8 -p1 -b .notemp~
 %patch9 -p1 -b .locale~
 %patch10 -p1 -b .mw_install~
-%patch11 -p1 -b .cond_include~
+#%%patch11 -p1 -b .cond_include~
 %patch12 -p1 -b .die~
 %patch13 -p1 -b .timezone~
 %patch14 -p1 -b .failed_logins~
 %patch15 -p1 -b .restricted~
 %patch16 -p1 -b .file_dir~
-%patch17 -p1 -b .typo~
+#%%patch17 -p1 -b .typo~
 %patch18 -p1 -b .mime_types~
 %patch19 -p1 -b .set_include_path~
 %patch20 -p1 -b .exit_status~
@@ -215,15 +215,16 @@ rm -rf %{buildroot}
 %{webroot}/header
 %{webroot}/javascript
 %{webroot}/jslib
-%{webroot}/lang
 %{webroot}/lib
 %{webroot}/modules
 %{webroot}/themes
+%{webroot}/sabredav
 %dir %{webroot}/scripts
 %{webroot}/scripts/docmgr.pgsql
 %{webroot}/api.php
 %{webroot}/history.php
 %{webroot}/index.php
+%{webroot}/webdav.php
 %attr(711,docmgr,docmgr) %dir %{_localstatedir}/lib/%{name}
 %attr(-,apache,apache) %{_localstatedir}/lib/%{name}/files
 
