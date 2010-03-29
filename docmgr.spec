@@ -52,6 +52,10 @@ Patch20:	docmgr-1.0-RC6-check-fileconvert-exit-status.patch
 Patch21:	docmgr-1.0-RC8-use-utf8-for-client_encoding.patch
 Patch22:	docmgr-1.0-RC8-run-indexer-as-admin-user.patch
 Patch23:	docmgr-1.0-RC8-webdav-baseUri-no-reserved-domain.patch
+# Print out the actual error message within the array, rather than the
+# array (type) itself. Probably not the best solution, but does at least
+# provide *some* verbosity...
+Patch24:	docmgr-1.0-RC8-print-firstlogin-perm-error.patch
 
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap php-fileinfo
@@ -112,6 +116,7 @@ revolving around content storage.
 %patch21 -p1 -b .utf8~
 %patch22 -p1 -b .admin~
 %patch23 -p1 -b .webdav~
+%patch24 -p1 -b .perm_error~
 sed -e 's#postgres#docmgr#g' -i scripts/docmgr.pgsql
 
 find -type f |xargs chmod 644
