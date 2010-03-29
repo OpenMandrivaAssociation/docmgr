@@ -49,6 +49,7 @@ Patch19:	docmgr-1.0-RC6-set-include_path.patch
 # Check that the OOo converter returns without error status.
 # TODO: implement proper behaviour on error
 Patch20:	docmgr-1.0-RC6-check-fileconvert-exit-status.patch
+Patch21:	docmgr-1.0-RC8-use-utf8-for-client_encoding.patch
 
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap php-fileinfo
@@ -106,6 +107,7 @@ revolving around content storage.
 %patch18 -p1 -b .mime_types~
 %patch19 -p1 -b .set_include_path~
 %patch20 -p1 -b .exit_status~
+%patch21 -p1 -b .utf8~
 sed -e 's#postgres#docmgr#g' -i scripts/docmgr.pgsql
 
 find -type f |xargs chmod 644
