@@ -50,6 +50,7 @@ Patch19:	docmgr-1.0-RC6-set-include_path.patch
 # TODO: implement proper behaviour on error
 Patch20:	docmgr-1.0-RC6-check-fileconvert-exit-status.patch
 Patch21:	docmgr-1.0-RC8-use-utf8-for-client_encoding.patch
+Patch22:	docmgr-1.0-RC8-run-indexer-as-admin-user.patch
 
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap php-fileinfo
@@ -108,6 +109,7 @@ revolving around content storage.
 %patch19 -p1 -b .set_include_path~
 %patch20 -p1 -b .exit_status~
 %patch21 -p1 -b .utf8~
+%patch22 -p1 -b .admin~
 sed -e 's#postgres#docmgr#g' -i scripts/docmgr.pgsql
 
 find -type f |xargs chmod 644
