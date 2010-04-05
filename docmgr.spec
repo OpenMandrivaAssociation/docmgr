@@ -22,8 +22,8 @@ Patch6:		docmgr-1.0-RC6-fileconvert-ooo-profile.d.patch
 # As DocumentConvert.py now uses streams, we don't need to copy documents
 # to a temporary directory to read them. This will also get rid of an issue
 # with the input document being deleted before reading as well..
-# Disabled patch for now as relying on the filename rather than on detecting
-# the mime type seems to be wired too heavily in... :/
+# Also since we no longer create a temporary copy with an extension to detect
+# the type from, we now detect it based on mime type in stead.
 Patch8:		docmgr-1.0-RC8-dont-use-temp-copy-for-ooo-input.patch
 # Use LC_TIME for date & time format if LOCALE is set
 Patch9:		docmgr-1.0-RC6-locale-use-LC_TIME.patch
