@@ -56,6 +56,9 @@ Patch23:	docmgr-1.0-RC8-webdav-baseUri-no-reserved-domain.patch
 # array (type) itself. Probably not the best solution, but does at least
 # provide *some* verbosity...
 Patch24:	docmgr-1.0-RC8-print-firstlogin-perm-error.patch
+# Do prefix searching to allow for searching on beginning of words as you write
+# them. TODO: will it work with or break postgresql < 8.4?
+Patch25:	docmgr-1.0-RC8-tsearch2-prefix-search.patch
 
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap php-fileinfo
@@ -117,6 +120,7 @@ revolving around content storage.
 %patch22 -p1 -b .admin~
 %patch23 -p1 -b .webdav~
 %patch24 -p1 -b .perm_error~
+%patch25 -p1 -b .prefix_search~
 sed -e 's#postgres#docmgr#g' -i scripts/docmgr.pgsql
 
 find -type f |xargs chmod 644
