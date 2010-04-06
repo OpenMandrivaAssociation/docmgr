@@ -40,7 +40,7 @@ Patch13:	docmgr-1.0-RC6-set-default-timezone.patch
 Patch14:	docmgr-1.0-RC8-check-if-user-exists-for-failed-logins.patch
 # The config file mentions RESTRICTED_DELETE, but it's not really implemented,
 # so let's implement it here.
-Patch15:	docmgr-1.0-RC6-restricted-delete.patch
+Patch15:	docmgr-1.0-RC8-restricted-delete.patch
 Patch16:	docmgr-1.0-RC6-use-FILE_DIR-for-process.patch
 #Patch17:	docmgr-1.0-RC6-fix-typo.patch
 Patch18:	docmgr-1.0-RC6-use-correct-mime-types.patch
