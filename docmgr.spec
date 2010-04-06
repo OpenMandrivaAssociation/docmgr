@@ -63,6 +63,7 @@ Patch26:	docmgr-1.0-RC8-update-to-ckeditor-3.2.patch
 # You can only search for users in the account manager, not list them, so let's
 # implement a list as well.
 Patch27:	docmgr-1.0-RC8-show-user-list.patch
+Patch28:	docmgr-1.0-RC8-set-bitmask.patch
 
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap php-fileinfo
@@ -127,6 +128,7 @@ revolving around content storage.
 %patch25 -p1 -b .prefix_search~
 %patch26 -p1 -b .ckeditor3.2~
 %patch27 -p1 -b .account_list~
+%patch28 -p1 -b .bitmask~
 sed -e 's#postgres#docmgr#g' -i scripts/docmgr.pgsql
 
 find -type f |xargs chmod 644
