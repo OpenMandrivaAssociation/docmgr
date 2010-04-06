@@ -59,6 +59,7 @@ Patch24:	docmgr-1.0-RC8-print-firstlogin-perm-error.patch
 # Do prefix searching to allow for searching on beginning of words as you write
 # them. TODO: will it work with or break postgresql < 8.4?
 Patch25:	docmgr-1.0-RC8-tsearch2-prefix-search.patch
+Patch26:	docmgr-1.0-RC8-update-to-ckeditor-3.2.patch
 
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap php-fileinfo
@@ -121,6 +122,7 @@ revolving around content storage.
 %patch23 -p1 -b .webdav~
 %patch24 -p1 -b .perm_error~
 %patch25 -p1 -b .prefix_search~
+%patch26 -p1 -b .ckeditor3.2~
 sed -e 's#postgres#docmgr#g' -i scripts/docmgr.pgsql
 
 find -type f |xargs chmod 644
