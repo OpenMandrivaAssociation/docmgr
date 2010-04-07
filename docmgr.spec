@@ -84,6 +84,7 @@ Requires:	wget poppler file
 BuildArch:	noarch
 %endif
 Requires:	openoffice.org%{?ext64}-pyuno openoffice.org%{?ext64}-writer
+Requires:	openoffice.org%{?ext64}-calc openoffice.org%{?ext64}-impress
 Requires(pre):	rpm-helper
 Requires(preun):	rpm-helper
 
