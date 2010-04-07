@@ -145,11 +145,10 @@ rm -rf %{buildroot}
 
 install -d %{buildroot}%{_var}/{www,lib}/docmgr
 cp -r */ *.php %{buildroot}%{webroot}
-rm -rf %{buildroot}%{webroot}/{DOCS,scripts}
+rm -rf %{buildroot}%{webroot}/DOCS
 mv %{buildroot}%{webroot}/files %{buildroot}%{_var}/lib/%{name}
 
 install -m755 %{SOURCE1} -D %{buildroot}%{_initrddir}/%{name}
-install -m644 scripts/docmgr.pgsql -D %{buildroot}%{webroot}/scripts/docmgr.pgsql
 
 install -d %{buildroot}%{webappconfdir}
 tee %{buildroot}%{webappconfdir}/%{name}.conf << EOF
