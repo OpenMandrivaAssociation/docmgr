@@ -246,8 +246,7 @@ rm -rf %{buildroot}
 %{webroot}/modules
 %{webroot}/themes
 %{webroot}/sabredav
-%dir %{webroot}/scripts
-%{webroot}/scripts/docmgr.pgsql
+%{webroot}/scripts
 %{webroot}/api.php
 %{webroot}/history.php
 %{webroot}/index.php
