@@ -69,7 +69,7 @@ Patch30:	docmgr-1.0-RC8-fix-css-themes-relative-path.patch
 
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap php-fileinfo
-Requires:	postgresql-server postgresql-contrib-virtual postgresql-plpgsql-virtual
+Requires:	postgresql-server >= 8.4 postgresql-contrib-virtual postgresql-plpgsql-virtual
 Requires:	gocr ocrad imagemagick libtiff-progs sendmail-command
 Requires:	xpdf xpdf-tools enscript wget zip clamav
 Requires:	wget poppler file
