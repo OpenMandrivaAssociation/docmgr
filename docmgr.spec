@@ -1,4 +1,4 @@
-%define	prerel	RC8
+%define	prerel	RC9
 %define	webroot	%{_var}/www/docmgr
 
 Name:		docmgr
@@ -131,7 +131,7 @@ revolving around content storage.
 %patch25 -p1 -b .prefix_search~
 %patch26 -p1 -b .ckeditor3.2~
 %patch27 -p1 -b .account_list~
-%patch28 -p1 -b .bitmask~
+#%patch28 -p1 -b .bitmask~
 %patch29 -p1 -b .bitset~
 %patch30 -p1 -b .themes_path~
 sed -e 's#postgres#docmgr#g' -i scripts/docmgr.pgsql
@@ -145,7 +145,7 @@ rm -rf %{buildroot}
 
 install -d %{buildroot}%{_var}/{www,lib}/docmgr
 cp -r */ *.php %{buildroot}%{webroot}
-rm -rf %{buildroot}%{webroot}/DOCS
+rm -rf %{buildroot}%{webroot}/{DOCS,sd}
 mv %{buildroot}%{webroot}/files %{buildroot}%{_var}/lib/%{name}
 
 install -m755 %{SOURCE1} -D %{buildroot}%{_initrddir}/%{name}
