@@ -70,6 +70,7 @@ Patch31:	docmgr-1.0-RC9-default-perms.patch
 # Split date and time in php to get it correctly with localized version
 Patch32:	docmgr-1.0-RC9-split-time-and-date-in-php-not-js.patch
 Patch33:	docmgr-1.0-RC9-add-missing-objectId-to-edittask-query.patch
+Patch34:	docmgr-1.0-RC9-set-workflow-comment-properly.patch
 
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap php-fileinfo
@@ -141,6 +142,7 @@ revolving around content storage.
 %patch31 -p1 -b .perms~
 %patch32 -p1 -b .date_view~
 %patch33 -p1 -b .objectId~
+%patch34 -p1 -b .comment~
 sed -e 's#postgres#docmgr#g' -i scripts/docmgr.pgsql
 
 find -type f |xargs chmod 644
