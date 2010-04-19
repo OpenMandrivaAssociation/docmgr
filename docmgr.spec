@@ -26,7 +26,7 @@ Patch6:		docmgr-1.0-RC6-fileconvert-ooo-profile.d.patch
 # the type from, we now detect it based on mime type in stead.
 Patch8:		docmgr-1.0-RC8-dont-use-temp-copy-for-ooo-input.patch
 # Use LC_TIME for date & time format if LOCALE is set
-Patch9:		docmgr-1.0-RC6-locale-use-LC_TIME.patch
+Patch9:		docmgr-1.0-RC9-locale-use-LC_TIME.patch
 Patch10:	docmgr-1.0-RC6-add-mediawiki-derived-installer.patch
 # This is mainly to avoid dependency extractor from adding dependencies on the
 # conditionally included files...
