@@ -214,8 +214,14 @@ done
 %pre
 %_pre_useradd %{name} %{_localstatedir}/lib/%{name} /sbin/nologin
 
+%post
+%_post_service %{name}
+
 %postun
 %_postun_userdel %{name}
+
+%preun
+%_preun_service %{name}
 
 %clean
 rm -rf %{buildroot}
