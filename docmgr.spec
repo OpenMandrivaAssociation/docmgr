@@ -186,6 +186,9 @@ tee %{buildroot}%{webroot}/config/vendor/config.php << EOF
   otherwise you might loose your configuration when upgrading.
 ********************************************/
 
+# No host & port specified, means use postgresql defaults (unix sockets)
+define("DBHOST","");
+define("DBPORT","");
 define("DBUSER", "docmgr");
 define("DBNAME", "docmgr");
 define("FILE_DIR", "%{_localstatedir}/lib/%{name}/files");
