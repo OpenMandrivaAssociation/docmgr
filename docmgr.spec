@@ -206,7 +206,7 @@ tee %{buildroot}%{_sysconfdir}/sysconfig/%{name} << EOF
 OOFFICE_HOST="localhost"
 OOFFICE_PORT="8100"
 # Any additional options to pass to ooffice can be set here
-OOFFICE_OPTIONS="-norestore -nofirststartwizard -invisible -nodefault -nologo"
+OOFFICE_OPTIONS="-norestore -nofirststartwizard -invisible -nodefault -nologo -nolockcheck"
 EOF
 
 find %{buildroot} -name \*~ |xargs rm -f
