@@ -73,6 +73,8 @@ Patch33:	docmgr-1.0-RC9-add-missing-objectId-to-edittask-query.patch
 Patch34:	docmgr-1.0-RC9-set-workflow-comment-properly.patch
 Patch35:	docmgr-1.0-RC9-display-recipient-notes-for-task.patch
 Patch36:	docmgr-1.0-RC9-pg_connect-accept-empty-default-values.patch
+# Use host & port specified in /etc/sysconfig/docmgr if available for doc conversion
+Patch37:	docmgr-1.0-RC9-docconv-host-port-sysconfig.patch
 
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap php-fileinfo
@@ -147,6 +149,7 @@ revolving around content storage.
 %patch34 -p1 -b .comment~
 %patch35 -p1 -b .task_notes~
 %patch36 -p1 -b .emptydefs~
+%patch37 -p1 -b .hostport~
 sed -e 's#postgres#docmgr#g' -i scripts/docmgr.pgsql
 
 find -type f |xargs chmod 644
