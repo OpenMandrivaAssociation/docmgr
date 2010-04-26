@@ -63,7 +63,7 @@ Patch26:	docmgr-1.0-RC8-update-to-ckeditor-3.2.patch
 # You can only search for users in the account manager, not list them, so let's
 # implement a list as well.
 Patch27:	docmgr-1.0-RC9-show-user-list.patch
-Patch28:	docmgr-1.0-RC8-set-bitmask.patch
+#Patch28:	docmgr-1.0-RC8-set-bitmask.patch
 Patch29:	docmgr-1.0-RC8-check-bitset-not-bitmask.patch
 Patch30:	docmgr-1.0-RC8-fix-css-themes-relative-path.patch
 Patch31:	docmgr-1.0-RC9-default-perms.patch
