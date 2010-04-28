@@ -77,7 +77,7 @@ Patch36:	docmgr-1.0-RC9-pg_connect-accept-empty-default-values.patch
 Patch37:	docmgr-1.0-RC9-docconv-host-port-sysconfig.patch
 
 Requires:	mod_php php-pgsql php-iconv
-Requires:	php-zip php-imap php-fileinfo
+Requires:	php-zip php-imap php-fileinfo php-mbstring
 Requires:	postgresql-server >= 8.4 postgresql-contrib-virtual postgresql-plpgsql-virtual
 Requires:	gocr ocrad imagemagick libtiff-progs sendmail-command
 Requires:	xpdf xpdf-tools enscript wget zip clamav
