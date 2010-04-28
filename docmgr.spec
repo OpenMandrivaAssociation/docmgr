@@ -1,4 +1,4 @@
-%define	prerel	RC9
+%define	prerel	RC10
 %define	webroot	%{_var}/www/docmgr
 
 Name:		docmgr
@@ -12,19 +12,19 @@ URL:		http://docmgr.org/
 Source0:	%{name}-%{version}%{?prerel:-%{prerel}}.tar.gz
 Source1:	docmgr.init
 Patch0:		docmgr-1.0-RC8-local-config.patch
-Patch1:		docmgr-1.0-RC8-unified-tmpdir.patch
+Patch1:		docmgr-1.0-RC10-unified-tmpdir.patch
 Patch2:		docmgr-1.0-RC8-quiet-rm.patch
-Patch3:		docmgr-1.0-RC6-no-dos-eol.patch
+Patch3:		docmgr-1.0-RC10-no-dos-eol.patch
 Patch4:		docmgr-1.0-RC6-PyODConverter-1.1.patch
 Patch5:		docmgr-1.0-RC6-PyODConvert-stream.patch
-Patch6:		docmgr-1.0-RC6-fileconvert-ooo-profile.d.patch
+Patch6:		docmgr-1.0-RC10-fileconvert-ooo-profile.d.patch
 #Patch7:		docmgr-1.0-RC6-fix-keepalive-relative-url.patch
 # As DocumentConvert.py now uses streams, we don't need to copy documents
 # to a temporary directory to read them. This will also get rid of an issue
 # with the input document being deleted before reading as well..
 # Also since we no longer create a temporary copy with an extension to detect
 # the type from, we now detect it based on mime type in stead.
-Patch8:		docmgr-1.0-RC8-dont-use-temp-copy-for-ooo-input.patch
+Patch8:		docmgr-1.0-RC10-dont-use-temp-copy-for-ooo-input.patch
 # Use LC_TIME for date & time format if LOCALE is set
 Patch9:		docmgr-1.0-RC9-locale-use-LC_TIME.patch
 Patch10:	docmgr-1.0-RC6-add-mediawiki-derived-installer.patch
@@ -40,22 +40,22 @@ Patch13:	docmgr-1.0-RC6-set-default-timezone.patch
 Patch14:	docmgr-1.0-RC8-check-if-user-exists-for-failed-logins.patch
 # The config file mentions RESTRICTED_DELETE, but it's not really implemented,
 # so let's implement it here.
-Patch15:	docmgr-1.0-RC8-restricted-delete.patch
+Patch15:	docmgr-1.0-RC10-restricted-delete.patch
 Patch16:	docmgr-1.0-RC6-use-FILE_DIR-for-process.patch
 #Patch17:	docmgr-1.0-RC6-fix-typo.patch
 Patch18:	docmgr-1.0-RC6-use-correct-mime-types.patch
 # Add absolute path to include_path
-Patch19:	docmgr-1.0-RC6-set-include_path.patch
+Patch19:	docmgr-1.0-RC10-set-include_path.patch
 # Check that the OOo converter returns without error status.
 # TODO: implement proper behaviour on error
 Patch20:	docmgr-1.0-RC6-check-fileconvert-exit-status.patch
-Patch21:	docmgr-1.0-RC8-use-utf8-for-client_encoding.patch
-Patch22:	docmgr-1.0-RC8-run-indexer-as-admin-user.patch
+Patch21:	docmgr-1.0-RC10-use-utf8-for-client_encoding.patch
+Patch22:	docmgr-1.0-RC10-run-indexer-as-admin-user.patch
 Patch23:	docmgr-1.0-RC8-webdav-baseUri-no-reserved-domain.patch
 # Print out the actual error message within the array, rather than the
 # array (type) itself. Probably not the best solution, but does at least
 # provide *some* verbosity...
-Patch24:	docmgr-1.0-RC8-print-firstlogin-perm-error.patch
+#Patch24:	docmgr-1.0-RC8-print-firstlogin-perm-error.patch
 # Do prefix searching to allow for searching on beginning of words as you write
 # them. TODO: will it work with or break postgresql < 8.4?
 Patch25:	docmgr-1.0-RC8-tsearch2-prefix-search.patch
@@ -64,7 +64,7 @@ Patch26:	docmgr-1.0-RC8-update-to-ckeditor-3.2.patch
 # implement a list as well.
 Patch27:	docmgr-1.0-RC9-show-user-list.patch
 #Patch28:	docmgr-1.0-RC8-set-bitmask.patch
-Patch29:	docmgr-1.0-RC8-check-bitset-not-bitmask.patch
+#Patch29:	docmgr-1.0-RC8-check-bitset-not-bitmask.patch
 Patch30:	docmgr-1.0-RC8-fix-css-themes-relative-path.patch
 Patch31:	docmgr-1.0-RC9-default-perms.patch
 # Split date and time in php to get it correctly with localized version
@@ -112,17 +112,17 @@ revolving around content storage.
 
 %prep
 %setup -q -n %{name}
-%patch0 -p1 -b .local~
+#%%patch0 -p1 -b .local~
 %patch1 -p1 -b .tmpdir~
 %patch2 -p1 -b .quiet~
-%patch3 -p1 -b .dos_eol~
+#%%patch3 -p1 -b .dos_eol~
 %patch4 -p1 -b .doc_conv1.1~
 %patch5 -p1 -b .stream~
 %patch6 -p1 -b .ooo~
 #%%patch7 -p1 -b .relative~
 %patch8 -p1 -b .notemp~
 %patch9 -p1 -b .locale~
-%patch10 -p1 -b .mw_install~
+#%%patch10 -p1 -b .mw_install~
 #%%patch11 -p1 -b .cond_include~
 %patch12 -p1 -b .die~
 %patch13 -p1 -b .timezone~
@@ -136,12 +136,12 @@ revolving around content storage.
 %patch21 -p1 -b .utf8~
 %patch22 -p1 -b .admin~
 %patch23 -p1 -b .webdav~
-%patch24 -p1 -b .perm_error~
+#%%patch24 -p1 -b .perm_error~
 %patch25 -p1 -b .prefix_search~
 %patch26 -p1 -b .ckeditor3.2~
 %patch27 -p1 -b .account_list~
-#%patch28 -p1 -b .bitmask~
-%patch29 -p1 -b .bitset~
+#%%patch28 -p1 -b .bitmask~
+#%%patch29 -p1 -b .bitset~
 %patch30 -p1 -b .themes_path~
 %patch31 -p1 -b .perms~
 %patch32 -p1 -b .date_view~
@@ -150,7 +150,6 @@ revolving around content storage.
 %patch35 -p1 -b .task_notes~
 %patch36 -p1 -b .emptydefs~
 %patch37 -p1 -b .hostport~
-sed -e 's#postgres#docmgr#g' -i scripts/docmgr.pgsql
 
 find -type f |xargs chmod 644
 
@@ -180,6 +179,7 @@ Alias /%{name} %{webroot}
 </Directory>
 EOF
 
+%if 0
 install -d %{buildroot}%{webroot}/config/{local/tmp,vendor}
 tee %{buildroot}%{webroot}/config/vendor/config.php << EOF
 <?php
@@ -202,6 +202,7 @@ define("IMPORT_DIR", FILE_DIR . "/import");
 define("DB_CHARSET", "UTF-8");
 define("VIEW_CHARSET", "UTF-8");
 EOF
+%endif
 
 install -d %{buildroot}%{_sysconfdir}/sysconfig
 tee %{buildroot}%{_sysconfdir}/sysconfig/%{name} << EOF
@@ -216,7 +217,7 @@ find %{buildroot} -name \*~ |xargs rm -f
 
 # ghost files
 for conf in app-config.php config.php ldap-config.php; do
-	touch %{buildroot}%{webroot}/config/local/$conf
+	touch %{buildroot}%{webroot}/config/$conf
 done
 
 %pre
@@ -247,24 +248,24 @@ rm -rf %{buildroot}
 %{webroot}/bin
 %{webroot}/ckeditor
 %dir %{webroot}/config
-%config %{webroot}/config/app-config.php
-%config %{webroot}/config/config.php
-%config %{webroot}/config/ldap-config.php
-%attr(711, root, root) %dir %{webroot}/config/local
-%attr(700,apache,apache) %dir %{webroot}/config/local/tmp
-%attr(600, root, root) %config(noreplace, missingok) %ghost %{webroot}/config/local/app-config.php
-%attr(600, root, root) %config(noreplace, missingok) %ghost %{webroot}/config/local/config.php
-%attr(600, root, root) %config(noreplace, missingok) %ghost %{webroot}/config/local/ldap-config.php
-%dir %{webroot}/config/vendor
-%config %{webroot}/config/vendor/config.php
+%config %{webroot}/config/app-config.default.php
+%config %{webroot}/config/config.default.php
+%config(noreplace) %{webroot}/config/ldap-config.php
+%attr(600, root, root) %config(noreplace, missingok) %ghost %{webroot}/config/app-config.php
+%attr(600, root, root) %config(noreplace, missingok) %ghost %{webroot}/config/config.php
+#%attr(600, root, root) %config(noreplace, missingok) %ghost %{webroot}/config/ldap-config.php
 %{webroot}/config/forms
+%if 0
 %dir %{webroot}/config/mediawiki
 %{webroot}/config/mediawiki/*.php
 %{webroot}/config/mediawiki/*.inc
 %{webroot}/config/index.php
+%endif
+%{webroot}/config/db_version.php
 %{webroot}/config/*.xml
 %{webroot}/controls
 %{webroot}/header
+%{webroot}/install
 %{webroot}/javascript
 %{webroot}/jslib
 %{webroot}/lib
