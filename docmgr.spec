@@ -75,6 +75,7 @@ Patch35:	docmgr-1.0-RC9-display-recipient-notes-for-task.patch
 Patch36:	docmgr-1.0-RC9-pg_connect-accept-empty-default-values.patch
 # Use host & port specified in /etc/sysconfig/docmgr if available for doc conversion
 Patch37:	docmgr-1.0-RC9-docconv-host-port-sysconfig.patch
+Patch38:	docmgr-1.0-RC10-installer-use-local-config.patch
 
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap php-fileinfo php-mbstring
@@ -140,6 +141,7 @@ revolving around content storage.
 %patch35 -p1 -b .task_notes~
 %patch36 -p1 -b .emptydefs~
 %patch37 -p1 -b .hostport~
+%patch38 -p1 -b .local_installer~
 
 find -type f |xargs chmod 644
 
@@ -170,6 +172,7 @@ Alias /%{name} %{webroot}
 EOF
 
 install -d %{buildroot}%{webroot}/config/{local/tmp,vendor}
+touch %{buildroot}%{webroot}/config/local/{app-config,config}.php
 tee %{buildroot}%{webroot}/config/vendor/config.php << EOF
 <?php
 /********************************************
@@ -237,12 +240,12 @@ rm -rf %{buildroot}
 %{webroot}/bin
 %{webroot}/ckeditor
 %dir %{webroot}/config
-%config %{webroot}/config/app-config.default.php
-%config %{webroot}/config/config.default.php
+%config %{webroot}/config/app-config.php
+%config %{webroot}/config/config.php
 %config %{webroot}/config/vendor/config.php
 %config(noreplace) %{webroot}/config/ldap-config.php
-%attr(600, root, root) %config(noreplace, missingok) %ghost %{webroot}/config/app-config.php
-%attr(600, root, root) %config(noreplace, missingok) %ghost %{webroot}/config/config.php
+%attr(600, root, root) %config(noreplace, missingok) %ghost %{webroot}/config/local/app-config.php
+%attr(600, root, root) %config(noreplace, missingok) %ghost %{webroot}/config/local/config.php
 #%attr(600, root, root) %config(noreplace, missingok) %ghost %{webroot}/config/ldap-config.php
 %{webroot}/config/forms
 %if 0
