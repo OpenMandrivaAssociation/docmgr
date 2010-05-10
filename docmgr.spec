@@ -24,6 +24,9 @@ Patch6:		docmgr-1.0-RC10-fileconvert-ooo-profile.d.patch
 # with the input document being deleted before reading as well..
 # Also since we no longer create a temporary copy with an extension to detect
 # the type from, we now detect it based on mime type in stead.
+# NOTE: Since we lack magic for ie. OOXML files and OOo also is dependent on suffix
+# to determine type, behaviour has been partly reverted to create a symlink
+# in stead with the corresponding suffix...
 Patch8:		docmgr-1.0-RC10-dont-use-temp-copy-for-ooo-input.patch
 # Use LC_TIME for date & time format if LOCALE is set
 Patch9:		docmgr-1.0-RC9-locale-use-LC_TIME.patch
