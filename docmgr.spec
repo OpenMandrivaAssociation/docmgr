@@ -11,7 +11,7 @@ URL:		http://docmgr.org/
 
 Source0:	%{name}-%{version}%{?prerel:-%{prerel}}.tar.gz
 Source1:	docmgr.init
-Patch0:		docmgr-1.0-RC8-local-config.patch
+Patch0:		docmgr-1.0-RC10-local-config.patch
 Patch1:		docmgr-1.0-RC10-unified-tmpdir.patch
 Patch2:		docmgr-1.0-RC8-quiet-rm.patch
 Patch3:		docmgr-1.0-RC10-no-dos-eol.patch
@@ -82,18 +82,8 @@ Requires:	postgresql-server >= 8.4 postgresql-contrib-virtual postgresql-plpgsql
 Requires:	gocr ocrad imagemagick libtiff-progs sendmail-command
 Requires:	xpdf xpdf-tools enscript wget zip clamav
 Requires:	wget poppler file
-# Backport for MES 5 where unfortunately we need to make the package arch
-# specific to get the necessary dependency on the desired OOo package to
-# have the document converter working with 64 bit java...
-%if "%{mdvver}" == "200900" && "%{_lib}" == "lib64"
-%define ext64 64
-%define _enable_debug_packages %{nil}
-%define debug_package %{nil}
-%else
+
 BuildArch:	noarch
-%endif
-Requires:	openoffice.org%{?ext64}-pyuno openoffice.org%{?ext64}-writer
-Requires:	openoffice.org%{?ext64}-calc openoffice.org%{?ext64}-impress
 Requires(pre):	rpm-helper
 Requires(preun):	rpm-helper
 
@@ -112,7 +102,7 @@ revolving around content storage.
 
 %prep
 %setup -q -n %{name}
-#%%patch0 -p1 -b .local~
+%patch0 -p1 -b .local~
 %patch1 -p1 -b .tmpdir~
 %patch2 -p1 -b .quiet~
 #%%patch3 -p1 -b .dos_eol~
@@ -179,7 +169,6 @@ Alias /%{name} %{webroot}
 </Directory>
 EOF
 
-%if 0
 install -d %{buildroot}%{webroot}/config/{local/tmp,vendor}
 tee %{buildroot}%{webroot}/config/vendor/config.php << EOF
 <?php
@@ -201,8 +190,8 @@ define("SITE_PATH", "%{webroot}");
 define("IMPORT_DIR", FILE_DIR . "/import");
 define("DB_CHARSET", "UTF-8");
 define("VIEW_CHARSET", "UTF-8");
+define("DEBUG", "5");
 EOF
-%endif
 
 install -d %{buildroot}%{_sysconfdir}/sysconfig
 tee %{buildroot}%{_sysconfdir}/sysconfig/%{name} << EOF
@@ -250,6 +239,7 @@ rm -rf %{buildroot}
 %dir %{webroot}/config
 %config %{webroot}/config/app-config.default.php
 %config %{webroot}/config/config.default.php
+%config %{webroot}/config/vendor/config.php
 %config(noreplace) %{webroot}/config/ldap-config.php
 %attr(600, root, root) %config(noreplace, missingok) %ghost %{webroot}/config/app-config.php
 %attr(600, root, root) %config(noreplace, missingok) %ghost %{webroot}/config/config.php
