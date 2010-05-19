@@ -11,10 +11,10 @@ URL:		http://docmgr.org/
 
 Source0:	%{name}-%{version}%{?prerel:-%{prerel}}.tar.gz
 Source1:	docmgr.init
-Patch0:		docmgr-1.0-RC10-local-config.patch
+#Patch0:		docmgr-1.0-RC10-local-config.patch
 Patch1:		docmgr-1.0-RC10-unified-tmpdir.patch
 Patch2:		docmgr-1.0-RC8-quiet-rm.patch
-Patch3:		docmgr-1.0-RC10-no-dos-eol.patch
+#Patch3:		docmgr-1.0-RC10-no-dos-eol.patch
 Patch4:		docmgr-1.0-RC6-PyODConverter-1.1.patch
 Patch5:		docmgr-1.0-RC6-PyODConvert-stream.patch
 Patch6:		docmgr-1.0-RC10-fileconvert-ooo-profile.d.patch
@@ -30,7 +30,7 @@ Patch6:		docmgr-1.0-RC10-fileconvert-ooo-profile.d.patch
 Patch8:		docmgr-1.0-RC10-dont-use-temp-copy-for-ooo-input.patch
 # Use LC_TIME for date & time format if LOCALE is set
 Patch9:		docmgr-1.0-RC9-locale-use-LC_TIME.patch
-Patch10:	docmgr-1.0-RC6-add-mediawiki-derived-installer.patch
+#Patch10:	docmgr-1.0-RC6-add-mediawiki-derived-installer.patch
 # This is mainly to avoid dependency extractor from adding dependencies on the
 # conditionally included files...
 #Patch11:	docmgr-1.0-RC6-conditional-include-function.patch
@@ -78,9 +78,10 @@ Patch35:	docmgr-1.0-RC9-display-recipient-notes-for-task.patch
 Patch36:	docmgr-1.0-RC9-pg_connect-accept-empty-default-values.patch
 # Use host & port specified in /etc/sysconfig/docmgr if available for doc conversion
 Patch37:	docmgr-1.0-RC9-docconv-host-port-sysconfig.patch
-Patch38:	docmgr-1.0-RC10-installer-use-local-config.patch
+#Patch38:	docmgr-1.0-RC10-installer-use-local-config.patch
 Patch39:	docmgr-1.0-RC10-make-users-directory-protected.patch
-Patch40:	docmgr-1.0-RC10-customizable-database-setup.patch
+#Patch40:	docmgr-1.0-RC10-customizable-database-setup.patch
+Patch41:	docmgr-1.0-RC10-enhanced-setup-and-config.patch
 
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap php-fileinfo php-mbstring
@@ -108,7 +109,7 @@ revolving around content storage.
 
 %prep
 %setup -q -n %{name}
-%patch0 -p1 -b .local~
+#%%patch0 -p1 -b .local~
 %patch1 -p1 -b .tmpdir~
 %patch2 -p1 -b .quiet~
 #%%patch3 -p1 -b .dos_eol~
@@ -146,9 +147,10 @@ revolving around content storage.
 %patch35 -p1 -b .task_notes~
 %patch36 -p1 -b .emptydefs~
 %patch37 -p1 -b .hostport~
-%patch38 -p1 -b .local_installer~
+#%patch38 -p1 -b .local_installer~
 %patch39 -p1 -b .protected~
-%patch40 -p1 -b .db_setup~
+#%patch40 -p1 -b .db_setup~
+%patch41 -p1 -b .setup~
 
 find -type f |xargs chmod 644
 
