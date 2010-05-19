@@ -79,6 +79,7 @@ Patch36:	docmgr-1.0-RC9-pg_connect-accept-empty-default-values.patch
 # Use host & port specified in /etc/sysconfig/docmgr if available for doc conversion
 Patch37:	docmgr-1.0-RC9-docconv-host-port-sysconfig.patch
 Patch38:	docmgr-1.0-RC10-installer-use-local-config.patch
+Patch39:	docmgr-1.0-RC10-make-users-directory-protected.patch
 
 Requires:	mod_php php-pgsql php-iconv
 Requires:	php-zip php-imap php-fileinfo php-mbstring
@@ -145,6 +146,7 @@ revolving around content storage.
 %patch36 -p1 -b .emptydefs~
 %patch37 -p1 -b .hostport~
 %patch38 -p1 -b .local_installer~
+%patch39 -p1 -b .protected~
 
 find -type f |xargs chmod 644
 
