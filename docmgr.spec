@@ -67,7 +67,7 @@ Patch26:	docmgr-1.0-RC8-update-to-ckeditor-3.2.patch
 # implement a list as well.
 Patch27:	docmgr-1.0-RC9-show-user-list.patch
 #Patch28:	docmgr-1.0-RC8-set-bitmask.patch
-#Patch29:	docmgr-1.0-RC8-check-bitset-not-bitmask.patch
+Patch29:	docmgr-1.0-RC8-check-bitset-not-bitmask.patch
 Patch30:	docmgr-1.0-RC8-fix-css-themes-relative-path.patch
 Patch31:	docmgr-1.0-RC9-default-perms.patch
 # Split date and time in php to get it correctly with localized version
@@ -135,7 +135,7 @@ revolving around content storage.
 %patch26 -p1 -b .ckeditor3.2~
 %patch27 -p1 -b .account_list~
 #%%patch28 -p1 -b .bitmask~
-#%%patch29 -p1 -b .bitset~
+%patch29 -p1 -b .bitset~
 %patch30 -p1 -b .themes_path~
 %patch31 -p1 -b .perms~
 %patch32 -p1 -b .date_view~
