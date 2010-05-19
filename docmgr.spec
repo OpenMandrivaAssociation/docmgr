@@ -52,7 +52,7 @@ Patch19:	docmgr-1.0-RC10-set-include_path.patch
 # Check that the OOo converter returns without error status.
 # TODO: implement proper behaviour on error
 Patch20:	docmgr-1.0-RC6-check-fileconvert-exit-status.patch
-Patch21:	docmgr-1.0-RC10-use-utf8-for-client_encoding.patch
+#Patch21:	docmgr-1.0-RC10-use-utf8-for-client_encoding.patch
 Patch22:	docmgr-1.0-RC10-run-indexer-as-admin-user.patch
 Patch23:	docmgr-1.0-RC8-webdav-baseUri-no-reserved-domain.patch
 # Print out the actual error message within the array, rather than the
@@ -129,7 +129,7 @@ revolving around content storage.
 %patch18 -p1 -b .mime_types~
 %patch19 -p1 -b .set_include_path~
 %patch20 -p1 -b .exit_status~
-%patch21 -p1 -b .utf8~
+#%%patch21 -p1 -b .utf8~
 %patch22 -p1 -b .admin~
 %patch23 -p1 -b .webdav~
 #%%patch24 -p1 -b .perm_error~
