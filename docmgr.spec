@@ -85,7 +85,7 @@ Patch39:	docmgr-1.0-RC10-make-users-directory-protected.patch
 #Patch40:	docmgr-1.0-RC10-customizable-database-setup.patch
 Patch41:	docmgr-1.0-RC10-enhanced-setup-and-config.patch
 
-Requires:	mod_php php-pgsql php-iconv
+Requires:	mod_php mod_ssl php-pgsql php-iconv
 Requires:	php-zip php-imap php-fileinfo php-mbstring
 Requires:	postgresql-server >= 8.4 postgresql-contrib-virtual postgresql-plpgsql-virtual
 Requires:	gocr ocrad imagemagick libtiff-progs sendmail-command
@@ -180,6 +180,15 @@ Alias /%{name} %{webroot}
   Order allow,deny
   Deny from All
 </Directory>
+
+<IfModule mod_ssl.c>
+  <LocationMatch /%{name}>
+    Options FollowSymLinks
+    RewriteEngine on
+    RewriteCond %{SERVER_PORT} !^443$
+    RewriteRule ^.*$ https://%{SERVER_NAME}%{REQUEST_URI} [L,R]
+  </LocationMatch>
+</IfModule>
 EOF
 
 install -d %{buildroot}%{webroot}/config/{local/tmp,vendor}
