@@ -205,6 +205,7 @@ tee %{buildroot}%{webroot}/config/vendor/config.php << EOF
 define("DBHOST","");
 define("DBPORT","");
 define("DBUSER", "docmgr");
+define("DBPASSWORD", "");
 define("DBNAME", "docmgr");
 define("FILE_DIR", "%{_localstatedir}/lib/%{name}/files");
 define("ADMIN_EMAIL", "root@localhost");
