@@ -217,8 +217,8 @@ EOF
 find %{buildroot} -name \*~ |xargs rm -f
 
 # ghost files
-for conf in app-config.php config.php ldap-config.php; do
-	touch %{buildroot}%{webroot}/config/$conf
+for conf in app-config.php config.php; do
+	touch %{buildroot}%{webroot}/config/local/{,tmp/}$conf
 done
 
 %pre
@@ -253,16 +253,13 @@ rm -rf %{buildroot}
 %config %{webroot}/config/config.php
 %config %{webroot}/config/vendor/config.php
 %config(noreplace) %{webroot}/config/ldap-config.php
-%attr(600, root, root) %config(noreplace, missingok) %ghost %{webroot}/config/local/app-config.php
-%attr(600, root, root) %config(noreplace, missingok) %ghost %{webroot}/config/local/config.php
+%config(noreplace, missingok) %ghost %{webroot}/config/local/app-config.php
+%config(noreplace, missingok) %ghost %{webroot}/config/local/config.php
+%attr(775, root, apache) %dir %{webroot}/config/local/tmp/
+%ghost %{webroot}/config/local/tmp/app-config.php
+%ghost %{webroot}/config/local/tmp/config.php
 #%attr(600, root, root) %config(noreplace, missingok) %ghost %{webroot}/config/ldap-config.php
 %{webroot}/config/forms
-%if 0
-%dir %{webroot}/config/mediawiki
-%{webroot}/config/mediawiki/*.php
-%{webroot}/config/mediawiki/*.inc
-%{webroot}/config/index.php
-%endif
 %{webroot}/config/db_version.php
 %{webroot}/config/*.xml
 %{webroot}/controls
