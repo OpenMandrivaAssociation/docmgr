@@ -37,8 +37,10 @@ Patch9:		docmgr-1.0-RC9-locale-use-LC_TIME.patch
 Patch12:	docmgr-1.0-RC6-die-if-pg_connect-fails.patch
 # This will set the default timezone if defined, this to silence php warnings
 # when using date() with LC_TIME.
-# TODO: fetch timezone from system (should we perhaps provide a default as well?)
-Patch13:	docmgr-1.0-RC6-set-default-timezone.patch
+# TODO: fetch timezone from system(?), defaults to GMT for now. Uncertain whether
+# or not it's actually desired to set any other timezone, rationale for now is to
+# set it only to silence php errors about it not being set when using date()..
+Patch13:	docmgr-1.0-RC10-set-default-timezone.patch
 # Check that user actually exists before trying to update failed_logins for it
 Patch14:	docmgr-1.0-RC8-check-if-user-exists-for-failed-logins.patch
 # The config file mentions RESTRICTED_DELETE, but it's not really implemented,
