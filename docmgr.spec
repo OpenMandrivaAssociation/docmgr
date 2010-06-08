@@ -164,7 +164,7 @@ find -type f |xargs chmod 644
 %install
 rm -rf %{buildroot}
 
-install -d %{buildroot}%{_var}/{www,lib}/docmgr
+install -d %{buildroot}%{_var}/{www,lib}/docmgr %{buildroot}%{_localstatedir}/run/docmgr
 cp -r */ *.php %{buildroot}%{webroot}
 rm -rf %{buildroot}%{webroot}/{DOCS,sd}
 mv %{buildroot}%{webroot}/files %{buildroot}%{_var}/lib/%{name}
@@ -293,4 +293,4 @@ rm -rf %{buildroot}
 %{webroot}/webdav.php
 %attr(711,docmgr,docmgr) %dir %{_localstatedir}/lib/%{name}
 %attr(-,apache,apache) %{_localstatedir}/lib/%{name}/files
-
+%attr(700,docmgr,docmgr) %dir %{_localstatedir}/run/docmgr
