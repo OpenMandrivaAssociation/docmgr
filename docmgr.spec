@@ -84,6 +84,7 @@ Patch37:	docmgr-1.0-RC9-docconv-host-port-sysconfig.patch
 Patch39:	docmgr-1.0-RC10-make-users-directory-protected.patch
 #Patch40:	docmgr-1.0-RC10-customizable-database-setup.patch
 Patch41:	docmgr-1.0-RC10-enhanced-setup-and-config.patch
+Patch42:	docmgr-1.0-RC10-use-improved-external-documentconverter.patch
 
 Requires:	mod_php mod_ssl php-pgsql php-iconv
 Requires:	php-zip php-imap php-fileinfo php-mbstring
@@ -91,6 +92,7 @@ Requires:	postgresql-server >= 8.4 postgresql-contrib-virtual postgresql-plpgsql
 Requires:	gocr ocrad imagemagick libtiff-progs sendmail-command
 Requires:	xpdf xpdf-tools enscript wget zip clamav
 Requires:	wget poppler file
+Requires:	python-odconverter
 
 BuildArch:	noarch
 Requires(pre):	rpm-helper
@@ -153,6 +155,7 @@ revolving around content storage.
 %patch39 -p1 -b .protected~
 #%patch40 -p1 -b .db_setup~
 %patch41 -p1 -b .setup~
+%patch42 -p1 -b .pyodconv_new~
 
 find -type f |xargs chmod 644
 
