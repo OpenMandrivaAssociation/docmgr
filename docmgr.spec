@@ -3,14 +3,13 @@
 
 Name:		docmgr
 Version:	1.0
-Release:	%mkrel 0.%{prerel}.1
+Release:	%mkrel 0.%{prerel}.2
 License:	GPLv2
 Group:		System/Servers
 Summary:	Web based DMS - Document Management System
 URL:		http://docmgr.org/
 
 Source0:	%{name}-%{version}%{?prerel:-%{prerel}}.tar.gz
-Source1:	docmgr.init
 #Patch0:		docmgr-1.0-RC10-local-config.patch
 Patch1:		docmgr-1.0-RC10-unified-tmpdir.patch
 Patch2:		docmgr-1.0-RC8-quiet-rm.patch
@@ -95,8 +94,6 @@ Requires:	wget poppler file
 Requires:	python-odconverter
 
 BuildArch:	noarch
-Requires(pre):	rpm-helper
-Requires(preun):	rpm-helper
 
 %description
 DocMgr is a complete, web-based Document Management System (DMS).
@@ -164,12 +161,10 @@ find -type f |xargs chmod 644
 %install
 rm -rf %{buildroot}
 
-install -d %{buildroot}%{_var}/{www,lib}/docmgr %{buildroot}%{_localstatedir}/run/docmgr
+install -d %{buildroot}%{_var}/{www,lib}/docmgr
 cp -r */ *.php %{buildroot}%{webroot}
 rm -rf %{buildroot}%{webroot}/{DOCS,sd}
 mv %{buildroot}%{webroot}/files %{buildroot}%{_var}/lib/%{name}
-
-install -m755 %{SOURCE1} -D %{buildroot}%{_initrddir}/%{name}
 
 install -d %{buildroot}%{webappconfdir}
 tee %{buildroot}%{webappconfdir}/%{name}.conf << EOF
@@ -220,15 +215,6 @@ define("VIEW_CHARSET", "UTF-8");
 define("DEBUG", "5");
 EOF
 
-install -d %{buildroot}%{_sysconfdir}/sysconfig
-tee %{buildroot}%{_sysconfdir}/sysconfig/%{name} << EOF
-# OpenOffice.org
-OOFFICE_HOST="localhost"
-OOFFICE_PORT="8100"
-# Any additional options to pass to ooffice can be set here
-OOFFICE_OPTIONS="-norestore -nofirststartwizard -invisible -nodefault -nologo -nolockcheck"
-EOF
-
 find %{buildroot} -name \*~ |xargs rm -f
 
 # ghost files
@@ -239,14 +225,8 @@ done
 %pre
 %_pre_useradd %{name} %{_localstatedir}/lib/%{name} /sbin/nologin
 
-%post
-%_post_service %{name}
-
 %postun
 %_postun_userdel %{name}
-
-%preun
-%_preun_service %{name}
 
 %clean
 rm -rf %{buildroot}
@@ -254,8 +234,6 @@ rm -rf %{buildroot}
 %files
 %defattr(644,root,root,755)
 %doc DOCS/AUTHORS 
-%attr(755,root,root) %{_initrddir}/%{name}
-%config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 %config %{webappconfdir}/%{name}.conf
 %dir %{webroot}
 %{webroot}/apilib
@@ -293,4 +271,3 @@ rm -rf %{buildroot}
 %{webroot}/webdav.php
 %attr(711,docmgr,docmgr) %dir %{_localstatedir}/lib/%{name}
 %attr(-,apache,apache) %{_localstatedir}/lib/%{name}/files
-%attr(700,docmgr,docmgr) %dir %{_localstatedir}/run/docmgr
