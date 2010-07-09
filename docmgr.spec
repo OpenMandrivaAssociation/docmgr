@@ -222,12 +222,6 @@ for conf in app-config.php config.php; do
 	touch %{buildroot}%{webroot}/config/local/{,tmp/}$conf
 done
 
-%pre
-%_pre_useradd %{name} %{_localstatedir}/lib/%{name} /sbin/nologin
-
-%postun
-%_postun_userdel %{name}
-
 %clean
 rm -rf %{buildroot}
 
@@ -269,5 +263,5 @@ rm -rf %{buildroot}
 %{webroot}/history.php
 %{webroot}/index.php
 %{webroot}/webdav.php
-%attr(711,docmgr,docmgr) %dir %{_localstatedir}/lib/%{name}
+%attr(711,root,root) %dir %{_localstatedir}/lib/%{name}
 %attr(-,apache,apache) %{_localstatedir}/lib/%{name}/files
