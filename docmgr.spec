@@ -92,6 +92,7 @@ Requires:	gocr ocrad imagemagick libtiff-progs sendmail-command
 Requires:	xpdf xpdf-tools enscript wget zip clamav
 Requires:	wget poppler file
 Requires:	python-odconverter
+Requires(post,preun):	rpm-helper
 
 BuildArch:	noarch
 
@@ -221,6 +222,12 @@ find %{buildroot} -name \*~ |xargs rm -f
 for conf in app-config.php config.php; do
 	touch %{buildroot}%{webroot}/config/local/{,tmp/}$conf
 done
+
+%posttrans
+%_post_webapp
+
+%postun
+%_postun_webapp
 
 %clean
 rm -rf %{buildroot}
