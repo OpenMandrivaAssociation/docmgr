@@ -10,6 +10,7 @@ Summary:	Web based DMS - Document Management System
 URL:		http://docmgr.org/
 
 Source0:	%{name}-%{version}%{?prerel:-%{prerel}}.tar.gz
+Source1:	docmgr-rsync.sh
 #Patch0:		docmgr-1.0-RC10-local-config.patch
 Patch1:		docmgr-1.0-RC10-unified-tmpdir.patch
 Patch2:		docmgr-1.0-RC8-quiet-rm.patch
@@ -149,9 +150,9 @@ revolving around content storage.
 %patch35 -p1 -b .task_notes~
 %patch36 -p1 -b .emptydefs~
 %patch37 -p1 -b .hostport~
-#%patch38 -p1 -b .local_installer~
+#%%patch38 -p1 -b .local_installer~
 %patch39 -p1 -b .protected~
-#%patch40 -p1 -b .db_setup~
+#%%patch40 -p1 -b .db_setup~
 %patch41 -p1 -b .setup~
 %patch42 -p1 -b .pyodconv_new~
 
@@ -216,7 +217,7 @@ define("VIEW_CHARSET", "UTF-8");
 define("DEBUG", "5");
 EOF
 
-tee %{buildroot}%{webroot}/config/vendor/config.php << EOF
+tee %{buildroot}%{webroot}/config/vendor/app-config.php << EOF
 <?php
 /********************************************
   DO NOT EDIT THE SETTINGS IN THIS FILE (config/vendor/app-config.php)!
@@ -233,6 +234,19 @@ find %{buildroot} -name \*~ |xargs rm -f
 for conf in app-config.php config.php; do
 	touch %{buildroot}%{webroot}/config/local/{,tmp/}$conf
 done
+
+install -m755 %{SOURCE1} -D %{buildroot}%{webroot}/bin/docmgr-rsync.sh
+
+install -d %{buildroot}%{_sysconfdir}/logrotate.d
+tee %{buildroot}%{_sysconfdir}/logrotate.d/docmgr-rsync <<EOH
+%{_var}/log/docmgr/rsync.log {
+    notifempty
+    missingok
+    copytruncate
+}
+EOH
+
+install -m700 -d %{buildroot}%{_var}/log/docmgr
 
 %posttrans
 %_post_webapp
@@ -251,7 +265,8 @@ rm -rf %{buildroot}
 %{webroot}/apilib
 %{webroot}/app
 %{webroot}/auth
-%{webroot}/bin
+%dir %{webroot}/bin
+%attr(755,,root,root) %{webroot}/bin/*
 %{webroot}/ckeditor
 %dir %{webroot}/config
 %config %{webroot}/config/app-config.php
@@ -286,3 +301,5 @@ rm -rf %{buildroot}
 %{webroot}/webdav.php
 %attr(711,root,root) %dir %{_localstatedir}/lib/%{name}
 %attr(-,apache,apache) %{_localstatedir}/lib/%{name}/files
+%config(noreplace) %{_sysconfdir}/logrotate.d/docmgr-rsync
+%attr(700,apache,apache) %{_var}/log/docmgr
