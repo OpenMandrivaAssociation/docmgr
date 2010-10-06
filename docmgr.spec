@@ -216,6 +216,17 @@ define("VIEW_CHARSET", "UTF-8");
 define("DEBUG", "5");
 EOF
 
+tee %{buildroot}%{webroot}/config/vendor/config.php << EOF
+<?php
+/********************************************
+  DO NOT EDIT THE SETTINGS IN THIS FILE (config/vendor/app-config.php)!
+  Add your own local settings to config/local/app-config.php in stead,
+  otherwise you might loose your configuration when upgrading.
+********************************************/
+
+define('OPENOFFICE_PATH', '');
+EOF
+
 find %{buildroot} -name \*~ |xargs rm -f
 
 # ghost files
@@ -245,6 +256,7 @@ rm -rf %{buildroot}
 %dir %{webroot}/config
 %config %{webroot}/config/app-config.php
 %config %{webroot}/config/config.php
+%config %{webroot}/config/vendor/app-config.php
 %config %{webroot}/config/vendor/config.php
 %config(noreplace) %{webroot}/config/ldap-config.php
 %config(noreplace, missingok) %ghost %{webroot}/config/local/app-config.php
