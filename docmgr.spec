@@ -85,7 +85,7 @@ Patch39:	docmgr-1.0-RC10-make-users-directory-protected.patch
 Patch41:	docmgr-1.0-RC10-enhanced-setup-and-config.patch
 Patch42:	docmgr-1.0-RC10-use-improved-external-documentconverter.patch
 
-Requires:	mod_php mod_ssl php-pgsql php-iconv
+Requires:	mod_php mod_ssl php-pgsql php-iconv php-cli
 Requires:	php-zip php-imap php-fileinfo php-mbstring
 Requires:	postgresql-server >= 8.4 postgresql-contrib-virtual postgresql-plpgsql-virtual
 Requires:	gocr ocrad imagemagick libtiff-progs sendmail-command
