@@ -256,9 +256,11 @@ rm -rf %{buildroot}
 %dir %{webroot}/config
 %config %{webroot}/config/app-config.php
 %config %{webroot}/config/config.php
+%dir %{webroot}/config/vendor
 %config %{webroot}/config/vendor/app-config.php
 %config %{webroot}/config/vendor/config.php
 %config(noreplace) %{webroot}/config/ldap-config.php
+%dir %{webroot}/config/local
 %config(noreplace, missingok) %ghost %{webroot}/config/local/app-config.php
 %config(noreplace, missingok) %ghost %{webroot}/config/local/config.php
 %attr(775, root, apache) %dir %{webroot}/config/local/tmp/
