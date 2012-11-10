@@ -1,0 +1,13 @@
+diff -p -up docmgr/lib/account/db.php.perms~ docmgr/lib/account/db.php
+--- docmgr/lib/account/db.php.perms~	2010-04-12 17:42:56.420345816 +0200
++++ docmgr/lib/account/db.php	2010-04-12 17:43:00.783468473 +0200
+@@ -89,7 +89,8 @@ class DB {
+ 		//insert a base permission record for this account
+ 		$opt = null;
+ 		$opt["account_id"] = $this->accountId;
+-		$opt["bitset"] = "0";
++		$opt["bitset"] = INSERT_OBJECTS;
++		$opt["bitmask"] = PERM::bit_set(PERM::pad(0, PERM_BITLEN), $opt["bitset"]);
+ 		$opt["enable"] = "t";
+ 		$this->DB->insert("auth_accountperm",$opt);
+                              

@@ -1,0 +1,12 @@
+diff -p -up docmgr/modules/center/docmgr/fileprop/js/filetasks.js.comment~ docmgr/modules/center/docmgr/fileprop/js/filetasks.js
+--- docmgr/modules/center/docmgr/fileprop/js/filetasks.js.comment~	2010-04-14 18:59:58.428341906 +0200
++++ docmgr/modules/center/docmgr/fileprop/js/filetasks.js	2010-04-14 19:00:10.245468788 +0200
+@@ -173,7 +173,7 @@ function completeTask() {
+   p.add("command","docmgr_workflow_markcomplete");
+   p.add("route_id",rid);
+ 	p.add("object_id",object);
+-	p.add("notes",ge("taskComment").value);
++	p.add("taskComment",ge("taskComment").value);
+ 	p.post(DOCMGR_API,"writeCompleteTask");
+ 
+ }

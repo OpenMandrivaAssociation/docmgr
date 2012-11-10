@@ -1,0 +1,71 @@
+diff -p -up docmgr/apilib/lib/docmgr/workflow.php.date_view~ docmgr/apilib/lib/docmgr/workflow.php
+--- docmgr/apilib/lib/docmgr/workflow.php.date_view~	2010-04-19 14:12:10.299270187 +0200
++++ docmgr/apilib/lib/docmgr/workflow.php	2010-04-19 14:12:17.525406799 +0200
+@@ -25,8 +25,12 @@ class DOCMGR_WORKFLOW extends DOCMGR 
+ 		{
+ 		
+ 			$list[$i]["status_view"] = $this->viewStatus($list[$i]["status"]);	
+-			$list[$i]["date_create_view"] = dateView($list[$i]["date_create"]);
+-			$list[$i]["date_complete_view"] = dateView($list[$i]["date_complete"]);
++			$date = explode(" ", $list[$i]["date_create"]);
++			$list[$i]["date_create_view"] = dateView($date[0]);
++			$list[$i]["date_time_create_view"] = dateView($list[$i]["date_create"]);
++			$date = explode(" ", $list[$i]["date_complete"]);
++			$list[$i]["date_complete_view"] = dateView($date[0]);
++			$list[$i]["date_time_complete_view"] = dateView($list[$i]["date_complete"]);
+ 
+ 			$this->PROTO->add("workflow",$list[$i]);
+ 			
+@@ -69,8 +73,13 @@ class DOCMGR_WORKFLOW extends DOCMGR 
+ 		
+ 			//translate status
+ 			$info["status_view"] = $this->viewStatus($info["status"]);	
+-			$info["date_create_view"] = dateView($info["date_create"]);
+-			$info["date_complete_view"] = dateView($info["date_complete"]);
++			$date = explode(" ", $info["date_create"]);
++			$info["date_create_view"] = dateView($date[0]);
++			$info["date_time_create_view"] = dateView($info["date_create"]);
++			$date = explode(" ", $list[$i]["date_complete"]);
++			$info["date_complete_view"] = dateView($date[0]);
++			$info["date_time_complete_view"] = dateView($info["date_complete"]);
++
+ 
+ 			for ($i=0;$i<$reciplist["count"];$i++) 
+ 			{
+diff -p -up docmgr/modules/center/docmgr/fileprop/js/workflow.js.date_view~ docmgr/modules/center/docmgr/fileprop/js/workflow.js
+--- docmgr/modules/center/docmgr/fileprop/js/workflow.js.date_view~	2010-03-13 16:08:12.000000000 +0100
++++ docmgr/modules/center/docmgr/fileprop/js/workflow.js	2010-04-14 20:38:33.197344282 +0200
+@@ -91,15 +91,6 @@ function writeWorkflowList(data) {
+ 			var row = ce("div","workflowRow");
+ 			setClick(row,"viewWorkflow('" + w.id + "')");
+ 
+-			//split out our date for now to show to not show time
+-			var createarr = w.date_create_view.split(" ");
+-			w.date_create_view = createarr[0];
+-
+-			if (isData(w.date_complete_view)) {
+-				var comparr = w.date_complete_view.split(" ");
+-				w.date_complete_view = comparr[0];
+-			}
+-
+ 			//the status and a link to view the workflow
+ 			row.appendChild(ce("div","","",w.status_view));
+ 			row.appendChild(ce("div","","",w.date_create_view));
+@@ -168,7 +159,7 @@ function writeWorkflowInfo(data) {
+ 		//output the info
+ 		var workcell = ce("div","workflowCell");
+ 		workcell.appendChild(ce("div","formHeader","","Date Created"));
+-		workcell.appendChild(ce("div","","",curwork.date_create_view));
++		workcell.appendChild(ce("div","","",curwork.date_time_create_view));
+ 		workcont.appendChild(workcell);		
+ 
+ 		if (isData(curwork.date_complete)) 
+@@ -177,7 +168,7 @@ function writeWorkflowInfo(data) {
+ 			//output the info
+ 			var workcell = ce("div","workflowCell");
+ 			workcell.appendChild(ce("div","formHeader","","Date Completed"));
+-			workcell.appendChild(ce("div","","",curwork.date_complete_view));
++			workcell.appendChild(ce("div","","",curwork.date_time_complete_view));
+ 			workcont.appendChild(workcell);		
+ 
+ 		}

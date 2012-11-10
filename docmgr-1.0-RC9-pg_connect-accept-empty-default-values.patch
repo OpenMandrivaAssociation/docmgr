@@ -1,0 +1,24 @@
+diff -p -up docmgr/lib/pgsql.php.emptydefs~ docmgr/lib/pgsql.php
+--- docmgr/lib/pgsql.php.emptydefs~	2010-04-21 15:42:44.452681998 +0200
++++ docmgr/lib/pgsql.php	2010-04-21 15:43:02.192723661 +0200
+@@ -26,7 +26,7 @@ CLASS POSTGRESQL {
+ 	***********************************************************/
+ 	function __construct($dbhost,$dbuser,$dbpassword,$dbport,$dbname) {
+ 	
+-		$this->conn = pg_connect("host=$dbhost port=$dbport user=$dbuser password=$dbpassword dbname=$dbname") or die('unable to connect to postgresql!');
++		$this->conn = pg_connect("host='$dbhost' port='$dbport' user='$dbuser' password='$dbpassword' dbname='$dbname'") or die('unable to connect to postgresql!');
+ 
+ 		//init the error handler
+ 		if (class_exists("logger")) $this->logger = new logger($this);
+diff -p -up docmgr/lib/postgresql.php.emptydefs~ docmgr/lib/postgresql.php
+--- docmgr/lib/postgresql.php.emptydefs~	2010-04-21 15:42:50.108548394 +0200
++++ docmgr/lib/postgresql.php	2010-04-21 15:43:10.424723512 +0200
+@@ -17,7 +17,7 @@ if (!defined("DB_LIKE")) define("DB_LIKE
+ //Opens a connection to the desired database w/ the given connection information
+ function db_connect($dbhost,$dbuser,$dbpassword,$dbport,$dbname) {
+ 
+-	if (!$conn = pg_connect("host=$dbhost port=$dbport user=$dbuser password=$dbpassword dbname=$dbname")) echo "Could not connect to database";
++	if (!$conn = pg_connect("host='$dbhost' port='$dbport' user='$dbuser' password='$dbpassword' dbname='$dbname'")) echo "Could not connect to database";
+ 	return $conn;
+ 
+ }

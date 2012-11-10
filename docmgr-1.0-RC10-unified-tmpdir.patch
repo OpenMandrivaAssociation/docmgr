@@ -1,0 +1,160 @@
+diff -p -up docmgr/apilib/request.php.tmpdir~ docmgr/apilib/request.php
+--- docmgr/apilib/request.php.tmpdir~	2010-04-07 18:56:20.000000000 +0200
++++ docmgr/apilib/request.php	2010-04-28 09:56:55.196455552 +0200
+@@ -45,7 +45,7 @@ if ($apidata)
+ 	
+ 		$debug = var_export($apidata,true);
+ 	
+-		file_put_contents("/tmp/api.log","\n============ REQUEST ==============\n".$debug."\n",FILE_APPEND);
++		file_put_contents(TMP_DIR . "/api.log","\n============ REQUEST ==============\n".$debug."\n",FILE_APPEND);
+ 
+ 	}
+ 	
+@@ -114,6 +114,6 @@ if ($apidata)
+ 
+ 	$debug = var_export($PROTO->getData(),true);
+ 	
+-	file_put_contents("/tmp/api.log","\n=========== RESPONSE ===============\n".$debug."\n",FILE_APPEND);
++	file_put_contents(TMP_DIR . "/api.log","\n=========== RESPONSE ===============\n".$debug."\n",FILE_APPEND);
+ 	
+ }
+diff -p -up docmgr/lib/account/ssh_client.php.tmpdir~ docmgr/lib/account/ssh_client.php
+--- docmgr/lib/account/ssh_client.php.tmpdir~	2010-03-13 16:08:03.000000000 +0100
++++ docmgr/lib/account/ssh_client.php	2010-04-28 09:56:55.196455552 +0200
+@@ -47,7 +47,7 @@ class SSH_CLIENT {
+ 	function run($command) {
+ 	
+ 		$cmd = $this->sshconn." ".$this->serverconn." \"".$command."\" 1>".$this->outfile." 2>".$this->errfile;
+-		file_put_contents("/tmp/ssh-run",$cmd);
++		file_put_contents(TMP_DIR . "/ssh-run",$cmd);
+ 		`$cmd`;
+ 
+ 
+diff -p -up docmgr/lib/mysql.php.tmpdir~ docmgr/lib/mysql.php
+--- docmgr/lib/mysql.php.tmpdir~	2010-03-13 16:08:03.000000000 +0100
++++ docmgr/lib/mysql.php	2010-04-28 09:56:55.196455552 +0200
+@@ -205,7 +205,7 @@ CLASS MYSQL {
+ 			$sql = "INSERT INTO $table (".$fieldString.") VALUES (".$valueString.");";
+ 			if ($option["debug"]) echo $sql."<br>\n";
+ 			if ($option["query"]) return $sql;
+-			if ($option["_showquery"]) file_put_contents("/tmp/query.sql",$sql);
++			if ($option["_showquery"]) file_put_contents(TMP_DIR . "/query.sql",$sql);
+ 			
+ 			if ($result = $this->query($sql)) {
+ 	
+@@ -261,7 +261,7 @@ CLASS MYSQL {
+ 	
+ 			if ($option["debug"]) echo $sql."<br>\n";
+ 			if ($option["query"]) return $sql;
+-			if ($option["_showquery"]) file_put_contents("/tmp/query.sql",$sql);
++			if ($option["_showquery"]) file_put_contents(TMP_DIR . "/query.sql",$sql);
+ 			
+ 			if ($this->query($sql)) return true;
+ 			else return false;
+@@ -271,4 +271,4 @@ CLASS MYSQL {
+ 	}
+ 	
+ }
+-		
+\ No newline at end of file
++		
+diff -p -up docmgr/lib/pgsql.php.tmpdir~ docmgr/lib/pgsql.php
+--- docmgr/lib/pgsql.php.tmpdir~	2010-04-14 21:36:20.000000000 +0200
++++ docmgr/lib/pgsql.php	2010-04-28 09:56:55.196455552 +0200
+@@ -353,7 +353,7 @@ CLASS POSTGRESQL {
+ 			$sql = "INSERT INTO $table (".$fieldString.") VALUES (".$valueString.");";
+ 			if ($option["debug"]) echo $sql."<br>\n";
+ 			if ($option["query"]) return $sql;
+-			if ($option["_showquery"]) file_put_contents("/tmp/query.sql",$sql);
++			if ($option["_showquery"]) file_put_contents(TMP_DIR . "/query.sql",$sql);
+ 			
+ 			if ($result = $this->query($sql,$nolog)) {
+ 	
+@@ -413,7 +413,7 @@ CLASS POSTGRESQL {
+ 	
+ 			if ($option["debug"]) echo $sql."<br>\n";
+ 			if ($option["query"]) return $sql;
+-			if ($option["_showquery"]) file_put_contents("/tmp/query.sql",$sql);
++			if ($option["_showquery"]) file_put_contents(TMP_DIR . "/query.sql",$sql);
+ 			
+ 			if ($this->query($sql)) return true;
+ 			else return false;
+@@ -431,4 +431,4 @@ CLASS POSTGRESQL {
+ 	}
+ 	
+ }
+-		
+\ No newline at end of file
++		
+diff -p -up docmgr/lib/proto/json.php.tmpdir~ docmgr/lib/proto/json.php
+--- docmgr/lib/proto/json.php.tmpdir~	2010-03-13 16:08:03.000000000 +0100
++++ docmgr/lib/proto/json.php	2010-04-28 09:56:55.196455552 +0200
+@@ -42,7 +42,7 @@ class JSON
+   function output($data)
+   {
+ 
+-    file_put_contents("/tmp/json-data",$data."\n==================================================\n",FILE_APPEND);
++    file_put_contents(TMP_DIR . "/json-data",$data."\n==================================================\n",FILE_APPEND);
+ 
+     header("Cache-Control: no-cache, must-revalidate");	
+     header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+diff -p -up docmgr/modules/center/docmgr/docmgrimport/diprocess/function.php.tmpdir~ docmgr/modules/center/docmgr/docmgrimport/diprocess/function.php
+--- docmgr/modules/center/docmgr/docmgrimport/diprocess/function.php.tmpdir~	2010-03-13 16:08:12.000000000 +0100
++++ docmgr/modules/center/docmgr/docmgrimport/diprocess/function.php	2010-04-28 09:56:55.197453584 +0200
+@@ -117,10 +117,10 @@ class IMPORT 
+     $cmd = "gs -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=\"".$output."\" -dBATCH";
+     for ($i=0;$i<count($files);$i++)  $cmd .= " \"".$files[$i]."\"";
+ 
+-    file_put_contents("/tmp/merge",$cmd);
++    file_put_contents(TMP_DIR . "/merge",$cmd);
+ 
+     //execute the command
+-    `$cmd 1>/tmp/merge1 2>/tmp/merge2`;
++    exec("$cmd 1>" . TMP_DIR . "/merge1 2>" . TMP_DIR . "/merge2");
+ 
+     //if the output file exists, delete the other files, otherwise throw an error
+     if (file_exists($output)) {
+@@ -519,7 +519,7 @@ class IMPORT 
+     }
+ 
+     //remerge all files back over the original
+-    `$cmd 1>/tmp/commit1 2>/tmp/commit2`;  
++    exec("$cmd 1>" . TMP_DIR . "/commit1 2>" . TMP_DIR . "/commit2`;  
+ 
+     //rethumb the file
+     $this->thumb($_REQUEST["filePath"]);
+diff -p -up docmgr/modules/common/proxy/process.php.tmpdir~ docmgr/modules/common/proxy/process.php
+--- docmgr/modules/common/proxy/process.php.tmpdir~	2009-11-17 19:18:46.000000000 +0100
++++ docmgr/modules/common/proxy/process.php	2010-04-28 09:56:55.197453584 +0200
+@@ -53,7 +53,7 @@ function processReturn($ret) {
+ 	  	die($ret->body);
+     }
+     die($ret->body);
+-    file_put_contents("/tmp/error",$ret->body);
++    file_put_contents(TMP_DIR . "/error",$ret->body);
+     return false;
+ 	
+ 	}
+@@ -107,4 +107,4 @@ function processRequest($allowedProxy) {
+ 	return http_parse_message(http_post_fields($url,$postdata)); 
+ 	
+ }
+-	
+\ No newline at end of file
++	
+diff -p -up docmgr/sabredav/lib/Sabre/DAV/TemporaryFileFilterLockPlugin.php.tmpdir~ docmgr/sabredav/lib/Sabre/DAV/TemporaryFileFilterLockPlugin.php
+--- docmgr/sabredav/lib/Sabre/DAV/TemporaryFileFilterLockPlugin.php.tmpdir~	2010-03-17 05:16:36.000000000 +0100
++++ docmgr/sabredav/lib/Sabre/DAV/TemporaryFileFilterLockPlugin.php	2010-04-28 09:56:55.197453584 +0200
+@@ -546,9 +546,9 @@ class Sabre_DAV_TemporaryFileFilterLockP
+ 
+             $locks = $this->getLocks($url);
+ 
+-            file_put_contents("/tmp/valid","\n==================================\n",FILE_APPEND);
+-            file_put_contents("/tmp/valid",var_export($locks,true)."\n",FILE_APPEND);
+-            file_put_contents("/tmp/valid",var_export($conditions,true)."\n",FILE_APPEND);
++            file_put_contents(TMP_DIR . "/valid","\n==================================\n",FILE_APPEND);
++            file_put_contents(TMP_DIR . "/valid",var_export($locks,true)."\n",FILE_APPEND);
++            file_put_contents(TMP_DIR . "/valid",var_export($conditions,true)."\n",FILE_APPEND);
+ 
+             // If there were no conditions, but there were locks, we fail 
+             if (!$conditions && $locks) {

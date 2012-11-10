@@ -1,0 +1,11 @@
+diff -p -up docmgr/header/callheader.php.timezone~ docmgr/header/callheader.php
+--- docmgr/header/callheader.php.timezone~	2010-03-10 15:23:58.855635374 +0100
++++ docmgr/header/callheader.php	2010-03-10 15:25:29.673763714 +0100
+@@ -5,6 +5,7 @@ else $calldir = null;
+ 
+ //set LC_TIME locale for date if LOCALE is set
+ if (defined("LOCALE")) setlocale(LC_TIME, LOCALE);
++if (defined("TIMEZONE")) date_default_timezone_set(TIMEZONE);
+ 
+ //the rest of our includes with our base functions
+ require_once($calldir."lib/accperms.php");

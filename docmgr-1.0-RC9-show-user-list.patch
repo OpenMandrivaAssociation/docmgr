@@ -1,0 +1,101 @@
+diff -p -up docmgr/modules/center/admin/accounts/javascript.js.account_list~ docmgr/modules/center/admin/accounts/javascript.js
+--- docmgr/modules/center/admin/accounts/javascript.js.account_list~	2010-04-06 02:26:26.000000000 +0200
++++ docmgr/modules/center/admin/accounts/javascript.js	2010-04-14 13:01:32.096468487 +0200
+@@ -8,6 +8,7 @@
+ //globals
+ var curpage = "contact";		//default to the editcontact page
+ var account = "";
++var accountList;
+ var accountinfo;
+ var toolbar;
+ var toolbarBtns;
+@@ -100,7 +101,11 @@ function loadToolbar() {
+ 	toolbarBtns = ce("div","","toolbarBtns");
+ 	toolbarTitle = ce("div","toolbarTitle","toolbarTitle");
+ 
++	accountList = createSelect("account_id", "getAccount()");
++
+ 	toolbar.appendChild(toolbarBtns);
++	toolbar.appendChild(accountList);	
++
+ 	toolbar.appendChild(toolbarTitle);
+   toolbar.appendChild(createCleaner());
+  
+@@ -142,6 +147,7 @@ function updateToolbarName(txt) {
+ 
+ 	clearElement(toolbarTitle);
+ 	toolbarTitle.appendChild(ctnode(txt));
++	getAccounts();
+ 
+ }
+ 
+@@ -223,6 +229,32 @@ function writeAccountSearch(data) {
+ 
+ }
+ 
++function getAccount() {
++	showAccount(ge("account_id").value);
++}
++
++function getAccounts()
++{
++
++	var url = "index.php?module=accountlist";
++	protoReq(url,"writeGetAccounts");
++
++
++}
++
++function writeGetAccounts(data)
++{
++	if (data.error) alert(data.error);
++	else {
++		for (var i=0;i<data.account.length;i++) {
++			accountList[i] = new Option(data.account[i].login, data.account[i].id);
++		}
++		accountList.value=account;
++
++	}
++
++}
++
+ function showAccount(id) {
+ 
+ 	searchResults.style.display = "none";
+diff -p -up docmgr/modules/center/admin/accounts/js/password.js.account_list~ docmgr/modules/center/admin/accounts/js/password.js
+--- docmgr/modules/center/admin/accounts/js/password.js.account_list~	2010-04-14 13:02:53.016490402 +0200
++++ docmgr/modules/center/admin/accounts/js/password.js	2010-04-14 13:03:06.564472887 +0200
+@@ -18,10 +18,21 @@ function loadEditPassword() {
+ 	loadPassToolbar();
+ 
+ 	//load our forms
+-	loadForms("config/forms/accounts/password.xml","","writeEditPassword");
++	loadForms("config/forms/accounts/password.xml","","writeEditPassword","getAccountData");
+ 
+ }
+ 
++function getAccountData() {
++
++  var data = protoReqSync("index.php?module=accountinfo&accountId=" + account);
++
++  //set our globals from contact information
++	setGlobals(data.account[0]);
++
++	return data.account[0];
++	
++}
++
+  
+ /****************************************************************
+ 	FUNCTION: writeEditPassword
+diff -p -up docmgr/modules/common/accountlist/display.php.account_list~ docmgr/modules/common/accountlist/display.php
+--- docmgr/modules/common/accountlist/display.php.account_list~	2009-11-17 18:31:23.000000000 +0100
++++ docmgr/modules/common/accountlist/display.php	2010-04-14 13:01:32.096468487 +0200
+@@ -12,6 +12,7 @@ for ($i=0;$i<$num;$i++) 
+     $output = array();
+     $output["id"] = $arr[$i]["id"];
+     $output["name"] = $arr[$i]["full_name"];
++    $output["login"] = $arr[$i]["login"];
+     $PROTO->add("account",$output);
+ 
+ }

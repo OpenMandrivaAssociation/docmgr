@@ -1,0 +1,20 @@
+diff -p -up docmgr/app/openoffice.php.return_code~ docmgr/app/openoffice.php
+--- docmgr/app/openoffice.php.return_code~	2010-03-29 09:45:07.512801955 +0200
++++ docmgr/app/openoffice.php	2010-03-29 09:46:15.649800513 +0200
+@@ -133,7 +133,15 @@ class OPENOFFICE {
+ 
+       //convert the file to the new extension  
+       $cmd = "php bin/fileconvert.php \"".$convfile."\" \"".$dest."\"";
+-      `$cmd`;
++      $return_value = 0;
++      exec($cmd, $output = array(), $return_value);
++      if($return_value) {
++	$stdout = file_get_contents(TMP_DIR."/doc_conv.out");
++	$stderr=  file_get_contents(TMP_DIR."/doc_conv.err");
++	$this->throwError($stdout . " : " . $stderr);
++	return false;
++      }
++
+ 
+       //if the file is html, we have to do some special stuff
+       if ($newext=="html") $this->fixWebDoc($dest);

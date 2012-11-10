@@ -1,0 +1,13 @@
+diff -p -up docmgr/modules/center/managetasks/js/edittask.js.objectId~ docmgr/modules/center/managetasks/js/edittask.js
+--- docmgr/modules/center/managetasks/js/edittask.js.objectId~	2010-04-14 18:45:16.663342816 +0200
++++ docmgr/modules/center/managetasks/js/edittask.js	2010-04-14 18:45:53.416480604 +0200
+@@ -411,6 +411,9 @@ function saveTask(handler) {
+ 
+ 	//get the content of our form
+ 	var query = dom2Query(ge("taskDiv"));
++	// This one should've been set somewhere else.. :/
++	query += "&objectId=" + formdata["object_id"];
++
+ 
+ 	//tack on any ids set from storeGlobals()
+ 	if (contact) query += "&contactId=" + contact;

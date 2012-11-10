@@ -1,0 +1,109 @@
+diff --git a/bin/DocumentConverter.py b/bin/DocumentConverter.py
+index 8ca5891..6265ea8 100644
+--- a/bin/DocumentConverter.py
++++ b/bin/DocumentConverter.py
+@@ -10,11 +10,14 @@
+ #
+ DEFAULT_OPENOFFICE_PORT = 8100
+ 
+-import uno
++import sys
++import uno, unohelper
+ from os.path import abspath, isfile, splitext
++from StringIO import StringIO
+ from com.sun.star.beans import PropertyValue
+ from com.sun.star.task import ErrorCodeIOException
+ from com.sun.star.connection import NoConnectException
++from com.sun.star.io import XOutputStream
+ 
+ FAMILY_TEXT = "Text"
+ FAMILY_WEB = "Web"
+@@ -110,6 +113,30 @@ PAGE_STYLE_OVERRIDE_PROPERTIES = {
+ # Configuration End #
+ #-------------------#
+ 
++class OutputStreamWrapper(unohelper.Base, XOutputStream):
++    """ Minimal Implementation of XOutputStream """
++    def __init__(self, file, debug=True):
++        self.debug = debug
++        self.out = file
++        self.position = 0
++        if self.debug:
++            sys.stderr.write("__init__ OutputStreamWrapper.\n")
++
++    def writeBytes(self, bytes):
++        if self.debug:
++            sys.stderr.write("writeBytes %i bytes.\n" % len(bytes.value))
++        self.out.write(bytes.value)
++        self.position += self.out.tell()
++
++    def closeOutput(self):
++        if self.debug:
++            sys.stderr.write("Closing output. %i bytes written.\n" % self.position)
++
++    def flush(self):
++        if self.debug:
++            sys.stderr.write("Flushing output.\n")
++        pass
++
+ class DocumentConversionException(Exception):
+ 
+     def __init__(self, message):
+@@ -122,8 +149,9 @@ class DocumentConversionException(Exception):
+ class DocumentConverter:
+     
+     def __init__(self, port=DEFAULT_OPENOFFICE_PORT):
+-        localContext = uno.getComponentContext()
+-        resolver = localContext.ServiceManager.createInstanceWithContext("com.sun.star.bridge.UnoUrlResolver", localContext)
++        self.localContext = uno.getComponentContext()
++        self.serviceManager = self.localContext.ServiceManager
++        resolver = self.serviceManager.createInstanceWithContext("com.sun.star.bridge.UnoUrlResolver", self.localContext)
+         try:
+             context = resolver.resolve("uno:socket,host=localhost,port=%s;urp;StarOffice.ComponentContext" % port)
+         except NoConnectException:
+@@ -131,16 +159,21 @@ class DocumentConverter:
+         self.desktop = context.ServiceManager.createInstanceWithContext("com.sun.star.frame.Desktop", context)
+ 
+     def convert(self, inputFile, outputFile):
++        input = open(inputFile)
++        inputFileStream = input.read()
++        input.close()
++        inputStream = self.serviceManager.createInstanceWithContext("com.sun.star.io.SequenceInputStream", self.localContext)
++        inputStream.initialize((uno.ByteSequence(inputFileStream),))
+ 
+-        inputUrl = self._toFileUrl(inputFile)
+-        outputUrl = self._toFileUrl(outputFile)
+-
+-        loadProperties = { "Hidden": True }
++        loadProperties = { "Hidden": True, "InputStream" : inputStream, "ReadOnly" : True }
+         inputExt = self._getFileExt(inputFile)
+         if IMPORT_FILTER_MAP.has_key(inputExt):
+             loadProperties.update(IMPORT_FILTER_MAP[inputExt])
+         
+-        document = self.desktop.loadComponentFromURL(inputUrl, "_blank", 0, self._toProperties(loadProperties))
++        document = self.desktop.loadComponentFromURL('private:stream', "_blank", 0, self._toProperties(loadProperties))
++
++        if not document:
++            raise Exception, "Error making document"
+         try:
+             document.refresh()
+         except AttributeError:
+@@ -150,12 +183,16 @@ class DocumentConverter:
+         self._overridePageStyleProperties(document, family)
+         
+         outputExt = self._getFileExt(outputFile)
++        output = open(outputFile, "w")
++        outputStream = OutputStreamWrapper(output, debug=False)
+         storeProperties = self._getStoreProperties(document, outputExt)
+-
++        storeProperties.update({"OutputStream": outputStream})
++        
+         try:
+-            document.storeToURL(outputUrl, self._toProperties(storeProperties))
++            document.storeToURL('private:stream', self._toProperties(storeProperties))
+         finally:
+             document.close(True)
++        output.close()
+ 
+     def _overridePageStyleProperties(self, document, family):
+         if PAGE_STYLE_OVERRIDE_PROPERTIES.has_key(family):

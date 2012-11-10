@@ -1,0 +1,12 @@
+diff -p -up docmgr/modules/center/home/homemodlets/docimportmodlet/process.php.file_dir~ docmgr/modules/center/home/homemodlets/docimportmodlet/process.php
+--- docmgr/modules/center/home/homemodlets/docimportmodlet/process.php.file_dir~	2010-03-15 16:01:15.442638112 +0100
++++ docmgr/modules/center/home/homemodlets/docimportmodlet/process.php	2010-03-15 16:01:37.868761350 +0100
+@@ -1,7 +1,7 @@
+ <?
+ 
+ $shared = IMPORT_DIR;
+-$local = SITE_PATH."/files/home/".USER_LOGIN;
++$local = FILE_DIR . "/home/".USER_LOGIN;
+ 
+ //sanity checking  
+ if (!is_dir($shared)) recurmkdir($shared);

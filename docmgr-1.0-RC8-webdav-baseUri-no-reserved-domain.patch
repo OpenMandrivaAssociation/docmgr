@@ -1,0 +1,12 @@
+diff -p -up docmgr/webdav.php.webdav~ docmgr/webdav.php
+--- docmgr/webdav.php.webdav~	2010-03-29 14:23:36.969801253 +0200
++++ docmgr/webdav.php	2010-03-29 14:23:38.466801801 +0200
+@@ -10,7 +10,7 @@ include("config/config.php");
+ // Make sure this setting is turned on and reflect the root url for your WebDAV server.
+ // This can be for example the root / or a complete path to your server script.  you probably
+ //don't need to change this
+-$baseUri = '/';
++$baseUri = '/webdav.php';
+ 
+ /******************************************
+   END CONFIGURABLE OPTIONS

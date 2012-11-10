@@ -1,0 +1,12 @@
+diff -p -up docmgr/apilib/lib/docmgr/util/common.php.protected~ docmgr/apilib/lib/docmgr/util/common.php
+--- docmgr/apilib/lib/docmgr/util/common.php.protected~	2010-05-19 12:20:22.746840446 +0200
++++ docmgr/apilib/lib/docmgr/util/common.php	2010-05-19 12:20:32.784840349 +0200
+@@ -165,6 +165,8 @@ class DOCMGR_UTIL_COMMON extends DOCMGR 
+ 				$data["parent_path"] = $prevpath;
+ 				$data["name"] = $name;
+ 				$data["object_type"] = "collection";
++				if ($path=="/Users")
++					$data["protected"] = 1;
+ 			
+ 				$o = new DOCMGR_OBJECT($data);
+ 				$parentId = $o->save();

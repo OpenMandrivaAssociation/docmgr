@@ -1,0 +1,38 @@
+diff -p -up docmgr/app/task.php.task_notes~ docmgr/app/task.php
+--- docmgr/app/task.php.task_notes~	2010-04-14 20:35:24.445468045 +0200
++++ docmgr/app/task.php	2010-04-14 20:36:59.950469289 +0200
+@@ -359,8 +359,15 @@ class TASK {
+ 	function getDocMGRTask() {
+ 
+ 	  //just query our full view and use tha tinstead
+-    $sql = "SELECT * FROM task.view_docmgr_task WHERE task_id='".$this->taskId."'";
++		$sql = "SELECT * FROM task.view_docmgr_task WHERE task_id='".$this->taskId."'";
+ 		$taskInfo = $this->DB->single($sql);
++		if ($taskInfo["route_id"] && $taskInfo["workflow_id"]) {
++			$sql = "SELECT task_notes FROM dm_workflow_route WHERE id='" . $taskInfo["route_id"] . "' and workflow_id='" . $taskInfo["workflow_id"] . "';";
++			$taskNotes = $this->DB->single($sql);
++			if ($taskNotes)
++				$taskInfo["task_notes"] = $taskNotes["task_notes"];
++		}
++    		
+ 
+ 		$sql = "SELECT * FROM docmgr.dm_object WHERE id='".$taskInfo["object_id"]."'";
+ 		$objInfo = $this->DB->single($sql);
+diff -p -up docmgr/modules/center/managetasks/js/edittask.js.task_notes~ docmgr/modules/center/managetasks/js/edittask.js
+--- docmgr/modules/center/managetasks/js/edittask.js.task_notes~	2010-04-14 20:34:55.045343931 +0200
++++ docmgr/modules/center/managetasks/js/edittask.js	2010-04-14 20:35:04.007342435 +0200
+@@ -148,7 +148,13 @@ function writeTaskInfo(data) {
+ 
+ 		//notes for the task
+ 		if (saveNotes) entry.notes = saveNotes;					//if switching between modes, carry the notes with us
+-		else if (!entry.notes) entry.notes = "None";
++		else if (!entry.notes) {
++			// Get a copy of the recipient notes as the default task notes
++			if (entry.task_notes)
++				entry.notes = entry.task_notes;
++			else
++				entry.notes = "None";
++		}
+ 
+ 
+ 		//add the form

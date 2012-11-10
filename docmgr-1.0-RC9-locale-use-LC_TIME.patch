@@ -1,0 +1,45 @@
+diff -p -up docmgr/header/callheader.php.locale~ docmgr/header/callheader.php
+--- docmgr/header/callheader.php.locale~	2010-02-11 04:06:19.000000000 +0100
++++ docmgr/header/callheader.php	2010-04-19 19:15:20.065045992 +0200
+@@ -3,6 +3,9 @@
+ if (defined("ALT_FILE_PATH")) $calldir = ALT_FILE_PATH."/";
+ else $calldir = null;
+ 
++//set LC_TIME locale for date if LOCALE is set
++if (defined("LOCALE")) setlocale(LC_TIME, LOCALE);
++
+ //the rest of our includes with our base functions
+ require_once($calldir."lib/accperms.php");
+ require_once($calldir."lib/account/account.php");
+diff -p -up docmgr/lib/data_formatting.php.locale~ docmgr/lib/data_formatting.php
+--- docmgr/lib/data_formatting.php.locale~	2010-03-13 16:08:03.000000000 +0100
++++ docmgr/lib/data_formatting.php	2010-04-19 19:15:36.442053733 +0200
+@@ -40,7 +40,9 @@ function dateView($date,$dateOpt=null,$t
+   if (!$date) return false;
+   
+   if (strstr($date,":")) {
+-  
++
++    if (defined("LOCALE")) return strftime(nl_langinfo(D_T_FMT), strtotime($date));
++
+     $arr = explode(" ",$date);
+     $date = formatDate($arr[0],$dateOpt);
+     $time = formatTime($arr[1],$timeOpt);
+@@ -50,6 +52,8 @@ function dateView($date,$dateOpt=null,$t
+ 
+   } else {
+ 
++    if (defined("LOCALE")) return strftime(nl_langinfo(D_FMT), strtotime($date));
++
+     return formatDate($date,$dateOpt);
+     
+   }  
+@@ -534,6 +538,8 @@ function notimeDateView($datestr) {
+ 
+ function date_view($date,$format = "slash") {
+ 
++  if (defined("LOCALE")) $format = null;
++
+   return dateView($date,$format);
+ 
+ }

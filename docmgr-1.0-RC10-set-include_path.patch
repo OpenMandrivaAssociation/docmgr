@@ -1,0 +1,12 @@
+diff -p -up docmgr/index.php.set_include_path~ docmgr/index.php
+--- docmgr/index.php.set_include_path~	2010-04-28 10:12:57.302436620 +0200
++++ docmgr/index.php	2010-04-28 10:14:07.479458996 +0200
+@@ -4,6 +4,8 @@
+ if (file_exists("install/install.php")) include("install/install.php");
+ 
+ //call our main header file
++set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
++
+ include("header/header.inc.php");
+ 
+ //get our module information for our file includes

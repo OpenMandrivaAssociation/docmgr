@@ -1,0 +1,66 @@
+diff -p -up docmgr/config/extensions.xml.mime_types~ docmgr/config/extensions.xml
+--- docmgr/config/extensions.xml.mime_types~	2009-12-24 03:56:42.000000000 +0100
++++ docmgr/config/extensions.xml	2010-03-24 15:23:00.368699207 +0100
+@@ -72,7 +72,7 @@
+ <object>
+ 	<extension>docx</extension>
+ 	<proper_name>MS Word XML Document</proper_name>
+-	<mime_type>application/msword</mime_type>
++	<mime_type>application/vnd.ms-office</mime_type>
+ 	<custom_type>docx</custom_type>
+ 	<openoffice>odt</openoffice>
+ 	<openoffice_index>1</openoffice_index>
+@@ -155,7 +155,7 @@
+ 
+ <object>
+ 	<extension>sxc</extension>
+-	<proper_name>OpenOffice Calc Document</proper_name>
++	<proper_name>OpenOffice.org 1.x Calc spreadsheet</proper_name>
+ 	<mime_type>application/octet-stream</mime_type>
+ 	<custom_type>openoffice</custom_type>
+ 	<openoffice>ods</openoffice>
+@@ -165,7 +165,7 @@
+ 
+ <object>
+ 	<extension>sxw</extension>
+-	<proper_name>OpenOffice Writer Document</proper_name>
++	<proper_name>OpenOffice.org 1.x Writer document</proper_name>
+ 	<mime_type>application/octet-stream</mime_type>
+ 	<custom_type>openoffice</custom_type>
+ 	<openoffice>odt</openoffice>
+@@ -175,7 +175,7 @@
+ 
+ <object>
+ 	<extension>sxi</extension>
+-	<proper_name>OpenOffice Impress Document</proper_name>
++	<proper_name>OpenOffice.org 1.x Impress presentation</proper_name>
+ 	<mime_type>application/octet-stream</mime_type>
+ 	<custom_type>openoffice</custom_type>
+ 	<openoffice>odp</openoffice>
+@@ -186,7 +186,7 @@
+ <object>
+ 	<extension>odt</extension>
+ 	<proper_name>Open Document Text</proper_name>
+-	<mime_type>application/octet-stream</mime_type>
++	<mime_type>application/vnd.oasis.opendocument.text</mime_type>
+ 	<custom_type>opendocument</custom_type>
+ 	<openoffice>odt</openoffice>
+ 	<openoffice_index>1</openoffice_index>
+@@ -196,7 +196,7 @@
+ <object>
+ 	<extension>ods</extension>
+ 	<proper_name>Open Document Spreadsheet</proper_name>
+-	<mime_type>application/octet-stream</mime_type>
++	<mime_type>application/vnd.oasis.opendocument.spreadsheet</mime_type>
+ 	<custom_type>opendocument</custom_type>
+ 	<openoffice>ods</openoffice>
+ 	<openoffice_index>1</openoffice_index>
+@@ -206,7 +206,7 @@
+ <object>
+ 	<extension>odp</extension>
+ 	<proper_name>Open Document Presentation</proper_name>
+-	<mime_type>application/octet-stream</mime_type>
++	<mime_type>application/vnd.oasis.opendocument.presentation</mime_type>
+ 	<custom_type>opendocument</custom_type>
+ 	<openoffice>odp</openoffice>
+ 	<openoffice_index>1</openoffice_index>

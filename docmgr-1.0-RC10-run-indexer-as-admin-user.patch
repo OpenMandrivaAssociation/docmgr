@@ -1,0 +1,14 @@
+diff -p -up docmgr/bin/docmgr-indexer.php.admin~ docmgr/bin/docmgr-indexer.php
+--- docmgr/bin/docmgr-indexer.php.admin~	2010-04-28 10:15:15.898453569 +0200
++++ docmgr/bin/docmgr-indexer.php	2010-04-28 10:22:02.977313170 +0200
+@@ -21,8 +21,8 @@ setExternalApps();
+ 
+ //run as an admin
+ define("BITSET","1");
+-define("USER_ID","1000");
+-define("USER_LOGIN","elawman");
++define("USER_ID","1");
++define("USER_LOGIN","admin");
+ 
+ //register our autoloader so we can call
+ //api functions direct from the client

@@ -1,0 +1,31 @@
+diff -p -up docmgr/apilib/lib/docmgr/lib/common.php.bitset_isnull~ docmgr/apilib/lib/docmgr/lib/common.php
+--- docmgr/apilib/lib/docmgr/lib/common.php.bitset_isnull~	2010-04-06 19:14:51.781470462 +0200
++++ docmgr/apilib/lib/docmgr/lib/common.php	2010-04-06 19:16:12.958468450 +0200
+@@ -177,7 +177,7 @@ function permString() {
+ 	if (DOCMGR_UTIL_OBJPERM_LEVEL=="strict" || PERM::check(GUEST_ACCOUNT,1)) 
+ 		$sql .= " object_owner='".USER_ID."')";
+ 	else
+-		$sql .= " bitmask ISNULL)";
++		$sql .= " bitset ISNULL)";
+ 
+ 	return $sql;
+ 
+diff -p -up docmgr/apilib/lib/docmgr/util/objperm.php.bitset_isnull~ docmgr/apilib/lib/docmgr/util/objperm.php
+--- docmgr/apilib/lib/docmgr/util/objperm.php.bitset_isnull~	2010-04-06 19:14:35.277468414 +0200
++++ docmgr/apilib/lib/docmgr/util/objperm.php	2010-04-06 19:16:35.654468898 +0200
+@@ -583,7 +583,7 @@ class DOCMGR_UTIL_OBJPERM
+ 		if (DOCMGR_UTIL_OBJPERM_LEVEL=="strict" || PERM::check(GUEST_ACCOUNT,1))
+ 			$sql .= " object_owner='".USER_ID."')";
+ 		else
+-			$sql .= " bitmask ISNULL)";
++			$sql .= " bitset ISNULL)";
+ 	
+ 		return $sql;
+ 	
+@@ -667,4 +667,4 @@ class DOCMGR_UTIL_OBJPERM
+ }
+ 
+ 
+-		
+\ No newline at end of file
++		

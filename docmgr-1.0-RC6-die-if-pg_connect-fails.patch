@@ -1,0 +1,12 @@
+diff -p -up docmgr/lib/pgsql.php.die~ docmgr/lib/pgsql.php
+--- docmgr/lib/pgsql.php.die~	2010-03-08 13:58:50.578760762 +0100
++++ docmgr/lib/pgsql.php	2010-03-08 13:58:52.476759527 +0100
+@@ -28,7 +28,7 @@ CLASS POSTGRESQL {
+ 	***********************************************************/
+ 	function __construct($dbhost,$dbuser,$dbpassword,$dbport,$dbname) {
+ 	
+-		$this->conn = pg_connect("host=$dbhost port=$dbport user=$dbuser password=$dbpassword dbname=$dbname");
++		$this->conn = pg_connect("host=$dbhost port=$dbport user=$dbuser password=$dbpassword dbname=$dbname") or die('unable to connect to postgresql!');
+ 
+ 		//init the error handler
+ 		if (class_exists("logger")) $this->logger = new logger($this);

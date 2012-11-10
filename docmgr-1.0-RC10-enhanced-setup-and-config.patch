@@ -1,0 +1,5106 @@
+diff --git a/config/app-config.default.php b/config/app-config.default.php
+deleted file mode 100755
+index 3982afd..0000000
+--- a/config/app-config.default.php
++++ /dev/null
+@@ -1,57 +0,0 @@
+-<?
+-/*****************************************************************************************
+-  Fileame: app-config.php
+-
+-  Purpose: Contains all settings external applications called by docmgr
+-           This is part of an effort to abstract out all program calls.  DocMGR should
+-           expect only a certain kind of response from the calling program.  The used program
+-           should contain the appropriate cli options to pass the desired output.
+-  Created: 05-07-2006
+-
+-******************************************************************************************/
+-
+-/************************************************************************
+-  paths and command line options for our apps
+-************************************************************************/
+-
+-//path to openoffice3 installation
+-define("OPENOFFICE_PATH","[OPENOFFICE_PATH]");
+-
+-/***********************************************************************
+-  The apps in this section should be able to be replaced with another
+-  app as long as the output is the same
+-***********************************************************************/
+-
+-//our ocr program.  All ocred content should be output to stdout
+-define("APP_OCR","[APP_OCR]");
+-
+-//wget for url objects.  it should output everything to a file, taking
+-//<progname> -outputOpt <filename> <url-to-get>
+-define("APP_WGET","[APP_WGET]");
+-
+-/************************************************************************
+-  The apps in this section are hard-coded for now
+-************************************************************************/
+-
+-//xpdf
+-define("APP_PDFTOTEXT","[APP_PDFTOTEXT] -nopgbrk -q");	//dont' remove the -nopgbrk option
+-define("APP_PDFIMAGES","[APP_PDFIMAGES] -q");
+-
+-define("APP_SENDMAIL","[APP_SENDMAIL]");
+-
+-//php cli binary
+-define("APP_PHP","[APP_PHP]");
+-
+-//clamav
+-define("APP_CLAMAV","[APP_CLAMAV]");
+-
+-//tiff processing
+-define("APP_TIFFINFO","[APP_TIFFINFO]");
+-define("APP_TIFFSPLIT","[APP_TIFFSPLIT]");
+-
+-//imagemagick
+-define("APP_CONVERT","[APP_CONVERT]");
+-define("APP_MOGRIFY","[APP_MOGRIFY]");	//should convert all objects to pnm
+-define("APP_MONTAGE","[APP_MONTAGE]");
+-define("APP_IDENTIFY","[APP_IDENTIFY]");
+-
+diff --git a/config/app-config.php b/config/app-config.php
+new file mode 100644
+index 0000000..79eab17
+--- /dev/null
++++ b/config/app-config.php
+@@ -0,0 +1,67 @@
++<?
++/*****************************************************************************************
++  Fileame: app-config.php
++
++  Purpose: Contains all settings external applications called by docmgr
++           This is part of an effort to abstract out all program calls.  DocMGR should
++           expect only a certain kind of response from the calling program.  The used program
++           should contain the appropriate cli options to pass the desired output.
++  Created: 05-07-2006
++
++******************************************************************************************/
++
++require_once("config/config.php");
++loadAlternateConfig("app-config.php");
++
++/********************************************
++  DO NOT EDIT THE SETTINGS IN THIS FILE (config/app-config.php)!
++  Add your own local settings to config/local/app-config.php in stead,
++  otherwise you might loose your configuration when upgrading.
++********************************************/
++
++
++/************************************************************************
++  paths and command line options for our apps
++************************************************************************/
++
++//path to openoffice3 installation
++define("OPENOFFICE_PATH","/opt/openoffice.org3");
++
++/***********************************************************************
++  The apps in this section should be able to be replaced with another
++  app as long as the output is the same
++***********************************************************************/
++
++//our ocr program.  All ocred content should be output to stdout
++define("APP_OCR","ocrad --format=utf8");
++
++//wget for url objects.  it should output everything to a file, taking
++//<progname> -outputOpt <filename> <url-to-get>
++define("APP_WGET","wget -O");
++
++/************************************************************************
++  The apps in this section are hard-coded for now
++************************************************************************/
++
++//xpdf
++define("APP_PDFTOTEXT","pdftotext -nopgbrk -q");	//dont' remove the -nopgbrk option
++define("APP_PDFIMAGES","pdfimages -q");
++
++define("APP_SENDMAIL","sendmail");
++
++//php cli binary
++define("APP_PHP","php");
++
++//clamav
++define("APP_CLAMAV","clamscan");
++
++//tiff processing
++define("APP_TIFFINFO","tiffinfo");
++define("APP_TIFFSPLIT","tiffsplit");
++
++//imagemagick
++define("APP_CONVERT","convert");
++define("APP_MOGRIFY","mogrify");	//should convert all objects to pnm
++define("APP_MONTAGE","montage");
++define("APP_IDENTIFY","identify");
++
+diff --git a/config/config.default.php b/config/config.default.php
+deleted file mode 100755
+index 223a1b5..0000000
+--- a/config/config.default.php
++++ /dev/null
+@@ -1,259 +0,0 @@
+-<?
+-/*****************************************************************************************
+-  Fileame: config.inc.php
+-
+-  Purpose: Contains all settings for site
+-
+-  Created: 12-27-01
+-  Updated: 06-24-2006
+-              Reorganized and split out certain config options
+-
+-******************************************************************************************/
+-
+-/********************************************
+-	Required Settings
+-********************************************/
+-
+-//connection settings
+-define("DBHOST","[DBHOST]");
+-define("DBUSER","[DBUSER]");
+-define("DBPASSWORD","[DBPASSWORD]");
+-define("DBPORT","[DBPORT]");
+-define("DBNAME","[DBNAME]");
+-
+-//administrator email (also return address for outgoing emails
+-define("ADMIN_EMAIL","[ADMIN_EMAIL]");
+-
+-//site url for emailing links to files in event and task notifications
+-//also, this must be set appropriately for fckeditor to work.  If a client
+-//uses a url different from this one, fckeditor will not load.  This
+-//must have a trailing slash!!!
+-define("SITE_URL","[SITE_URL]");
+-define("SITE_PATH","[SITE_PATH]");
+-
+-//absolute path to the docmgr files directory (no trailing slash)
+-define("FILE_DIR",SITE_PATH."/files");
+-
+-//paths to other storage directories.  You probably don't need to change
+-define("TMP_DIR",FILE_DIR."/tmp");
+-define("DATA_DIR",FILE_DIR."/data");
+-define("THUMB_DIR",FILE_DIR."/thumbnails");
+-define("PREVIEW_DIR",FILE_DIR."/preview");
+-define("DOC_DIR",FILE_DIR."/document");
+-define("HOME_DIR",FILE_DIR."/home");
+-
+-//path to shared import directory
+-define("IMPORT_DIR",FILE_DIR."/import");
+-
+-//use ldap for accounts.  If set, alter ldap settings in ldap-config.php
+-//define("USE_LDAP","1");
+-
+-/******************************************************************
+-	Indexing Options
+-******************************************************************/
+-
+-//do not index more than this many words. 
+-//define("INDEX_WORD_LIMIT","1000");
+-
+-//regular expression used by preg_replace when stripping content
+-//from imported files.  whatever you put here is what those functions
+-//will keep.  This is case INSENSITVE  
+-//	Examples:
+-//	a-z -> keep all letters
+-//	0-9 -> keep all letters and numbers
+-define("REGEXP_OPTION","-a-z0-9_");
+-
+-/*****************************************************************
+-        Optional Permissions Settings
+-*****************************************************************/
+-
+-//allow automated logins with cookies
+-define("USE_COOKIES","1");
+-
+-//allow removal of past file revisions (yes or no)
+-define("FILE_REVISION_REMOVE","yes");
+-
+-//allow removal of past document revisions (yes or no)
+-define("DOC_REVISION_REMOVE","yes");
+-
+-/*****************************************************************
+-	Optional Settings
+-*****************************************************************/
+-
+-//set the default language for users (not used at this moment)
+-define("DEFAULT_LANG","English");
+-
+-//default search results per page;
+-define("RESULTS_PER_PAGE","10");
+-
+-//number of pages of results to show at once
+-define("PAGE_RESULT_LIMIT","20");
+-
+-//default search results per page;
+-//define("PAGE_BROWSE_RESULTS","1");
+-
+-//max number of seconds per page per file
+-define("EXECUTION_TIME","60");
+-
+-//date format for entering and viewing (either mm/dd/yyyy or dd/mm/yyyy);
+-define("DATE_FORMAT","mm/dd/yyyy");
+-
+-//default view for browsing categories.  Can be either "list" or "thumb"
+-define("DEFAULT_BROWSE_VIEW","list");
+-
+-//number of file histories to keep, 0 for unlimited
+-define("FILE_REVISION_LIMIT","0");
+-
+-//number of document histories to keep, 0 for unlimited
+-define("DOC_REVISION_LIMIT","0");
+-
+-//send a md5 checksum file with all email attachments
+-//define("SEND_MD5_CHECKSUM","1");
+-
+-//if a file fails md5check when viewing, this allows the user
+-//to view the file anyways (after a warning is displayed)
+-//define("BYPASS_MD5CHECK","1");
+-
+-//default docmgr path for CMS.  To enable the Intranet module,
+-//go to docmgr/modules/center/intranet and rename Module.xml to module.xml
+-//the log out and log back in
+-define("DEFAULT_INTRANET","/cms");
+-
+-//when an object is created, this is the permissions given to non-owners
+-//of the object by default.  can be "view","edit", or "manage"
+-define("CREATE_MASK","view");
+-
+-//by default, make user's home folders viewable only by them. 
+-//comment out to make them subject to CREATE_MASK setting
+-define("PRIVATE_HOME","1");
+-
+-//use a trash can instead of direct delete
+-define("USE_TRASH","1");
+-
+-/*******************************************************************
+-  Things you probably don't need to change
+-*******************************************************************/
+-
+-//docmgr keepalive check (five minutes)
+-define("DOCMGR_KEEPALIVE","50000");
+-
+-//url to the docmgr api
+-define("DOCMGR_API","api.php");
+-
+-//what do you want the default page in docmgr to be
+-//your options are "docmgr" for the file browser or
+-//"home" for the dashboard
+-define("DEFAULT_MOD","home");
+-
+-//tsearch2 profile to use for indexing (ignore if not using tsearch2)
+-//if you are indexing a non-english language, use "simple", or
+-//you can setup a language-specific profile through tsearch2 and
+-//specify it here.  The "simple" profile will not try do dictionary
+-//compares or determine roots of words.  If you're unsure, you
+-//can safely leave this unchanged
+-define("TSEARCH2_PROFILE","english");
+-
+-//set this if nobody can delete objects except adminstrators
+-//define("RESTRICTED_DELETE","1");
+-
+-//site theme
+-define("SITE_THEME","default");
+-
+-define("LOGGER_MODE","db");
+-
+-//name for the top level bookmark
+-define("ROOT_NAME","Root Level");
+-
+-/*************************************************************************
+-  charset.  these control conversion of your database to whatever
+-  your web browser is expecting.  You most likely don't need to
+-  touch these.  
+-*************************************************************************/
+-//encoding of your database.  you probably don't need to change this
+-//if changed, make sure you use the value iconv (http://www.php.net/iconv) 
+-//recognizes for your encoding, not the encoding name postgresql uses
+-define("DB_CHARSET","ISO-8859-1");
+-
+-//charset of the xml returned from the api
+-define("VIEW_CHARSET","ISO-8859-1");
+-
+-/*************************************************************************
+-        Security Options
+-*************************************************************************/
+-
+-//login banner.  Displayed on the login page
+-//define("WARNING_BANNER","Message Displayed On Login");
+-
+-//Enable account lockout feature - affects all users but administrators
+-define("ENABLE_ACCOUNT_LOCKOUT",1);
+-
+-// Number of minutes to lock out the account, 0 = forever
+-define("ACCOUNT_LOCKOUT_TIME",5);
+-
+-// Number of attempts before an account is locked
+-define("ACCOUNT_LOCKOUT_ATTEMPTS",5);
+-
+-// Number of minutes before a session is timed out
+-//define("SESSION_TIMEOUT",20);
+-
+-// Select whether cookies should only be sent over secure connections
+-//define("SECURE_COOKIES",1);
+-
+-//characters we disallow in a filename.  Anything set it here
+-//will prevent a file from being uploaded if set
+-define("DISALLOW_CHARS","\"/*");
+-
+-//turn on error reporting
+-error_reporting(E_ALL ^ E_NOTICE);
+-ini_set("display_error","1");
+-
+-/*************************************************************************
+-	Do not modify anything below this line
+-*************************************************************************/
+-
+-//used for digest authentication on webdav
+-define("DIGEST_REALM","SabreDAV");
+-
+-//our proto transfer protocol
+-define("PROTO_DEFAULT","JSON");
+-
+-define("DOCMGR_URL",SITE_URL);
+-
+-define("_AT","at");
+-
+-//length of our permissions bitmask
+-define("PERM_BITLEN","32");
+-
+-//required system defines
+-define("APP_VERSION","1.0 RC10");
+-define("SITE_TITLE","DocMGR ".APP_VERSION);
+-
+-//define but do not set edraw
+-define("DSOFRAMER_ENABLE","1");
+-//define("TEA_ENABLE","1");
+-
+-//do we process auths in this site
+-define("PROCESS_AUTH","1");
+-
+-//set error reporting to not show notices
+-error_reporting(E_ALL ^ E_NOTICE);
+-
+-//reload modules every time for development
+-//define("DEV_MODE","1");
+-
+-//the debug level for outputting messages (0 - 5).
+-//define("DEBUG","5");
+-
+-//our directory levels (DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING!)
+-define("LEVEL1_NUM","16");
+-define("LEVEL2_NUM","256");
+-
+-$exemptRequest = array();
+-$exemptRequest[] = "editorContent";
+-$exemptRequest[] = "editor_content";
+-$exemptRequest[] = "apidata";
+-$exemptRequest[] = "apiparm";
+-$exemptRequest[] = "to"; 
+-$exemptRequest[] = "from"; 
+-$exemptRequest[] = "cc";
+-$exemptRequest[] = "bcc";
+diff --git a/config/config.php b/config/config.php
+new file mode 100644
+index 0000000..1498329
+--- /dev/null
++++ b/config/config.php
+@@ -0,0 +1,278 @@
++<?
++/*****************************************************************************************
++  Fileame: config.inc.php
++
++  Purpose: Contains all settings for site
++
++  Created: 12-27-01
++  Updated: 06-24-2006
++              Reorganized and split out certain config options
++
++******************************************************************************************/
++
++//set error reporting to not show notices
++error_reporting(E_ALL ^ E_NOTICE);
++
++if(!function_exists("loadAlternateConfig")) {
++    function loadAlternateConfig($configFile, $alternate = array('local', 'vendor')) {
++	for ($i = 0; $i < count($alternate); $i++) {
++	    $configPath = dirname(__FILE__) . "/" . $alternate[$i] . "/" . $configFile;
++	    if ( file_exists($configPath) )
++		require_once($configPath);
++	}
++    }
++}
++
++loadAlternateConfig("config.php");
++
++/********************************************
++  DO NOT EDIT THE SETTINGS IN THIS FILE (config/config.php)!
++  Add your own local settings to config/local/config.php in stead,
++  otherwise you might loose your configuration when upgrading.
++********************************************/
++
++
++/********************************************
++	Required Settings
++********************************************/
++
++//connection settings
++define("DBHOST","127.0.0.1");
++define("DBUSER","postgres");
++define("DBPASSWORD","secret");
++define("DBPORT","5432");
++define("DBNAME","docmgr");
++
++//administrator email (also return address for outgoing emails
++define("ADMIN_EMAIL","admin@mydomain.com");
++
++//site url for emailing links to files in event and task notifications
++//also, this must be set appropriately for fckeditor to work.  If a client
++//uses a url different from this one, fckeditor will not load.  This
++//must have a trailing slash!!!
++define("SITE_URL","http://docmgr.mydomain.com/");
++define("SITE_PATH","/www/docmgr");
++
++//absolute path to the docmgr files directory (no trailing slash)
++define("FILE_DIR",SITE_PATH."/files");
++
++//paths to other storage directories.  You probably don't need to change
++define("TMP_DIR",FILE_DIR."/tmp");
++define("DATA_DIR",FILE_DIR."/data");
++define("THUMB_DIR",FILE_DIR."/thumbnails");
++define("PREVIEW_DIR",FILE_DIR."/preview");
++define("DOC_DIR",FILE_DIR."/document");
++define("HOME_DIR",FILE_DIR."/home");
++
++//path to shared import directory
++define("IMPORT_DIR",FILE_DIR."/import");
++
++//use ldap for accounts.  If set, alter ldap settings in ldap-config.php
++//define("USE_LDAP","1");
++
++/******************************************************************
++	Indexing Options
++******************************************************************/
++
++//do not index more than this many words. 
++//define("INDEX_WORD_LIMIT","1000");
++
++//regular expression used by preg_replace when stripping content
++//from imported files.  whatever you put here is what those functions
++//will keep.  This is case INSENSITVE  
++//	Examples:
++//	a-z -> keep all letters
++//	0-9 -> keep all letters and numbers
++define("REGEXP_OPTION","-a-z0-9_");
++
++/*****************************************************************
++        Optional Permissions Settings
++*****************************************************************/
++
++//allow automated logins with cookies
++define("USE_COOKIES","1");
++
++//allow removal of past file revisions (yes or no)
++define("FILE_REVISION_REMOVE","yes");
++
++//allow removal of past document revisions (yes or no)
++define("DOC_REVISION_REMOVE","yes");
++
++/*****************************************************************
++	Optional Settings
++*****************************************************************/
++
++//set the default language for users (not used at this moment)
++define("DEFAULT_LANG","English");
++
++//default search results per page;
++define("RESULTS_PER_PAGE","10");
++
++//number of pages of results to show at once
++define("PAGE_RESULT_LIMIT","20");
++
++//default search results per page;
++//define("PAGE_BROWSE_RESULTS","1");
++
++//max number of seconds per page per file
++define("EXECUTION_TIME","60");
++
++//date format for entering and viewing (either mm/dd/yyyy or dd/mm/yyyy);
++define("DATE_FORMAT","mm/dd/yyyy");
++
++//default view for browsing categories.  Can be either "list" or "thumb"
++define("DEFAULT_BROWSE_VIEW","list");
++
++//number of file histories to keep, 0 for unlimited
++define("FILE_REVISION_LIMIT","0");
++
++//number of document histories to keep, 0 for unlimited
++define("DOC_REVISION_LIMIT","0");
++
++//send a md5 checksum file with all email attachments
++//define("SEND_MD5_CHECKSUM","1");
++
++//if a file fails md5check when viewing, this allows the user
++//to view the file anyways (after a warning is displayed)
++//define("BYPASS_MD5CHECK","1");
++
++//default docmgr path for CMS.  To enable the Intranet module,
++//go to docmgr/modules/center/intranet and rename Module.xml to module.xml
++//the log out and log back in
++define("DEFAULT_INTRANET","/cms");
++
++//when an object is created, this is the permissions given to non-owners
++//of the object by default.  can be "view","edit", or "manage"
++define("CREATE_MASK","view");
++
++//by default, make user's home folders viewable only by them. 
++//comment out to make them subject to CREATE_MASK setting
++define("PRIVATE_HOME","1");
++
++//use a trash can instead of direct delete
++define("USE_TRASH","1");
++
++/*******************************************************************
++  Things you probably don't need to change
++*******************************************************************/
++
++//docmgr keepalive check (five minutes)
++define("DOCMGR_KEEPALIVE","50000");
++
++//url to the docmgr api
++define("DOCMGR_API","api.php");
++
++//what do you want the default page in docmgr to be
++//your options are "docmgr" for the file browser or
++//"home" for the dashboard
++define("DEFAULT_MOD","home");
++
++//tsearch2 profile to use for indexing (ignore if not using tsearch2)
++//if you are indexing a non-english language, use "simple", or
++//you can setup a language-specific profile through tsearch2 and
++//specify it here.  The "simple" profile will not try do dictionary
++//compares or determine roots of words.  If you're unsure, you
++//can safely leave this unchanged
++define("TSEARCH2_PROFILE","english");
++
++//set this if nobody can delete objects except adminstrators
++//define("RESTRICTED_DELETE","1");
++
++//site theme
++define("SITE_THEME","default");
++
++define("LOGGER_MODE","db");
++
++//name for the top level bookmark
++define("ROOT_NAME","Root Level");
++
++/*************************************************************************
++  charset.  these control conversion of your database to whatever
++  your web browser is expecting.  You most likely don't need to
++  touch these.  
++*************************************************************************/
++//encoding of your database.  you probably don't need to change this
++//if changed, make sure you use the value iconv (http://www.php.net/iconv) 
++//recognizes for your encoding, not the encoding name postgresql uses
++define("DB_CHARSET","ISO-8859-1");
++
++//charset of the xml returned from the api
++define("VIEW_CHARSET","ISO-8859-1");
++
++/*************************************************************************
++        Security Options
++*************************************************************************/
++
++//login banner.  Displayed on the login page
++//define("WARNING_BANNER","Message Displayed On Login");
++
++//Enable account lockout feature - affects all users but administrators
++define("ENABLE_ACCOUNT_LOCKOUT",1);
++
++// Number of minutes to lock out the account, 0 = forever
++define("ACCOUNT_LOCKOUT_TIME",5);
++
++// Number of attempts before an account is locked
++define("ACCOUNT_LOCKOUT_ATTEMPTS",5);
++
++// Number of minutes before a session is timed out
++//define("SESSION_TIMEOUT",20);
++
++// Select whether cookies should only be sent over secure connections
++//define("SECURE_COOKIES",1);
++
++//characters we disallow in a filename.  Anything set it here
++//will prevent a file from being uploaded if set
++define("DISALLOW_CHARS","\"/*");
++
++//turn on error reporting
++error_reporting(E_ALL ^ E_NOTICE);
++ini_set("display_error","1");
++
++/*************************************************************************
++	Do not modify anything below this line
++*************************************************************************/
++
++//used for digest authentication on webdav
++define("DIGEST_REALM","SabreDAV");
++
++//our proto transfer protocol
++define("PROTO_DEFAULT","JSON");
++
++define("DOCMGR_URL",SITE_URL);
++
++define("_AT","at");
++
++//length of our permissions bitmask
++define("PERM_BITLEN","32");
++
++//required system defines
++define("APP_VERSION","1.0 RC10");
++define("SITE_TITLE","DocMGR ".APP_VERSION);
++
++//define but do not set edraw
++define("DSOFRAMER_ENABLE","1");
++//define("TEA_ENABLE","1");
++
++//do we process auths in this site
++define("PROCESS_AUTH","1");
++
++//reload modules every time for development
++//define("DEV_MODE","1");
++
++//the debug level for outputting messages (0 - 5).
++//define("DEBUG","5");
++
++//our directory levels (DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING!)
++define("LEVEL1_NUM","16");
++define("LEVEL2_NUM","256");
++
++$exemptRequest = array();
++$exemptRequest[] = "editorContent";
++$exemptRequest[] = "editor_content";
++$exemptRequest[] = "apidata";
++$exemptRequest[] = "apiparm";
++$exemptRequest[] = "to"; 
++$exemptRequest[] = "from"; 
++$exemptRequest[] = "cc";
++$exemptRequest[] = "bcc";
+diff --git a/index.php b/index.php
+index d089704..46dd660 100755
+--- a/index.php
++++ b/index.php
+@@ -1,7 +1,7 @@
+ <?php
+ 
+ //make sure we are setup
+-if (file_exists("install/install.php")) include("install/install.php");
++if (!file_exists("config/local/config.php")) include("install/install.php");
+ 
+ //call our main header file
+ set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
+diff --git a/install/classes/app.php b/install/classes/app.php
+index 8fda2cf..03d5e87 100644
+--- a/install/classes/app.php
++++ b/install/classes/app.php
+@@ -1,241 +1,121 @@
+ <?php
+ 
+-class APP
++class APP extends INSTALL_STEP
+ {
++  function __construct() {
++    $this->filename = "app-config.php";
++    array_push($this->entries,
++	    "openoffice_path",
++	    "app_ocr",
++	    "app_wget",
++	    "app_pdftotext",
++	    "app_pdfimages",
++	    "app_sendmail",
++	    "app_php",
++	    "app_clamav",
++	    "app_tiffinfo",
++	    "app_tiffsplit",
++	    "app_convert",
++	    "app_mogrify",
++	    "app_montage",
++	    "app_identify"
++    );
++    array_push($this->emptyEntriesAllow,
++      "openoffice_path",
++      "app_ocr",
++      "app_wget"
++    );
+ 
+-  private $file;
+-  private $errorMessage;
+-  private $apps = array("openoffice_path",
+-                        "app_ocr",
+-                        "app_wget",
+-                        "app_pdftotext",
+-                        "app_pdfimages",
+-                        "app_sendmail",
+-                        "app_php",
+-                        "app_clamav",
+-                        "app_tiffinfo",
+-                        "app_tiffsplit",
+-                        "app_convert",
+-                        "app_mogrify",
+-                        "app_montage",
+-                        "app_identify"
+-                        );
+-  
+-  /******************************************************
+-    FUNCTION:	getError
+-    PURPOSE:	returns an existing class error
+-  ******************************************************/  
+-  public function getError()
+-  {
+-    return $this->errorMessage;
+   }
+-  
+-  /******************************************************
+-    FUNCTION:	throwError
+-    PURPOSE:	throws a class error
+-  ******************************************************/  
+-  public function throwError($err)
+-  {
+-    $this->errorMessage = $err;
+-  }
+-  
+-  /******************************************************
+-    FUNCTION:	display
+-    PURPOSE:	displays the form for entering config
+-              information
+-  ******************************************************/  
++
+   public function display()
+   {
++    require_once("config/app-config.php");
++
++    $conf = array();
++    $conf['openoffice_path'] = importPostC("openoffice_path");
++    $conf['app_ocr'] = importPostC("app_ocr");
++    $conf['app_wget'] = importPostC("app_wget");
++    $conf['app_pdftotext'] = importPostC("app_pdftotext");
++    $conf['app_pdfimages'] = importPostC("app_pdfimages");
++    $conf['app_sendmail'] = importPostC("app_sendmail");
++    $conf['app_php'] = importPostC("app_php");
++    $conf['app_clamav'] = importPostC("app_clamav");
++    $conf['app_tiffinfo'] = importPostC("app_tiffinfo");
++    $conf['app_tiffsplit'] = importPostC("app_tiffsplit");
++    $conf['app_convert'] = importPostC("app_convert");
++    $conf['app_mogrify'] = importPostC("app_mogrify");
++    $conf['app_montage'] = importPostC("app_montage");
++    $conf['app_identify'] = importPostC("app_identify");
+   
+-    $content = "<h3>Please enter application paths below.</h3>
+-                <p>
+-                Apps marked with * are required.  For non-required apps, just leave the field
+-                blank to disable them.
+-                </p>
+-                <table width=\"600px\" border=\"0\">
+-	                <tr><td align=\"right\">
+-	                  Openoffice Installation Path*
+-	                </td><td>
+-	                  <input type=\"text\" name=\"openoffice_path\" id=\"openoffice_path\" value=\"/opt/openoffice.org3\">
+-	                </td></tr>
+-	                <tr><td colspan=\"2\">
+-	                  The apps below may be swapped out for others provided they output to stdout.
+-                  </td></tr>
+-                  <tr><td align=\"right\" class=\"appName\">
+-                    OCRad
+-                  </td><td class=\"appName\">
+-                    <a href=\"http://www.gnu.org/software/ocrad/ocrad.html\">http://www.gnu.org/software/ocrad/ocrad.html</a>
+-                  </td></tr>
+-	                <tr><td align=\"right\">
+-	                  OCR
+-	                </td><td>
+-	                  <input type=\"text\" name=\"app_ocr\" id=\"app_ocr\" value=\"ocrad --format=utf8\">
+-	                </td></tr>
+-	                <tr><td align=\"right\">
+-	                  wget
+-	                </td><td>
+-	                  <input type=\"text\" name=\"app_wget\" id=\"app_wget\" value=\"wget -O\">
+-	                </td></tr>
+-	                <tr><td colspan=\"2\">
+-	                  The apps below cannot be changed.  However, you may specify the full path to the app if it's
+-	                  not in a place apache can find it.
+-                  </td></tr>
+-                  <tr><td align=\"right\" class=\"appName\">
+-                    XPDF
+-                  </td><td class=\"appName\">
+-                    <a href=\"http://www.foolabs.com/xpdf/\">http://www.foolabs.com/xpdf/</a>
+-                  </td></tr>
+-	                <tr><td align=\"right\">
+-	                  pdftotext*
+-	                </td><td>
+-	                  <input type=\"text\" name=\"app_pdftotext\" id=\"app_pdftotext\" value=\"pdftotext\">
+-	                </td></tr>
+-	                <tr><td align=\"right\">
+-	                  pdfimages*
+-	                </td><td>
+-	                  <input type=\"text\" name=\"app_pdfimages\" id=\"app_pdfimages\" value=\"pdfimages\">
+-	                </td></tr>
+-	                <tr><td align=\"right\">
+-	                  PHP*
+-	                </td><td>
+-	                  <input type=\"text\" name=\"app_php\" id=\"app_php\" value=\"php\">
+-	                </td></tr>
+-	                <tr><td align=\"right\">
+-	                  Sendmail*
+-	                </td><td>
+-	                  <input type=\"text\" name=\"app_sendmail\" id=\"app_sendmail\" value=\"sendmail\">
+-	                </td></tr>
+-                  <tr><td align=\"right\" class=\"appName\">
+-                    ClamAV
+-                  </td><td class=\"appName\">
+-                    <a href=\"http://www.clamav.net/\">http://www.clamav.net</a>
+-                  </td></tr>
+-	                <tr><td align=\"right\">
+-	                  clamscan
+-	                </td><td>
+-	                  <input type=\"text\" name=\"app_clamav\" id=\"app_clamav\" value=\"clamscan\">
+-	                </td></tr>
+-                  <tr><td align=\"right\" class=\"appName\">
+-                    LibTiff
+-                  </td><td class=\"appName\">
+-                    <a href=\"http://www.remotesensing.org/libtiff/\">http://www.remotesensing.org/libtiff/</a>
+-                  </td></tr>
+-	                <tr><td align=\"right\">
+-	                  tiffinfo*
+-	                </td><td>
+-	                  <input type=\"text\" name=\"app_tiffinfo\" id=\"app_tiffinfo\" value=\"tiffinfo\">
+-	                </td></tr>
+-	                <tr><td align=\"right\">
+-	                  tiffsplit*
+-	                </td><td>
+-	                  <input type=\"text\" name=\"app_tiffsplit\" id=\"app_tiffsplit\" value=\"tiffsplit\">
+-	                </td></tr>
+-                  <tr><td align=\"right\" class=\"appName\">
+-                    Imagemagick
+-                  </td><td class=\"appName\">
+-                    <a href=\"http://www.imagemagick.org/\">http://www.imagemagick.org</a>
+-                  </td></tr>
+-	                <tr><td align=\"right\">
+-	                  convert*
+-	                </td><td>
+-	                  <input type=\"text\" name=\"app_convert\" id=\"app_convert\" value=\"convert\">
+-	                </td></tr>
+-	                <tr><td align=\"right\">
+-	                  mogrify*
+-	                </td><td>
+-	                  <input type=\"text\" name=\"app_mogrify\" id=\"app_mogrify\" value=\"mogrify\">
+-	                </td></tr>
+-	                <tr><td align=\"right\">
+-	                  montage*
+-	                </td><td>
+-	                  <input type=\"text\" name=\"app_montage\" id=\"app_montage\" value=\"montage\">
+-	                </td></tr>
+-	                <tr><td align=\"right\">
+-	                  identify*
+-	                </td><td>
+-	                  <input type=\"text\" name=\"app_identify\" id=\"app_identify\" value=\"identify\">
+-	                </td></tr>
+-                </table>
+-                ";  
++    $content = '<h3>Please enter application paths below.</h3>
++	<h2>Site config</h2>
++
++	<p class="config-desc">
++	  Apps marked with * are required.  For non-required apps, just leave the field
++	  blank to disable them.
++	</p>
++
++	<div class="config-section">
++	  <div class="config-input">' . aField($conf, 'openoffice_path', 'OpenOffice.org installation path:') . '</div>
++	  <p class="config-desc">
++	    Leave blank if automatically configured through environment variables or other means.
++	  </p>
++	</div>
++	<p class="config-desc">
++	  The apps below may be swapped out for others provided they output to stdout.
++	</p>
++	<div class="config-section">
++	  <div class="config-input">' . aField($conf, 'app_ocr', 'OCR') . '</div>
++	  <div class="config-input">' . aField($conf, 'app_wget', 'wget') . '</div>
++	</div>
++	<p class="config-desc">
++	  The apps below cannot be changed.  However, you may specify the full path to the app if it\'s
++	  not in a place apache can find it.
++	</p>
++	<div class="config-section">
++	  <div class="config-input">' . aLabel('XPDF', 'http://www.foolabs.com/xpdf/') . '</div>
++	  <div class="config-input">' . aField($conf, 'app_pdftotext','pdftotext*') . '</div>
++	  <div class="config-input">' . aField($conf, 'app_pdfimages','pdfimages*') . '</div>
++	</div>
++
++	<div class="config-section">
++	  <div class="config-input">' . aField($conf, 'app_php','php*') . '</div>
++	  <div class="config-input">' . aField($conf, 'app_sendmail','sendmail*') . '</div>
++	</div>
++
++	<div class="config-section">
++	  <div class="config-input">' . aLabel('ClamAV', 'http://www.clamav.net') . '</div>
++	  <div class="config-input">' . aField($conf, 'app_clamav','clamscan') . '</div>
++	</div>
++
++	<div class="config-section">
++	  <div class="config-input">' . aLabel('LibTiff', 'http://www.remotesensing.org/libtiff/') . '</div>
++	  <div class="config-input">' . aField($conf, 'app_tiffinfo','tiffinfo*') . '</div>
++	  <div class="config-input">' . aField($conf, 'app_tiffsplit','tiffsplit*') . '</div>
++	</div>
++
++	<div class="config-section">
++	  <div class="config-input">' . aLabel('ImageMagick', 'http://www.imagemagick.org') . '</div>
++	  <div class="config-input">' . aField($conf, 'app_convert','convert*') . '</div>
++	  <div class="config-input">' . aField($conf, 'app_mogrify','mogrify*') . '</div>
++	  <div class="config-input">' . aField($conf, 'app_montage','montage*') . '</div>
++	  <div class="config-input">' . aField($conf, 'app_identify','identify*') . '</div>
++	</div>
++                ';  
+ 
+     return $content;
+     
+   }
+ 
+-  /******************************************************
+-    FUNCTION:	process
+-    PURPOSE:	writes our submitted values to the
+-              config file and saves the file
+-  ******************************************************/  
+-  public function process()
+-  {
+-
+-    $this->loadFile();
+-    $this->storeConfigValues();
+-    $this->testConfig();
+-        
+-    if (!$this->getError())	$this->writeFile();
+-  
+-  }
+-
+-  /******************************************************
+-    FUNCTION:	loadFile
+-    PURPOSE:	load our config template file
+-  ******************************************************/  
+-  protected function loadFile()
+-  {
+-
+-    if (file_exists("config/app-config.default.php"))
+-    {
+-      $this->file = file_get_contents("config/app-config.default.php");  
+-    }  
+-    else
+-    {
+-      $this->throwError("Unable to load config template file config/app-config.default.php");
+-    }
+-  
+-  }
+-
+-  protected function storeConfigValues()
+-  {
+-
+-    foreach ($this->apps AS $entry)
+-    {
+-    
+-      //if we aren't submitted an entry, bail here
+-      if (!$_POST[$entry])
+-      {
+-        $this->throwError("You did not fill out the \"".$entry."\" field");
+-        break;
+-      }
+-
+-      //set it up into [DBNAME] format      
+-      $name = "[".strtoupper($entry)."]";
+-      
+-      //update our string
+-      $this->file = str_replace($name,$_POST[$entry],$this->file);
+-    
+-    }
+-
+-  }
+-
+   protected function testConfig()
+   {
++    global $errors;
+ 
+-    //required apps
+-    $required = array("openoffice_path","app_pdftotext","app_pdfimages","app_sendmail",
+-                      "app_tiffinfo","app_tiffsplit",
+-                      "app_convert","app_mogrify","app_montage","app_identify");
+-  
+-    foreach ($this->apps AS $entry)
++    foreach ($this->entries AS $entry)
+     {
+-    
+-      //if we aren't submitted an entry, bail here
+-      if (!$_POST[$entry] && in_array($entry,$required))
+-      {
+-        $this->throwError("You did not fill out the \"".str_replace("app_","",$entry)."\" field");
+-        break;
+-      }
++      if($errors[$entry])
++	continue;
+ 
+       $app = $_POST[$entry];
+       
+@@ -246,30 +126,48 @@ class APP
+       if ($entry=="openoffice_path")
+       {
+ 
+-        $python = $app."/program/python";
+-
+-        //now see if we can find it
+-        $output = `which $python`;
+-        $output = trim($output);
+-
+-        if (!$output)
+-        {
+-          $this->throwError("Could not find the python application in the openoffice installation prefix");
+-        }
++	if ($app)
++	{
++	  $python = $app."/program/python";
++
++	  //now see if we can find it
++	  $output = `which $python`;
++	  $output = trim($output);
++
++	  if (!$output)
++	  {
++	    $errors[$entry] = "Could not find the python application in the OpenOffice.org installation prefix";
++	  }
++
++	}
++	else
++	{
++	  $ret = 0;
++	  // We'll check if we're able to load the required python module.
++	  // This we do within a 'login shell' to get all the standard environment
++	  // variables set (ie. most distributions add the path of the module to $PYTHONPATH),
++	  // as the web server is usually executed in a shell without all these set...
++	  passthru("sh --login -c 'python -c \"import uno\" &>/dev/null'", $ret);
++	  if($ret)
++	    $errors[$entry] = "Unable to load the required 'uno' python module";
++	}
+       
+       }
+       else
+       {
++	if(!$app)
++	  continue;
+ 
+         //now see if we can find it
+         $output = `which $app`;
+         $output = trim($output);
+ 
+-        if (!$output && in_array($entry,$required))
+-        {
+-          $this->throwError("Apache could not find application \"".$app."\" in ".$_SERVER["PATH"]);
+-        }
+-    
++	if (!$output)
++	{
++	  $errors[$entry] = "Apache could not find application \"".$app."\" in ".$_SERVER["PATH"];
++	  if(in_array($entry,$this->emptyEntriesAllow))
++	    $errors[$entry] .= ", if you don't have/want it, clear the field";
++	}
+       }
+         
+     }
+@@ -277,22 +175,6 @@ class APP
+   
+   }
+       
+-  /******************************************************
+-    FUNCTION:	writeFile
+-    PURPOSE:	write our config template file
+-  ******************************************************/  
+-  protected function writeFile()
+-  {
+-
+-    if ($this->getError()) return false;
+-
+-    if (!file_put_contents("config/app-config.php",$this->file))
+-    {
+-      $this->throwError("Unable to write config file config/app-config.php");
+-    }
+-  
+-  }
+-
+ }
+ 
+ 
+diff --git a/install/classes/config.php b/install/classes/config.php
+index 433a261..e7307b9 100644
+--- a/install/classes/config.php
++++ b/install/classes/config.php
+@@ -1,161 +1,120 @@
+ <?php
+ 
+-class CONFIG 
++class CONFIG extends INSTALL_STEP
+ {
+ 
+-  private $file;
+-  private $errorMessage;
+-  
+-  /******************************************************
+-    FUNCTION:	getError
+-    PURPOSE:	returns an existing class error
+-  ******************************************************/  
+-  public function getError()
+-  {
+-    return $this->errorMessage;
+-  }
+-  
+-  /******************************************************
+-    FUNCTION:	throwError
+-    PURPOSE:	throws a class error
+-  ******************************************************/  
+-  public function throwError($err)
+-  {
+-    $this->errorMessage = $err;
++  function __construct() {
++    $this->filename = "config.php";
++    array_push($this->entries,
++      "dbhost",
++      "dbuser",
++      "dbpassword",
++      "dbport",
++      "dbname",
++      "admin_email",
++      "site_url",
++      "site_path",
++      "file_dir"
++    );
++    array_push($this->emptyEntriesAllow,
++      "dbhost",
++      "dbport"
++    );
+   }
+   
+-  /******************************************************
+-    FUNCTION:	display
+-    PURPOSE:	displays the form for entering config
+-              information
+-  ******************************************************/  
+   public function display()
+   {
+-  
+-    $content = "<h3>Please enter the configure information below.</h3>
+-                <table width=\"500px\" border=\"0\">
+-	                <tr><td align=\"right\">
+-	                  Database Host
+-	                </td><td>
+-	                  <input type=\"text\" size=\"30\" name=\"dbhost\" id=\"dbhost\" value=\"127.0.0.1\">
+-	                </td></tr>
+-	                <tr><td align=\"right\">
+-	                  Database User
+-	                </td><td>
+-	                  <input type=\"text\" size=\"30\" name=\"dbuser\" id=\"dbuser\" value=\"postgres\">
+-	                </td></tr>
+-	                <tr><td align=\"right\">
+-	                  Database Password
+-	                </td><td>
+-	                  <input type=\"text\" size=\"30\" name=\"dbpassword\" id=\"dbpassword\" value=\"secret\">
+-	                </td></tr>
+-	                <tr><td align=\"right\">
+-	                  Database Name (Must already exist)
+-	                </td><td>
+-	                  <input type=\"text\" size=\"30\" name=\"dbname\" id=\"dbname\" value=\"docmgr\">
+-	                </td></tr>
+-	                <tr><td align=\"right\">
+-	                  Database Port
+-	                </td><td>
+-	                  <input type=\"text\" size=\"30\" name=\"dbport\" id=\"dbport\" value=\"5432\">
+-	                </td></tr>
+-	                <tr><td align=\"right\">
+-	                  Full Site URL (with trailing slash)
+-	                </td><td>
+-	                  <input type=\"text\" size=\"30\" name=\"site_url\" id=\"site_url\" value=\"http://docmgr.mydomain.com/\">
+-	                </td></tr>
+-	                <tr><td align=\"right\">
+-	                  Full Site Path
+-	                </td><td>
+-	                  <input type=\"text\" size=\"30\" name=\"site_path\" id=\"site_path\" value=\"/www/docmgr\">
+-	                </td></tr>
+-	                <tr><td align=\"right\">
+-	                  Admin Email Address
+-	                </td><td>
+-	                  <input type=\"text\" size=\"30\" name=\"admin_email\" id=\"admin_email\" value=\"admin@mydomain.com\">
+-	                </td></tr>
+-                </table>
+-                ";  
++    require_once('config/config.php');
++
++    $conf = array();
++    $conf['dbhost'] = importSessionC('dbhost');
++    $conf['dbport'] = importSessionC('dbport');
++    $conf['dbuser'] = importSessionC('dbuser');
++    $conf['dbpassword'] = importSessionC('dbpassword');
++    $conf['dbpassword2'] = importSession('dbpassword2', $dbpassword);
++    $conf['dbname'] = importSessionC('dbname');
++    $conf['site_url'] = 'https://'.$_SERVER['SERVER_NAME'].dirname($_SERVER['REQUEST_URI'] . ' ').'/';
++    $conf['site_path'] = dirname(dirname(dirname(__FILE__)));
++    $conf['file_dir'] = importSessionC('file_dir');
++    $conf['admin_email'] = importSession('admin_email', empty($_SERVER['SERVER_ADMIN']) ? ADMIN_EMAIL : $_SERVER['SERVER_ADMIN']);
++    $conf['useroot'] = importSession('use_root', true);
++    $conf['superuser'] = importSession('superuser', 'postgres');
++    $conf['superpass'] = importSession('superpass');
++
++    $content = '<h3>Please enter the configure information below.</h3>
++	<h2>Site config</h2>
++	<div class="config-section">
++	  <div class="config-input">' . aField($conf, 'admin_email', 'Admin email address:') . '</div>
++	  <div class="config-input">' . aField($conf, 'site_url', 'Full site URL:') . '</div>
++	  <p class="config-desc">
++	    URL must contain trailing slash.
++	  </p>
++	  <div class="config-input">' . aField($conf, 'site_path', 'Full site path:') . '</div>
++	  <div class="config-input">' . aField($conf, 'file_dir', 'DocMGR files directory:') . '</div>
++	  <p class="config-desc">
++	    This is the working directory for DocMGR and the location where files will be uploaded to etc.
++	    Specify the absolute path without trailing slash.
++	  </p>
++	</div>
++
++
++	<h2>Database config</h2>
++	<div class="config-section">
++	  <div class="config-input" style="clear:left">' . aField($conf, 'dbhost', 'Database host:') . '</div>
++	  <p class="config-desc">
++	    If connecting to local postgresql, leave blank to use unix sockets (<strong>recommended</strong>).
++	  </p>
++	  <div class="config-input">' . aField($conf, 'dbport', 'Database port:') . '</div>
++	  <p class="config-desc">
++	    Leave blank to use postgresql standard port.
++	  </p>
++	  <div class="config-input">' . aField($conf, 'dbname', 'Database name:') . '</div>
++	  <div class="config-input">' . aField($conf, 'dbuser', 'Database user:') . '</div>
++	  <div class="config-input">' . aField($conf, 'dbpassword', 'Database password:', 'password') . '</div>
++	  <div class="config-input">' . aField($conf, 'dbpassword2', 'Database password confirm:', 'password') . '</div>
++	  <p class="config-desc">
++	    If you only have a single user account and database available,
++	    enter those here. If you have database root access (see below)
++	    you can specify new accounts/databases to be created. This account 
++	    will not be created if it pre-exists. If this is the case, ensure that it
++	    has SELECT, INSERT, UPDATE, and DELETE permissions on the DocMGR database.
++	  </p>
++
++	  <div class="config-input">
++	  <div class="config-input">' . aField($conf, 'useroot', 'Use superuser account:', 'checkbox') . '</div>
++	  <div class="config-input">' . aField($conf, 'superuser', 'Superuser name:') . '</div>
++	  <div class="config-input">' . aField($conf, 'superpass', 'Superuser password:', 'password') . '</div>
++
++	  <p class="config-desc">
++	    If the database user specified above does not exist, or does not have access to create
++	    the database (if needed) or tables within it, please check the box and provide details
++	    of a superuser account, such as <strong>postgres</strong>, which does.
++	  </p>
++	</div>';
+ 
+     return $content;
+     
+   }
+ 
+   /******************************************************
+-    FUNCTION:	process
+-    PURPOSE:	writes our submitted values to the
+-              config file and saves the file
+-  ******************************************************/  
+-  public function process()
+-  {
+-
+-    $this->loadFile();
+-    $this->storeConfigValues();
+-    $this->testConfig();
+-    
+-    if (!$this->getError())	$this->writeFile();
+-  
+-  }
+-
+-  /******************************************************
+-    FUNCTION:	loadFile
+-    PURPOSE:	load our config template file
+-  ******************************************************/  
+-  protected function loadFile()
+-  {
+-
+-    if (file_exists("config/config.default.php"))
+-    {
+-      $this->file = file_get_contents("config/config.default.php");  
+-    }  
+-    else
+-    {
+-      $this->throwError("Unable to load config template file config/config.default.php");
+-    }
+-  
+-  }
+-
+-  protected function storeConfigValues()
+-  {
+-
+-    $arr = array("dbhost",
+-                  "dbuser",
+-                  "dbpassword",
+-                  "dbport",
+-                  "dbname",
+-                  "admin_email",
+-                  "site_url",
+-                  "site_path"
+-                  );
+-
+-    foreach ($arr AS $entry)
+-    {
+-    
+-      //if we aren't submitted an entry, bail here
+-      if (!$_POST[$entry])
+-      {
+-        $this->throwError("You did not fill out the \"".$entry."\" field");
+-        break;
+-      }
+-
+-      //set it up into [DBNAME] format      
+-      $name = "[".strtoupper($entry)."]";
+-      
+-      //update our string
+-      $this->file = str_replace($name,$_POST[$entry],$this->file);
+-    
+-    }
+-
+-  }
+-
+-  /******************************************************
+     FUNCTION:	testConfig
+     PURPOSE:	verifies the given db parameters
+   ******************************************************/  
+   protected function testConfig()
+   {
++    global $errors;
+ 
+-    $DB = new POSTGRESQL($_POST["dbhost"],$_POST["dbuser"],$_POST["dbpassword"],$_POST["dbport"],$_POST["dbname"]);
++    if ($_POST["dbpassword"] != $_POST["dbpassword2"]) {
++       $errors["dbpassword"] = "Passwords doesn't match";
++       return false;
++    }
++    if(count($errors))
++      return false;
++
++    if ($_POST["useroot"])
++      $DB = new POSTGRESQL($_POST["dbhost"],$_POST["superuser"],$_POST["superpass"],$_POST["dbport"],"postgres");
++    else
++      $DB = new POSTGRESQL($_POST["dbhost"],$_POST["dbuser"],$_POST["dbpassword"],$_POST["dbport"],$_POST["dbname"]);
+ 
+     if (!$DB->getConn())
+     {
+@@ -177,20 +136,20 @@ class CONFIG
+       return false;
+     }
+     
+-  }
+-      
+-  /******************************************************
+-    FUNCTION:	writeFile
+-    PURPOSE:	write our config template file
+-  ******************************************************/  
+-  protected function writeFile()
+-  {
+-
+-    if ($this->getError()) return false;
+-
+-    if (!file_put_contents("config/config.php",$this->file))
++    $path = importSession('file_dir');
++    if(!file_exists($path))
+     {
+-      $this->throwError("Unable to write config file config/config.php");
++      if(!mkdir($path, 0700, true)) {
++	$errors['file_dir'] = "Unable to create $path";
++	return false;
++      }
++    }
++    //can we write to the files directory
++    if (!is_writable($path))
++    {
++      $errors['file_dir'] = "Unable to write to $path directory.  Please make sure " .
++                        "the user apache runs as has write access to this directory";
++      return false;
+     }
+   
+   }
+diff --git a/install/classes/database.php b/install/classes/database.php
+index db8aa33..46b62fe 100644
+--- a/install/classes/database.php
++++ b/install/classes/database.php
+@@ -5,6 +5,7 @@ class DATABASE
+ 
+   private $file;
+   private $errorMessage;
++  private $schemas = array("docmgr", "public", "addressbook", "logger", "modlet", "task");
+     
+   /******************************************************
+     FUNCTION:	getError
+@@ -34,9 +35,8 @@ class DATABASE
+ 
+     $content = "<h3>Database Setup</h3>
+                 <p>The installer will now create or update your database.</p>
+-                <p>If you are upgrading your DocMGR installation, please backup your database before continuing.</p>
+-                ";
+-                
++		<p>If you are upgrading your DocMGR installation, please backup your database before continuing.</p>";
++
+     return $content;  
+   
+   }
+@@ -55,10 +55,15 @@ class DATABASE
+ 
+   protected function checkDB()
+   {
++    require_once('config/config.php');
+ 
+-    include("config/config.php");
+-    
+-    $DB = new POSTGRESQL(DBHOST,DBUSER,DBPASSWORD,DBPORT,DBNAME);
++    if (importSession("useroot")) {
++      $superdb = new POSTGRESQL(importSession('dbhost'),importSession('superuser'),importSession('superpass'),importSession('dbport'),'postgres');
++      $superdb->initial_setup(importSession('dbname'),importSession('dbuser'),importSession('dbpassword'),$this->schemas,importSession('superuser'),importSession('superpass'),'postgres');
++    }
++
++    $DB = new POSTGRESQL(importSession('dbhost'),importSession('dbuser'),importSession('dbpassword'),importSession('dbport'),importSession('dbname'));
++    $superdb->initial_setup(importSession('dbname'),importSession('dbuser'),importSession('dbpassword'),$this->schemas);
+     
+     //see if the database already exists
+     $sql = "SELECT tablename FROM pg_tables WHERE tablename NOT LIKE 'pg%'
+@@ -110,7 +115,7 @@ class DATABASE
+     //create from scratch
+     else
+     {
+-      $this->createDB($DB);    
++      $this->createDB($DB);
+     }
+   
+     return true;
+@@ -119,10 +124,8 @@ class DATABASE
+ 
+   protected function createDB($DB)
+   {
+-
+     //create the database from scratch
+-    $sql = file_get_contents("install/docmgr.pgsql");
+-    $DB->query($sql);
++    $DB->setup_database(DBUSER, $this->schemas);
+ 
+   }
+ 
+diff --git a/install/classes/files.php b/install/classes/files.php
+index 72ee99d..021d640 100644
+--- a/install/classes/files.php
++++ b/install/classes/files.php
+@@ -54,7 +54,13 @@ class FILES
+   protected function checkFiles()
+   {
+ 
+-    include("config/config.php");
++    // define our constants here so that we get the correct ones
++    // for those loaded from config and used below
++    foreach ($_SESSION["config"] as $key => $value)
++    {
++      define(strtoupper($key), $value);
++    }
++    require_once("config/config.php");
+ 
+     $this->createFileSubDir(DATA_DIR);
+     $this->createFileSubDir(THUMB_DIR);
+@@ -69,7 +75,7 @@ class FILES
+   {
+ 
+     //create our directory if it doesn't exist
+-    if (!is_dir($path)) mkdir($path);
++    if (!is_dir($path)) mkdir($path, 700, true);
+ 
+     //if it's not writable, error out
+     if (!is_writable($path)) die("Error!".$path." is not writable by the webserver");
+diff --git a/install/classes/step.php b/install/classes/step.php
+new file mode 100644
+index 0000000..dc328ae
+--- /dev/null
++++ b/install/classes/step.php
+@@ -0,0 +1,124 @@
++<?php
++
++abstract class INSTALL_STEP
++{
++  protected $file = "<?\n";
++  protected $filename = null;
++  protected $entries = array();
++  protected $emptyEntriesAllow = array();
++  protected $errorMessage;
++
++  /******************************************************
++    FUNCTION:	getError
++    PURPOSE:	returns an existing class error
++  ******************************************************/  
++  public function getError()
++  {
++    return $this->errorMessage;
++  }
++  
++  /******************************************************
++    FUNCTION:	throwError
++    PURPOSE:	throws a class error
++  ******************************************************/  
++  public function throwError($err)
++  {
++    $this->errorMessage = $err;
++  }
++  
++  /******************************************************
++    FUNCTION:	display
++    PURPOSE:	displays the form for entering config
++              information
++  ******************************************************/  
++  public function display()
++  {
++  }
++
++  /******************************************************
++    FUNCTION:	process
++    PURPOSE:	writes our submitted values to the
++              config file and saves the file
++  ******************************************************/  
++  public function process()
++  {
++    global $errors;
++    $this->loadFile();
++    $this->storeConfigValues();
++    $this->testConfig();
++    
++    if (!$this->getError() && count($errors) == 0)	$this->writeFile();
++
++  }
++
++  /******************************************************
++    FUNCTION:	loadFile
++    PURPOSE:	load our config template file
++  ******************************************************/  
++  protected function loadFile()
++  {
++    if($this->filename) {
++      $localConf = "config/local/tmp/" . $this->filename;
++  
++
++      if ((file_exists($localConf) && !is_writable($localConf)) ||
++	      (!file_exists($localConf) && !is_writable(dirname($localConf))))
++      {
++	$this->throwError("Local configuration output file '$localConf' isn't writable");
++      }
++    }
++  }
++
++  protected function storeConfigValues()
++  {
++    require_once("config/" . $this->filename);
++    global $errors;
++
++
++    foreach ($this->entries AS $entry)
++    {
++
++      //if we aren't submitted an entry, bail here
++      if (!in_array($entry, $this->emptyEntriesAllow) && !$_POST[$entry])
++      {
++	$errors[$entry] = "Missing value";
++	#$this->throwError("You did not fill out the \"".$entry."\" field");
++	//break;
++      }
++
++      $name = strtoupper($entry);
++      if (array_key_exists($entry, $_POST)) {
++	if (!defined($name) || constant(strtoupper($entry)) != $_POST[$entry]) {
++	  $this->file .= "define('$name', '$_POST[$entry]');\n";
++	}
++      }
++    }
++
++  }
++
++  protected function testConfig()
++  {
++  }
++
++  /******************************************************
++    FUNCTION:	writeFile
++    PURPOSE:	write our config template file
++  ******************************************************/  
++  protected function writeFile()
++  {
++    global $errors;
++
++    if ($this->getError() && count($errors) == 0) return false;
++
++    if($this->filename) {
++      $localConf = "config/local/tmp/" . $this->filename;
++
++      if (!file_put_contents($localConf,$this->file))
++      {
++	$this->throwError("Unable to write config file '$localConf'");
++      }
++
++    }
++  }
++
++}
+diff --git a/install/classes/verify.php b/install/classes/verify.php
+index 1dee7e9..5604322 100644
+--- a/install/classes/verify.php
++++ b/install/classes/verify.php
+@@ -63,44 +63,27 @@ class VERIFY
+   {
+ 
+     //is there a config template
+-    if (!file_exists("config/config.default.php"))
++    if (!file_exists("config/config.php"))
+     {
+-      $this->throwError("Default template config/config.default.php file does not exist");
+-      return false;
+-    }  
+-
+-    //can we write to this file to disable when done template
+-    if (!is_writeable("install/install.php"))
+-    {
+-      $this->throwError("install/ directory is not writeable");
++      $this->throwError("Default template config/config.php file does not exist");
+       return false;
+     }  
+ 
+     //is there a config template
+-    if (!file_exists("config/app-config.default.php"))
++    if (!file_exists("config/app-config.php"))
+     {
+-      $this->throwError("Default template config/app-config.default.php file does not exist");
++      $this->throwError("Default template config/app-config.php file does not exist");
+       return false;
+     }  
+ 
+     //can we write to the config directory
+-    if (!file_put_contents("config/test.php","TEST"))
++    if (!is_writable("config/local/tmp"))
+     {
+-      $this->throwError("Unable to write to config/ directory.  Please make sure
++      $this->throwError("Unable to write to config/local/tmp directory.  Please make sure
+                         the user apache runs as has write access to this directory");
+       return false;
+     }
+-    else unlink("config/test.php");
+ 
+-    //can we write to the files directory
+-    if (!file_put_contents("files/test.php","TEST"))
+-    {
+-      $this->throwError("Unable to write to files/ directory.  Please make sure
+-                        the user apache runs as has write access to this directory");
+-      return false;
+-    }
+-    else unlink("files/test.php");
+-  
+   }
+ 
+   protected function checkPHP()
+diff --git a/install/docmgr.pgsql b/install/docmgr.pgsql
+index 9d180c1..50d19db 100755
+--- a/install/docmgr.pgsql
++++ b/install/docmgr.pgsql
+@@ -3,169 +3,120 @@
+ --
+ 
+ SET statement_timeout = 0;
+-SET client_encoding = 'LATIN1';
+ SET standard_conforming_strings = off;
+ SET check_function_bodies = false;
+ SET client_min_messages = warning;
+ SET escape_string_warning = off;
+ 
+---
+--- Name: addressbook; Type: SCHEMA; Schema: -; Owner: postgres
+---
+ 
+-CREATE SCHEMA addressbook;
+ 
+ 
+-ALTER SCHEMA addressbook OWNER TO postgres;
++SET search_path = docmgr, pg_catalog;
+ 
+ --
+--- Name: docmgr; Type: SCHEMA; Schema: -; Owner: postgres
++-- Name: getobjfrompath(text); Type: FUNCTION; Schema: docmgr; Owner: docmgr
+ --
+ 
+-CREATE SCHEMA docmgr;
++CREATE FUNCTION getobjfrompath(path text) RETURNS integer
++    LANGUAGE plpgsql IMMUTABLE
++    AS
++$dm$
++DECLARE arr text[];
++DECLARE parent integer;
++DECLARE i integer;
+ 
++BEGIN
+ 
+-ALTER SCHEMA docmgr OWNER TO postgres;
++     arr := string_to_array(path,'/');
++     parent := 0;
+ 
+---
+--- Name: logger; Type: SCHEMA; Schema: -; Owner: postgres
+---
++     FOR i IN array_lower(arr,1)+1 .. array_upper(arr,1) LOOP
+ 
+-CREATE SCHEMA logger;
++		SELECT INTO parent object_id FROM docmgr.dm_view_objects WHERE parent_id=parent AND name=arr[i];
+ 
++     END LOOP;
+ 
+-ALTER SCHEMA logger OWNER TO postgres;
++     RETURN parent;
+ 
+---
+--- Name: modlet; Type: SCHEMA; Schema: -; Owner: postgres
+---
++END;
++$dm$;
+ 
+-CREATE SCHEMA modlet;
+ 
+ 
+-ALTER SCHEMA modlet OWNER TO postgres;
+ 
+ --
+--- Name: task; Type: SCHEMA; Schema: -; Owner: postgres
++-- Name: getobjpath(integer, text); Type: FUNCTION; Schema: docmgr; Owner: docmgr
+ --
+ 
+-CREATE SCHEMA task;
++CREATE FUNCTION getobjpath(objid integer, path text) RETURNS text
++    LANGUAGE plpgsql IMMUTABLE
++    AS
++$dm$
++DECLARE result text;
++DECLARE tempresult text;
++BEGIN
++     IF path = '' THEN
++         result := objid::text;
++     ELSE
++         result := path;
++     END IF;
+ 
++     IF objid <> '0' THEN
++		SELECT parent_id INTO tempresult FROM docmgr.dm_object_parent WHERE object_id=objid LIMIT 1;
++	     result := result || ',' || tempresult::text;
++		result := docmgr.getobjpath(tempresult::integer,result);
+ 
+-ALTER SCHEMA task OWNER TO postgres;
++	END IF;
+ 
+---
+--- Name: plpgsql; Type: PROCEDURAL LANGUAGE; Schema: -; Owner: postgres
+---
++	RETURN result;
+ 
+-CREATE PROCEDURAL LANGUAGE plpgsql;
++END;
++$dm$;
+ 
+ 
+-ALTER PROCEDURAL LANGUAGE plpgsql OWNER TO postgres;
+ 
+-SET search_path = docmgr, pg_catalog;
+ 
+ --
+--- Name: getobjfrompath(text); Type: FUNCTION; Schema: docmgr; Owner: postgres
++-- Name: getobjpathname(integer, text); Type: FUNCTION; Schema: docmgr; Owner: docmgr
+ --
+ 
+-CREATE FUNCTION getobjfrompath(path text) RETURNS integer
++CREATE FUNCTION getobjpathname(objid integer, path text) RETURNS text
+     LANGUAGE plpgsql IMMUTABLE
+-    AS $$
+-DECLARE arr text[];
+-DECLARE parent integer;
+-DECLARE i integer;
+-
+-BEGIN
+-
+-     arr := string_to_array(path,'/');
+-     parent := 0;
+-
+-     FOR i IN array_lower(arr,1)+1 .. array_upper(arr,1) LOOP
+-
+-		SELECT INTO parent object_id FROM docmgr.dm_view_objects WHERE parent_id=parent AND name=arr[i];
+-
+-     END LOOP;
+-
+-     RETURN parent;
+-
+-END;
+-$$;
+-
+-
+-ALTER FUNCTION docmgr.getobjfrompath(path text) OWNER TO postgres;
+-
+---
+--- Name: getobjpath(integer, text); Type: FUNCTION; Schema: docmgr; Owner: postgres
+---
++    AS
++$dm$
++DECLARE result text;
++DECLARE rec record;
++
++BEGIN
++     IF path = '' THEN
++         result := '';
++     ELSE
++         result := path;
++     END IF;
++
++     IF objid <> '0' THEN
++		SELECT name,parent_id INTO rec FROM docmgr.dm_view_objects WHERE id=objid LIMIT 1;
++
++	        IF result = '' THEN
++                   result := rec.name;
++                ELSE 
++                   result := rec.name || '/' || result;
++                END IF;
++
++		result := docmgr.getobjpathname(rec.parent_id,result);
++
++     ELSE 
++         result := '/' || result;
++
++	END IF;
++
++	RETURN result;
++
++END;
++$dm$;
++
+ 
+-CREATE FUNCTION getobjpath(objid integer, path text) RETURNS text
+-    LANGUAGE plpgsql IMMUTABLE
+-    AS $$
+-DECLARE result text;
+-DECLARE tempresult text;
+-BEGIN
+-     IF path = '' THEN
+-         result := objid::text;
+-     ELSE
+-         result := path;
+-     END IF;
+-
+-     IF objid <> '0' THEN
+-		SELECT parent_id INTO tempresult FROM docmgr.dm_object_parent WHERE object_id=objid LIMIT 1;
+-	     result := result || ',' || tempresult::text;
+-		result := docmgr.getobjpath(tempresult::integer,result);
+-
+-	END IF;
+-
+-	RETURN result;
+-
+-END;
+-$$;
+-
+-
+-ALTER FUNCTION docmgr.getobjpath(objid integer, path text) OWNER TO postgres;
+-
+---
+--- Name: getobjpathname(integer, text); Type: FUNCTION; Schema: docmgr; Owner: postgres
+---
+ 
+-CREATE FUNCTION getobjpathname(objid integer, path text) RETURNS text
+-    LANGUAGE plpgsql IMMUTABLE
+-    AS $$
+-DECLARE result text;
+-DECLARE rec record;
+-
+-BEGIN
+-     IF path = '' THEN
+-         result := '';
+-     ELSE
+-         result := path;
+-     END IF;
+-
+-     IF objid <> '0' THEN
+-		SELECT name,parent_id INTO rec FROM docmgr.dm_view_objects WHERE id=objid LIMIT 1;
+-
+-	        IF result = '' THEN
+-                   result := rec.name;
+-                ELSE 
+-                   result := rec.name || '/' || result;
+-                END IF;
+-
+-		result := docmgr.getobjpathname(rec.parent_id,result);
+-
+-     ELSE 
+-         result := '/' || result;
+-
+-	END IF;
+-
+-	RETURN result;
+-
+-END;
+-$$;
+-
+-
+-ALTER FUNCTION docmgr.getobjpathname(objid integer, path text) OWNER TO postgres;
+ 
+ SET search_path = addressbook, pg_catalog;
+ 
+@@ -174,7 +125,7 @@ SET default_tablespace = '';
+ SET default_with_oids = false;
+ 
+ --
+--- Name: contact; Type: TABLE; Schema: addressbook; Owner: postgres; Tablespace: 
++-- Name: contact; Type: TABLE; Schema: addressbook; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE contact (
+@@ -206,10 +157,10 @@ CREATE TABLE contact (
+ );
+ 
+ 
+-ALTER TABLE addressbook.contact OWNER TO postgres;
++
+ 
+ --
+--- Name: contact_account; Type: TABLE; Schema: addressbook; Owner: postgres; Tablespace: 
++-- Name: contact_account; Type: TABLE; Schema: addressbook; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE contact_account (
+@@ -219,10 +170,10 @@ CREATE TABLE contact_account (
+ );
+ 
+ 
+-ALTER TABLE addressbook.contact_account OWNER TO postgres;
++
+ 
+ --
+--- Name: contact_id_seq; Type: SEQUENCE; Schema: addressbook; Owner: postgres
++-- Name: contact_id_seq; Type: SEQUENCE; Schema: addressbook; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE contact_id_seq
+@@ -233,36 +184,36 @@ CREATE SEQUENCE contact_id_seq
+     CACHE 1;
+ 
+ 
+-ALTER TABLE addressbook.contact_id_seq OWNER TO postgres;
++
+ 
+ --
+--- Name: contact_id_seq; Type: SEQUENCE OWNED BY; Schema: addressbook; Owner: postgres
++-- Name: contact_id_seq; Type: SEQUENCE OWNED BY; Schema: addressbook; Owner: docmgr
+ --
+ 
+ ALTER SEQUENCE contact_id_seq OWNED BY contact.id;
+ 
+ 
+ --
+--- Name: contact_id_seq; Type: SEQUENCE SET; Schema: addressbook; Owner: postgres
++-- Name: contact_id_seq; Type: SEQUENCE SET; Schema: addressbook; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('contact_id_seq', 1, true);
+ 
+ 
+ --
+--- Name: view_contact; Type: VIEW; Schema: addressbook; Owner: postgres
++-- Name: view_contact; Type: VIEW; Schema: addressbook; Owner: docmgr
+ --
+ 
+ CREATE VIEW view_contact AS
+     SELECT contact.id, contact.first_name, contact.middle_name, contact.last_name, contact.address, contact.address2, contact.city, contact.state, contact.zip, contact.country, contact.home_phone, contact.home_fax, contact.work_phone, contact.work_fax, contact.mobile, contact.pager, contact.email, contact.prefix, contact.suffix, contact.letter_salutation, contact.envelope_salutation, contact.website, contact.company_name, contact.last_modified, contact.work_ext, contact_account.account_id, contact_account.account_name FROM (contact LEFT JOIN contact_account ON ((contact.id = contact_account.contact_id)));
+ 
+ 
+-ALTER TABLE addressbook.view_contact OWNER TO postgres;
++
+ 
+ SET search_path = docmgr, pg_catalog;
+ 
+ --
+--- Name: dm_alert; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_alert; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_alert (
+@@ -273,10 +224,10 @@ CREATE TABLE dm_alert (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_alert OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_alert_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: postgres
++-- Name: dm_alert_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE dm_alert_id_seq
+@@ -287,24 +238,24 @@ CREATE SEQUENCE dm_alert_id_seq
+     CACHE 1;
+ 
+ 
+-ALTER TABLE docmgr.dm_alert_id_seq OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_alert_id_seq; Type: SEQUENCE OWNED BY; Schema: docmgr; Owner: postgres
++-- Name: dm_alert_id_seq; Type: SEQUENCE OWNED BY; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER SEQUENCE dm_alert_id_seq OWNED BY dm_alert.id;
+ 
+ 
+ --
+--- Name: dm_alert_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: postgres
++-- Name: dm_alert_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('dm_alert_id_seq', 1, false);
+ 
+ 
+ --
+--- Name: dm_bookmark; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_bookmark; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_bookmark (
+@@ -318,10 +269,10 @@ CREATE TABLE dm_bookmark (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_bookmark OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_bookmark_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: postgres
++-- Name: dm_bookmark_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE dm_bookmark_id_seq
+@@ -332,24 +283,24 @@ CREATE SEQUENCE dm_bookmark_id_seq
+     CACHE 1;
+ 
+ 
+-ALTER TABLE docmgr.dm_bookmark_id_seq OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_bookmark_id_seq; Type: SEQUENCE OWNED BY; Schema: docmgr; Owner: postgres
++-- Name: dm_bookmark_id_seq; Type: SEQUENCE OWNED BY; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER SEQUENCE dm_bookmark_id_seq OWNED BY dm_bookmark.id;
+ 
+ 
+ --
+--- Name: dm_bookmark_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: postgres
++-- Name: dm_bookmark_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('dm_bookmark_id_seq', 1, false);
+ 
+ 
+ --
+--- Name: dm_dirlevel; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_dirlevel; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_dirlevel (
+@@ -359,10 +310,10 @@ CREATE TABLE dm_dirlevel (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_dirlevel OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_discussion; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_discussion; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_discussion (
+@@ -376,10 +327,10 @@ CREATE TABLE dm_discussion (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_discussion OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_discussion_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: postgres
++-- Name: dm_discussion_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE dm_discussion_id_seq
+@@ -390,17 +341,17 @@ CREATE SEQUENCE dm_discussion_id_seq
+     CACHE 1;
+ 
+ 
+-ALTER TABLE docmgr.dm_discussion_id_seq OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_discussion_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: postgres
++-- Name: dm_discussion_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('dm_discussion_id_seq', 1, false);
+ 
+ 
+ --
+--- Name: dm_document; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_document; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_document (
+@@ -413,10 +364,10 @@ CREATE TABLE dm_document (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_document OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_document_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: postgres
++-- Name: dm_document_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE dm_document_id_seq
+@@ -427,24 +378,24 @@ CREATE SEQUENCE dm_document_id_seq
+     CACHE 1;
+ 
+ 
+-ALTER TABLE docmgr.dm_document_id_seq OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_document_id_seq; Type: SEQUENCE OWNED BY; Schema: docmgr; Owner: postgres
++-- Name: dm_document_id_seq; Type: SEQUENCE OWNED BY; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER SEQUENCE dm_document_id_seq OWNED BY dm_document.id;
+ 
+ 
+ --
+--- Name: dm_document_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: postgres
++-- Name: dm_document_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('dm_document_id_seq', 1, false);
+ 
+ 
+ --
+--- Name: dm_email_anon; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_email_anon; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_email_anon (
+@@ -458,10 +409,10 @@ CREATE TABLE dm_email_anon (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_email_anon OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_file_history; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_file_history; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_file_history (
+@@ -478,10 +429,10 @@ CREATE TABLE dm_file_history (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_file_history OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_file_history_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: postgres
++-- Name: dm_file_history_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE dm_file_history_id_seq
+@@ -492,17 +443,17 @@ CREATE SEQUENCE dm_file_history_id_seq
+     CACHE 1;
+ 
+ 
+-ALTER TABLE docmgr.dm_file_history_id_seq OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_file_history_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: postgres
++-- Name: dm_file_history_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('dm_file_history_id_seq', 1, false);
+ 
+ 
+ --
+--- Name: dm_index; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_index; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_index (
+@@ -512,10 +463,10 @@ CREATE TABLE dm_index (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_index OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_index_queue; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_index_queue; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_index_queue (
+@@ -527,10 +478,10 @@ CREATE TABLE dm_index_queue (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_index_queue OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_index_queue_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: postgres
++-- Name: dm_index_queue_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE dm_index_queue_id_seq
+@@ -541,24 +492,24 @@ CREATE SEQUENCE dm_index_queue_id_seq
+     CACHE 1;
+ 
+ 
+-ALTER TABLE docmgr.dm_index_queue_id_seq OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_index_queue_id_seq; Type: SEQUENCE OWNED BY; Schema: docmgr; Owner: postgres
++-- Name: dm_index_queue_id_seq; Type: SEQUENCE OWNED BY; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER SEQUENCE dm_index_queue_id_seq OWNED BY dm_index_queue.id;
+ 
+ 
+ --
+--- Name: dm_index_queue_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: postgres
++-- Name: dm_index_queue_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('dm_index_queue_id_seq', 1, false);
+ 
+ 
+ --
+--- Name: dm_keyword; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_keyword; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_keyword (
+@@ -586,10 +537,10 @@ CREATE TABLE dm_locks (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_locks OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_locks_object_id_idx; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_locks_object_id_idx; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_locks_object_id_idx ON dm_locks USING btree (object_id);
+@@ -601,17 +552,17 @@ CREATE TABLE dm_locktoken (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_locktoken OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_locktoken_account_id_idx; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_locktoken_account_id_idx; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_locktoken_account_id_idx ON dm_locktoken USING btree (account_id);
+ 
+ 
+ --
+--- Name: dm_locktoken_object_id_idx; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_locktoken_object_id_idx; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_locktoken_object_id_idx ON dm_locktoken USING btree (object_id);
+@@ -621,10 +572,10 @@ CREATE INDEX dm_locktoken_object_id_idx ON dm_locktoken USING btree (object_id);
+ 
+ 
+ 
+-ALTER TABLE docmgr.dm_keyword OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_object; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_object; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_object (
+@@ -648,10 +599,10 @@ CREATE TABLE dm_object (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_object OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_object_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: postgres
++-- Name: dm_object_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE dm_object_id_seq
+@@ -662,17 +613,17 @@ CREATE SEQUENCE dm_object_id_seq
+     CACHE 1;
+ 
+ 
+-ALTER TABLE docmgr.dm_object_id_seq OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_object_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: postgres
++-- Name: dm_object_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('dm_object_id_seq', 1, false);
+ 
+ 
+ --
+--- Name: dm_object_log; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_object_log; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_object_log (
+@@ -684,10 +635,10 @@ CREATE TABLE dm_object_log (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_object_log OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_object_parent; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_object_parent; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_object_parent (
+@@ -696,10 +647,10 @@ CREATE TABLE dm_object_parent (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_object_parent OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_object_perm; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_object_perm; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_object_perm (
+@@ -711,10 +662,10 @@ CREATE TABLE dm_object_perm (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_object_perm OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_object_related; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_object_related; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_object_related (
+@@ -723,10 +674,10 @@ CREATE TABLE dm_object_related (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_object_related OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_object_type_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: postgres
++-- Name: dm_object_type_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE dm_object_type_id_seq
+@@ -737,16 +688,16 @@ CREATE SEQUENCE dm_object_type_id_seq
+     CACHE 1;
+ 
+ 
+-ALTER TABLE docmgr.dm_object_type_id_seq OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_object_type_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: postgres
++-- Name: dm_object_type_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('dm_object_type_id_seq', 1, false);
+ 
+ --
+--- Name: dm_properties; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_properties; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_properties (
+@@ -755,10 +706,10 @@ CREATE TABLE dm_properties (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_properties OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_saveroute; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_saveroute; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_saveroute (
+@@ -768,10 +719,10 @@ CREATE TABLE dm_saveroute (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_saveroute OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_saveroute_data; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_saveroute_data; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_saveroute_data (
+@@ -784,10 +735,10 @@ CREATE TABLE dm_saveroute_data (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_saveroute_data OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_saveroute_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: postgres
++-- Name: dm_saveroute_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE dm_saveroute_id_seq
+@@ -798,24 +749,24 @@ CREATE SEQUENCE dm_saveroute_id_seq
+     CACHE 1;
+ 
+ 
+-ALTER TABLE docmgr.dm_saveroute_id_seq OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_saveroute_id_seq; Type: SEQUENCE OWNED BY; Schema: docmgr; Owner: postgres
++-- Name: dm_saveroute_id_seq; Type: SEQUENCE OWNED BY; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER SEQUENCE dm_saveroute_id_seq OWNED BY dm_saveroute.id;
+ 
+ 
+ --
+--- Name: dm_saveroute_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: postgres
++-- Name: dm_saveroute_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('dm_saveroute_id_seq', 1, false);
+ 
+ 
+ --
+--- Name: dm_search; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_search; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_search (
+@@ -823,10 +774,10 @@ CREATE TABLE dm_search (
+ 		params text
+ );
+ 
+-ALTER TABLE docmgr.dm_search OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_subscribe; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_subscribe; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_subscribe (
+@@ -838,10 +789,10 @@ CREATE TABLE dm_subscribe (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_subscribe OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_tag; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_tag; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_tag (
+@@ -851,10 +802,10 @@ CREATE TABLE dm_tag (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_tag OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_tag_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: postgres
++-- Name: dm_tag_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE dm_tag_id_seq
+@@ -865,24 +816,24 @@ CREATE SEQUENCE dm_tag_id_seq
+     CACHE 1;
+ 
+ 
+-ALTER TABLE docmgr.dm_tag_id_seq OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_tag_id_seq; Type: SEQUENCE OWNED BY; Schema: docmgr; Owner: postgres
++-- Name: dm_tag_id_seq; Type: SEQUENCE OWNED BY; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER SEQUENCE dm_tag_id_seq OWNED BY dm_tag.id;
+ 
+ 
+ --
+--- Name: dm_tag_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: postgres
++-- Name: dm_tag_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('dm_tag_id_seq', 1, false);
+ 
+ 
+ --
+--- Name: dm_tag_link; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_tag_link; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_tag_link (
+@@ -891,10 +842,10 @@ CREATE TABLE dm_tag_link (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_tag_link OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_task; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_task; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_task (
+@@ -905,10 +856,10 @@ CREATE TABLE dm_task (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_task OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_workflow; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_workflow; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_workflow (
+@@ -924,10 +875,10 @@ CREATE TABLE dm_workflow (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_workflow OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_workflow_route; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_workflow_route; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_workflow_route (
+@@ -944,20 +895,20 @@ CREATE TABLE dm_workflow_route (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_workflow_route OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_task_view; Type: VIEW; Schema: docmgr; Owner: postgres
++-- Name: dm_task_view; Type: VIEW; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE VIEW dm_task_view AS
+     SELECT dm_task.account_id, dm_task.task_id, dm_task.alert_type, dm_workflow.object_id, dm_workflow_route.id AS route_id, dm_workflow_route.date_due, dm_workflow_route.task_notes, dm_object.name FROM (((dm_task LEFT JOIN dm_workflow_route ON ((dm_task.task_id = dm_workflow_route.id))) LEFT JOIN dm_workflow ON ((dm_workflow_route.workflow_id = dm_workflow.id))) LEFT JOIN dm_object ON ((dm_workflow.object_id = dm_object.id)));
+ 
+ 
+-ALTER TABLE docmgr.dm_task_view OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_thumb_queue; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_thumb_queue; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_thumb_queue (
+@@ -969,10 +920,10 @@ CREATE TABLE dm_thumb_queue (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_thumb_queue OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_thumb_queue_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: postgres
++-- Name: dm_thumb_queue_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE dm_thumb_queue_id_seq
+@@ -983,24 +934,24 @@ CREATE SEQUENCE dm_thumb_queue_id_seq
+     CACHE 1;
+ 
+ 
+-ALTER TABLE docmgr.dm_thumb_queue_id_seq OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_thumb_queue_id_seq; Type: SEQUENCE OWNED BY; Schema: docmgr; Owner: postgres
++-- Name: dm_thumb_queue_id_seq; Type: SEQUENCE OWNED BY; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER SEQUENCE dm_thumb_queue_id_seq OWNED BY dm_thumb_queue.id;
+ 
+ 
+ --
+--- Name: dm_thumb_queue_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: postgres
++-- Name: dm_thumb_queue_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('dm_thumb_queue_id_seq', 1, false);
+ 
+ 
+ --
+--- Name: dm_url; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_url; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_url (
+@@ -1009,60 +960,60 @@ CREATE TABLE dm_url (
+ );
+ 
+ 
+-ALTER TABLE docmgr.dm_url OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_view_alert; Type: VIEW; Schema: docmgr; Owner: postgres
++-- Name: dm_view_alert; Type: VIEW; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE VIEW dm_view_alert AS
+     SELECT dm_object.id, dm_object.name, dm_object.summary, dm_object.object_type, dm_object.create_date, dm_object.object_owner, dm_object.status, dm_object.status_date, dm_object.status_owner, dm_object.version, dm_object.reindex, dm_alert.id AS alert_id, dm_alert.object_id, dm_alert.account_id, dm_alert.alert_type FROM dm_object, dm_alert WHERE (dm_object.id = dm_alert.object_id);
+ 
+ 
+-ALTER TABLE docmgr.dm_view_alert OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_view_collections; Type: VIEW; Schema: docmgr; Owner: postgres
++-- Name: dm_view_collections; Type: VIEW; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE VIEW dm_view_collections AS
+     SELECT dm_object.id, dm_object.name, dm_object.summary, dm_object.object_type, dm_object.create_date, dm_object.object_owner, dm_object.status, dm_object.status_date, dm_object.status_owner, dm_object.version, dm_object.reindex, dm_object.hidden, dm_object_parent.object_id, dm_object_parent.parent_id, dm_object_perm.account_id, dm_object_perm.group_id, dm_object_perm.bitset FROM ((dm_object LEFT JOIN dm_object_parent ON ((dm_object.id = dm_object_parent.object_id))) LEFT JOIN dm_object_perm ON ((dm_object.id = dm_object_perm.object_id))) WHERE (dm_object.object_type = 'collection'::text);
+ 
+ 
+-ALTER TABLE docmgr.dm_view_collections OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_view_full_search; Type: VIEW; Schema: docmgr; Owner: postgres
++-- Name: dm_view_full_search; Type: VIEW; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE VIEW dm_view_full_search AS
+     SELECT dm_object.id, dm_object.name, dm_object.summary, dm_object.create_date, dm_object.object_owner, dm_object.status, dm_object.status_date, dm_object.status_owner, dm_object.version, dm_object.reindex, dm_object.filesize, dm_object.object_type, dm_object.token, dm_object.last_modified, dm_object.modified_by, dm_index.idxfti, dm_dirlevel.level1, dm_dirlevel.level2 FROM ((dm_object LEFT JOIN dm_index ON ((dm_object.id = dm_index.object_id))) LEFT JOIN dm_dirlevel ON ((dm_object.id = dm_dirlevel.object_id)));
+ 
+ 
+-ALTER TABLE docmgr.dm_view_full_search OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_view_keyword; Type: VIEW; Schema: docmgr; Owner: postgres
++-- Name: dm_view_keyword; Type: VIEW; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE VIEW dm_view_keyword AS
+     SELECT dm_object.id, dm_object.name, dm_object.summary, dm_object.object_type, dm_object.create_date, dm_object.object_owner, dm_object.status, dm_object.status_date, dm_object.status_owner, dm_object.filesize, dm_keyword.object_id, dm_keyword.field1, dm_keyword.field2, dm_keyword.field3, dm_keyword.field4, dm_keyword.field5, dm_keyword.field6, dm_object_parent.parent_id, dm_object_perm.account_id, dm_object_perm.group_id, dm_object_perm.bitset FROM (((dm_object LEFT JOIN dm_keyword ON ((dm_object.id = dm_keyword.object_id))) LEFT JOIN dm_object_parent ON ((dm_object.id = dm_object_parent.object_id))) LEFT JOIN dm_object_perm ON ((dm_object.id = dm_object_perm.object_id)));
+ 
+ 
+-ALTER TABLE docmgr.dm_view_keyword OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_view_objects; Type: VIEW; Schema: docmgr; Owner: postgres
++-- Name: dm_view_objects; Type: VIEW; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE VIEW dm_view_objects AS
+     SELECT dm_object.id, dm_object.name, dm_object.summary, dm_object.create_date, dm_object.object_owner, dm_object.status, dm_object.status_date, dm_object.status_owner, dm_object.version, dm_object.reindex, dm_object.filesize, dm_object.object_type, dm_object.token, dm_object.last_modified, dm_object.modified_by, dm_object.hidden, dm_object_parent.object_id, dm_object_parent.parent_id, dm_object_perm.account_id, dm_object_perm.group_id, dm_object_perm.bitset,bitmask, dm_dirlevel.level1, dm_dirlevel.level2 FROM (((dm_object LEFT JOIN dm_object_parent ON ((dm_object.id = dm_object_parent.object_id))) LEFT JOIN dm_object_perm ON ((dm_object.id = dm_object_perm.object_id))) LEFT JOIN dm_dirlevel ON ((dm_object.id = dm_dirlevel.object_id)));
+ 
+ 
+-ALTER TABLE docmgr.dm_view_objects OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_view_perm; Type: VIEW; Schema: docmgr; Owner: postgres
++-- Name: dm_view_perm; Type: VIEW; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE VIEW dm_view_perm AS
+@@ -1071,50 +1022,50 @@ CREATE VIEW dm_view_perm AS
+    LEFT JOIN dm_object_perm ON dm_object.id = dm_object_perm.object_id;
+ 
+ 
+-ALTER TABLE docmgr.dm_view_perm OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_view_related; Type: VIEW; Schema: docmgr; Owner: postgres
++-- Name: dm_view_related; Type: VIEW; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE VIEW dm_view_related AS
+     SELECT dm_object_related.object_id, dm_object_related.related_id, dm_object.name, dm_object.object_type FROM (dm_object_related LEFT JOIN dm_object ON ((dm_object_related.related_id = dm_object.id)));
+ 
+ 
+-ALTER TABLE docmgr.dm_view_related OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_view_search; Type: VIEW; Schema: docmgr; Owner: postgres
++-- Name: dm_view_search; Type: VIEW; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE VIEW dm_view_search AS
+     SELECT dm_object.id, dm_object.name, dm_object.summary, dm_object.filesize, dm_object.last_modified, dm_index.idxfti FROM (dm_index LEFT JOIN dm_object ON ((dm_index.object_id = dm_object.id)));
+ 
+ 
+-ALTER TABLE docmgr.dm_view_search OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_view_webdav; Type: VIEW; Schema: docmgr; Owner: postgres
++-- Name: dm_view_webdav; Type: VIEW; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE VIEW dm_view_webdav AS
+     SELECT dm_object.id, dm_object.name, dm_object.summary, dm_object.object_type, dm_object.create_date, dm_object.object_owner, dm_object.status, dm_object.status_date, dm_object.status_owner, dm_object.version, dm_object_parent.object_id, dm_object_parent.parent_id, (SELECT dm_file_history.id FROM dm_file_history WHERE (dm_file_history.object_id = dm_object.id) ORDER BY dm_file_history.version DESC LIMIT 1) AS file_id FROM dm_object, dm_object_parent WHERE ((dm_object.id = dm_object_parent.object_id) AND ((dm_object.object_type = 'collection'::text) OR (dm_object.object_type = 'file'::text)));
+ 
+ 
+-ALTER TABLE docmgr.dm_view_webdav OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_view_workflow; Type: VIEW; Schema: docmgr; Owner: postgres
++-- Name: dm_view_workflow; Type: VIEW; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE VIEW dm_view_workflow AS
+     SELECT dm_workflow_route.id, dm_workflow_route.workflow_id, dm_workflow_route.account_id, dm_workflow_route.task_type, dm_workflow_route.date_due AS relative_due, dm_workflow_route.date_complete, dm_workflow_route.status, dm_workflow_route.sort_order, dm_workflow_route.comment, dm_workflow.object_id FROM (dm_workflow_route LEFT JOIN dm_workflow ON ((dm_workflow_route.workflow_id = dm_workflow.id)));
+ 
+ 
+-ALTER TABLE docmgr.dm_view_workflow OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_workflow_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: postgres
++-- Name: dm_workflow_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE dm_workflow_id_seq
+@@ -1125,24 +1076,24 @@ CREATE SEQUENCE dm_workflow_id_seq
+     CACHE 1;
+ 
+ 
+-ALTER TABLE docmgr.dm_workflow_id_seq OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_workflow_id_seq; Type: SEQUENCE OWNED BY; Schema: docmgr; Owner: postgres
++-- Name: dm_workflow_id_seq; Type: SEQUENCE OWNED BY; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER SEQUENCE dm_workflow_id_seq OWNED BY dm_workflow.id;
+ 
+ 
+ --
+--- Name: dm_workflow_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: postgres
++-- Name: dm_workflow_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('dm_workflow_id_seq', 1, false);
+ 
+ 
+ --
+--- Name: dm_workflow_route_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: postgres
++-- Name: dm_workflow_route_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE dm_workflow_route_id_seq
+@@ -1153,24 +1104,24 @@ CREATE SEQUENCE dm_workflow_route_id_seq
+     CACHE 1;
+ 
+ 
+-ALTER TABLE docmgr.dm_workflow_route_id_seq OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_workflow_route_id_seq; Type: SEQUENCE OWNED BY; Schema: docmgr; Owner: postgres
++-- Name: dm_workflow_route_id_seq; Type: SEQUENCE OWNED BY; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER SEQUENCE dm_workflow_route_id_seq OWNED BY dm_workflow_route.id;
+ 
+ 
+ --
+--- Name: dm_workflow_route_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: postgres
++-- Name: dm_workflow_route_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('dm_workflow_route_id_seq', 1, false);
+ 
+ 
+ --
+--- Name: keyword; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: keyword; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE keyword (
+@@ -1181,10 +1132,10 @@ CREATE TABLE keyword (
+ );
+ 
+ 
+-ALTER TABLE docmgr.keyword OWNER TO postgres;
++
+ 
+ --
+--- Name: keyword_collection; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: keyword_collection; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE keyword_collection (
+@@ -1193,10 +1144,10 @@ CREATE TABLE keyword_collection (
+ );
+ 
+ 
+-ALTER TABLE docmgr.keyword_collection OWNER TO postgres;
++
+ 
+ --
+--- Name: keyword_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: postgres
++-- Name: keyword_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE keyword_id_seq
+@@ -1207,24 +1158,24 @@ CREATE SEQUENCE keyword_id_seq
+     CACHE 1;
+ 
+ 
+-ALTER TABLE docmgr.keyword_id_seq OWNER TO postgres;
++
+ 
+ --
+--- Name: keyword_id_seq; Type: SEQUENCE OWNED BY; Schema: docmgr; Owner: postgres
++-- Name: keyword_id_seq; Type: SEQUENCE OWNED BY; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER SEQUENCE keyword_id_seq OWNED BY keyword.id;
+ 
+ 
+ --
+--- Name: keyword_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: postgres
++-- Name: keyword_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('keyword_id_seq', 1, false);
+ 
+ 
+ --
+--- Name: keyword_option; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: keyword_option; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE keyword_option (
+@@ -1234,10 +1185,10 @@ CREATE TABLE keyword_option (
+ );
+ 
+ 
+-ALTER TABLE docmgr.keyword_option OWNER TO postgres;
++
+ 
+ --
+--- Name: keyword_option_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: postgres
++-- Name: keyword_option_id_seq; Type: SEQUENCE; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE keyword_option_id_seq
+@@ -1248,24 +1199,24 @@ CREATE SEQUENCE keyword_option_id_seq
+     CACHE 1;
+ 
+ 
+-ALTER TABLE docmgr.keyword_option_id_seq OWNER TO postgres;
++
+ 
+ --
+--- Name: keyword_option_id_seq; Type: SEQUENCE OWNED BY; Schema: docmgr; Owner: postgres
++-- Name: keyword_option_id_seq; Type: SEQUENCE OWNED BY; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER SEQUENCE keyword_option_id_seq OWNED BY keyword_option.id;
+ 
+ 
+ --
+--- Name: keyword_option_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: postgres
++-- Name: keyword_option_id_seq; Type: SEQUENCE SET; Schema: docmgr; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('keyword_option_id_seq', 1, false);
+ 
+ 
+ --
+--- Name: keyword_value; Type: TABLE; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: keyword_value; Type: TABLE; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE keyword_value (
+@@ -1276,11 +1227,11 @@ CREATE TABLE keyword_value (
+ );
+ 
+ 
+-ALTER TABLE docmgr.keyword_value OWNER TO postgres;
++
+ 
+ 
+ --
+--- Name: level1; Type: SEQUENCE; Schema: docmgr; Owner: postgres
++-- Name: level1; Type: SEQUENCE; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE level1
+@@ -1292,17 +1243,17 @@ CREATE SEQUENCE level1
+     CYCLE;
+ 
+ 
+-ALTER TABLE docmgr.level1 OWNER TO postgres;
++
+ 
+ --
+--- Name: level1; Type: SEQUENCE SET; Schema: docmgr; Owner: postgres
++-- Name: level1; Type: SEQUENCE SET; Schema: docmgr; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('level1', 1, false);
+ 
+ 
+ --
+--- Name: level2; Type: SEQUENCE; Schema: docmgr; Owner: postgres
++-- Name: level2; Type: SEQUENCE; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE level2
+@@ -1314,29 +1265,29 @@ CREATE SEQUENCE level2
+     CYCLE;
+ 
+ 
+-ALTER TABLE docmgr.level2 OWNER TO postgres;
++
+ 
+ --
+--- Name: level2; Type: SEQUENCE SET; Schema: docmgr; Owner: postgres
++-- Name: level2; Type: SEQUENCE SET; Schema: docmgr; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('level2', 1, false);
+ 
+ 
+ --
+--- Name: view_keyword_collection; Type: VIEW; Schema: docmgr; Owner: postgres
++-- Name: view_keyword_collection; Type: VIEW; Schema: docmgr; Owner: docmgr
+ --
+ 
+ CREATE VIEW view_keyword_collection AS
+     SELECT keyword.id, keyword.name, keyword.type, keyword.required, keyword_collection.parent_id FROM (keyword LEFT JOIN keyword_collection ON ((keyword.id = keyword_collection.keyword_id)));
+ 
+ 
+-ALTER TABLE docmgr.view_keyword_collection OWNER TO postgres;
++
+ 
+ SET search_path = logger, pg_catalog;
+ 
+ --
+--- Name: logs; Type: TABLE; Schema: logger; Owner: postgres; Tablespace: 
++-- Name: logs; Type: TABLE; Schema: logger; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE logs (
+@@ -1355,10 +1306,10 @@ CREATE TABLE logs (
+ );
+ 
+ 
+-ALTER TABLE logger.logs OWNER TO postgres;
++
+ 
+ --
+--- Name: logs_id_seq; Type: SEQUENCE; Schema: logger; Owner: postgres
++-- Name: logs_id_seq; Type: SEQUENCE; Schema: logger; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE logs_id_seq
+@@ -1369,17 +1320,17 @@ CREATE SEQUENCE logs_id_seq
+     CACHE 1;
+ 
+ 
+-ALTER TABLE logger.logs_id_seq OWNER TO postgres;
++
+ 
+ --
+--- Name: logs_id_seq; Type: SEQUENCE OWNED BY; Schema: logger; Owner: postgres
++-- Name: logs_id_seq; Type: SEQUENCE OWNED BY; Schema: logger; Owner: docmgr
+ --
+ 
+ ALTER SEQUENCE logs_id_seq OWNED BY logs.id;
+ 
+ 
+ --
+--- Name: logs_id_seq; Type: SEQUENCE SET; Schema: logger; Owner: postgres
++-- Name: logs_id_seq; Type: SEQUENCE SET; Schema: logger; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('logs_id_seq', 1, true);
+@@ -1388,7 +1339,7 @@ SELECT pg_catalog.setval('logs_id_seq', 1, true);
+ SET search_path = modlet, pg_catalog;
+ 
+ --
+--- Name: rssfeed; Type: TABLE; Schema: modlet; Owner: postgres; Tablespace: 
++-- Name: rssfeed; Type: TABLE; Schema: modlet; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE rssfeed (
+@@ -1399,10 +1350,10 @@ CREATE TABLE rssfeed (
+ );
+ 
+ 
+-ALTER TABLE modlet.rssfeed OWNER TO postgres;
++
+ 
+ --
+--- Name: tasks; Type: TABLE; Schema: modlet; Owner: postgres; Tablespace: 
++-- Name: tasks; Type: TABLE; Schema: modlet; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE tasks (
+@@ -1413,12 +1364,12 @@ CREATE TABLE tasks (
+ );
+ 
+ 
+-ALTER TABLE modlet.tasks OWNER TO postgres;
++
+ 
+ SET search_path = public, pg_catalog;
+ 
+ --
+--- Name: auth_accountperm; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
++-- Name: auth_accountperm; Type: TABLE; Schema: public; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE auth_accountperm (
+@@ -1435,10 +1386,10 @@ CREATE TABLE auth_accountperm (
+ );
+ 
+ 
+-ALTER TABLE public.auth_accountperm OWNER TO postgres;
++
+ 
+ --
+--- Name: auth_accounts; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
++-- Name: auth_accounts; Type: TABLE; Schema: public; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE auth_accounts (
+@@ -1453,10 +1404,10 @@ CREATE TABLE auth_accounts (
+ );
+ 
+ 
+-ALTER TABLE public.auth_accounts OWNER TO postgres;
++
+ 
+ --
+--- Name: auth_accounts_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
++-- Name: auth_accounts_id_seq; Type: SEQUENCE; Schema: public; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE auth_accounts_id_seq
+@@ -1467,24 +1418,24 @@ CREATE SEQUENCE auth_accounts_id_seq
+     CACHE 1;
+ 
+ 
+-ALTER TABLE public.auth_accounts_id_seq OWNER TO postgres;
++
+ 
+ --
+--- Name: auth_accounts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
++-- Name: auth_accounts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: docmgr
+ --
+ 
+ ALTER SEQUENCE auth_accounts_id_seq OWNED BY auth_accounts.id;
+ 
+ 
+ --
+--- Name: auth_accounts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
++-- Name: auth_accounts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('auth_accounts_id_seq', 2, true);
+ 
+ 
+ --
+--- Name: auth_grouplink; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
++-- Name: auth_grouplink; Type: TABLE; Schema: public; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE auth_grouplink (
+@@ -1493,10 +1444,10 @@ CREATE TABLE auth_grouplink (
+ );
+ 
+ 
+-ALTER TABLE public.auth_grouplink OWNER TO postgres;
++
+ 
+ --
+--- Name: auth_groupperm; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
++-- Name: auth_groupperm; Type: TABLE; Schema: public; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE auth_groupperm (
+@@ -1506,10 +1457,10 @@ CREATE TABLE auth_groupperm (
+ );
+ 
+ 
+-ALTER TABLE public.auth_groupperm OWNER TO postgres;
++
+ 
+ --
+--- Name: auth_groups; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
++-- Name: auth_groups; Type: TABLE; Schema: public; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE auth_groups (
+@@ -1518,10 +1469,10 @@ CREATE TABLE auth_groups (
+ );
+ 
+ 
+-ALTER TABLE public.auth_groups OWNER TO postgres;
++
+ 
+ --
+--- Name: auth_groups_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
++-- Name: auth_groups_id_seq; Type: SEQUENCE; Schema: public; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE auth_groups_id_seq
+@@ -1532,24 +1483,24 @@ CREATE SEQUENCE auth_groups_id_seq
+     CACHE 1;
+ 
+ 
+-ALTER TABLE public.auth_groups_id_seq OWNER TO postgres;
++
+ 
+ --
+--- Name: auth_groups_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
++-- Name: auth_groups_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: docmgr
+ --
+ 
+ ALTER SEQUENCE auth_groups_id_seq OWNED BY auth_groups.id;
+ 
+ 
+ --
+--- Name: auth_groups_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
++-- Name: auth_groups_id_seq; Type: SEQUENCE SET; Schema: public; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('auth_groups_id_seq', 1, true);
+ 
+ 
+ --
+--- Name: auth_settings; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
++-- Name: auth_settings; Type: TABLE; Schema: public; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE auth_settings (
+@@ -1560,10 +1511,10 @@ CREATE TABLE auth_settings (
+ );
+ 
+ 
+-ALTER TABLE public.auth_settings OWNER TO postgres;
++
+ 
+ --
+--- Name: dashboard; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
++-- Name: dashboard; Type: TABLE; Schema: public; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dashboard (
+@@ -1576,10 +1527,10 @@ CREATE TABLE dashboard (
+ );
+ 
+ 
+-ALTER TABLE public.dashboard OWNER TO postgres;
++
+ 
+ --
+--- Name: db_version; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
++-- Name: db_version; Type: TABLE; Schema: public; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE db_version (
+@@ -1587,10 +1538,10 @@ CREATE TABLE db_version (
+ );
+ 
+ 
+-ALTER TABLE public.db_version OWNER TO postgres;
++
+ 
+ --
+--- Name: dm_object_type; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
++-- Name: dm_object_type; Type: TABLE; Schema: public; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE dm_object_type (
+@@ -1599,10 +1550,10 @@ CREATE TABLE dm_object_type (
+ );
+ 
+ 
+-ALTER TABLE public.dm_object_type OWNER TO postgres;
++
+ 
+ --
+--- Name: group_dashboard; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
++-- Name: group_dashboard; Type: TABLE; Schema: public; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE group_dashboard (
+@@ -1615,10 +1566,10 @@ CREATE TABLE group_dashboard (
+ );
+ 
+ 
+-ALTER TABLE public.group_dashboard OWNER TO postgres;
++
+ 
+ --
+--- Name: imagenum_seq; Type: SEQUENCE; Schema: public; Owner: postgres
++-- Name: imagenum_seq; Type: SEQUENCE; Schema: public; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE imagenum_seq
+@@ -1629,17 +1580,17 @@ CREATE SEQUENCE imagenum_seq
+     CACHE 1;
+ 
+ 
+-ALTER TABLE public.imagenum_seq OWNER TO postgres;
++
+ 
+ --
+--- Name: imagenum_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
++-- Name: imagenum_seq; Type: SEQUENCE SET; Schema: public; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('imagenum_seq', 1, false);
+ 
+ 
+ --
+--- Name: state; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
++-- Name: state; Type: TABLE; Schema: public; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE state (
+@@ -1649,10 +1600,10 @@ CREATE TABLE state (
+ );
+ 
+ 
+-ALTER TABLE public.state OWNER TO postgres;
++
+ 
+ --
+--- Name: state_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
++-- Name: state_id_seq; Type: SEQUENCE; Schema: public; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE state_id_seq
+@@ -1663,17 +1614,17 @@ CREATE SEQUENCE state_id_seq
+     CACHE 1;
+ 
+ 
+-ALTER TABLE public.state_id_seq OWNER TO postgres;
++
+ 
+ --
+--- Name: state_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
++-- Name: state_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: docmgr
+ --
+ 
+ ALTER SEQUENCE state_id_seq OWNED BY state.id;
+ 
+ 
+ --
+--- Name: state_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
++-- Name: state_id_seq; Type: SEQUENCE SET; Schema: public; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('state_id_seq', 1, false);
+@@ -1682,7 +1633,7 @@ SELECT pg_catalog.setval('state_id_seq', 1, false);
+ SET search_path = task, pg_catalog;
+ 
+ --
+--- Name: docmgr_task; Type: TABLE; Schema: task; Owner: postgres; Tablespace: 
++-- Name: docmgr_task; Type: TABLE; Schema: task; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE docmgr_task (
+@@ -1693,10 +1644,10 @@ CREATE TABLE docmgr_task (
+ );
+ 
+ 
+-ALTER TABLE task.docmgr_task OWNER TO postgres;
++
+ 
+ --
+--- Name: task; Type: TABLE; Schema: task; Owner: postgres; Tablespace: 
++-- Name: task; Type: TABLE; Schema: task; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE task (
+@@ -1717,10 +1668,10 @@ CREATE TABLE task (
+ );
+ 
+ 
+-ALTER TABLE task.task OWNER TO postgres;
++
+ 
+ --
+--- Name: task_account; Type: TABLE; Schema: task; Owner: postgres; Tablespace: 
++-- Name: task_account; Type: TABLE; Schema: task; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE task_account (
+@@ -1729,10 +1680,10 @@ CREATE TABLE task_account (
+ );
+ 
+ 
+-ALTER TABLE task.task_account OWNER TO postgres;
++
+ 
+ --
+--- Name: task_id_seq; Type: SEQUENCE; Schema: task; Owner: postgres
++-- Name: task_id_seq; Type: SEQUENCE; Schema: task; Owner: docmgr
+ --
+ 
+ CREATE SEQUENCE task_id_seq
+@@ -1743,24 +1694,24 @@ CREATE SEQUENCE task_id_seq
+     CACHE 1;
+ 
+ 
+-ALTER TABLE task.task_id_seq OWNER TO postgres;
++
+ 
+ --
+--- Name: task_id_seq; Type: SEQUENCE OWNED BY; Schema: task; Owner: postgres
++-- Name: task_id_seq; Type: SEQUENCE OWNED BY; Schema: task; Owner: docmgr
+ --
+ 
+ ALTER SEQUENCE task_id_seq OWNED BY task.id;
+ 
+ 
+ --
+--- Name: task_id_seq; Type: SEQUENCE SET; Schema: task; Owner: postgres
++-- Name: task_id_seq; Type: SEQUENCE SET; Schema: task; Owner: docmgr
+ --
+ 
+ SELECT pg_catalog.setval('task_id_seq', 1, true);
+ 
+ 
+ --
+--- Name: task_role; Type: TABLE; Schema: task; Owner: postgres; Tablespace: 
++-- Name: task_role; Type: TABLE; Schema: task; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE TABLE task_role (
+@@ -1770,42 +1721,42 @@ CREATE TABLE task_role (
+ );
+ 
+ 
+-ALTER TABLE task.task_role OWNER TO postgres;
++
+ 
+ --
+--- Name: view_docmgr_task; Type: VIEW; Schema: task; Owner: postgres
++-- Name: view_docmgr_task; Type: VIEW; Schema: task; Owner: docmgr
+ --
+ 
+ CREATE VIEW view_docmgr_task AS
+     SELECT task.id, task.title, task.notes, task.priority, task.date_due, task.completed, task.due, task.date_completed, task.created_by, task.created_date, task.modified_by, task.modified_date, task.task_type, task.idxfti, docmgr_task.task_id, docmgr_task.object_id, docmgr_task.route_id, docmgr_task.workflow_id FROM (task LEFT JOIN docmgr_task ON ((task.id = docmgr_task.task_id)));
+ 
+ 
+-ALTER TABLE task.view_docmgr_task OWNER TO postgres;
++
+ 
+ --
+--- Name: view_task_complete; Type: VIEW; Schema: task; Owner: postgres
++-- Name: view_task_complete; Type: VIEW; Schema: task; Owner: docmgr
+ --
+ 
+ CREATE VIEW view_task_complete AS
+     SELECT task.id, task.title, task.notes, task.priority, task.date_due, task.completed, task.due, task.date_completed, task.created_by, task.created_date, task.modified_by, task.modified_date, task.task_type, task_account.account_id, task_role.role_id, task_role.child_location_id FROM ((task LEFT JOIN task_account ON ((task.id = task_account.task_id))) LEFT JOIN task_role ON ((task.id = task_role.task_id)));
+ 
+ 
+-ALTER TABLE task.view_task_complete OWNER TO postgres;
++
+ 
+ --
+--- Name: view_tasks; Type: VIEW; Schema: task; Owner: postgres
++-- Name: view_tasks; Type: VIEW; Schema: task; Owner: docmgr
+ --
+ 
+ CREATE VIEW view_tasks AS
+     SELECT task.id, task.title, task.notes, task.priority, task.date_due, task.completed, task.due, task.date_completed, task.created_by, task.created_date, task.modified_by, task.modified_date, task.task_type, task_account.account_id, task_role.role_id, task_role.child_location_id FROM ((task LEFT JOIN task_account ON ((task.id = task_account.task_id))) LEFT JOIN task_role ON ((task.id = task_role.task_id)));
+ 
+ 
+-ALTER TABLE task.view_tasks OWNER TO postgres;
++
+ 
+ SET search_path = addressbook, pg_catalog;
+ 
+ --
+--- Name: id; Type: DEFAULT; Schema: addressbook; Owner: postgres
++-- Name: id; Type: DEFAULT; Schema: addressbook; Owner: docmgr
+ --
+ 
+ ALTER TABLE contact ALTER COLUMN id SET DEFAULT nextval('contact_id_seq'::regclass);
+@@ -1814,28 +1765,28 @@ ALTER TABLE contact ALTER COLUMN id SET DEFAULT nextval('contact_id_seq'::regcla
+ SET search_path = docmgr, pg_catalog;
+ 
+ --
+--- Name: id; Type: DEFAULT; Schema: docmgr; Owner: postgres
++-- Name: id; Type: DEFAULT; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER TABLE dm_bookmark ALTER COLUMN id SET DEFAULT nextval('dm_bookmark_id_seq'::regclass);
+ 
+ 
+ --
+--- Name: id; Type: DEFAULT; Schema: docmgr; Owner: postgres
++-- Name: id; Type: DEFAULT; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER TABLE dm_tag ALTER COLUMN id SET DEFAULT nextval('dm_tag_id_seq'::regclass);
+ 
+ 
+ --
+--- Name: id; Type: DEFAULT; Schema: docmgr; Owner: postgres
++-- Name: id; Type: DEFAULT; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER TABLE keyword ALTER COLUMN id SET DEFAULT nextval('keyword_id_seq'::regclass);
+ 
+ 
+ --
+--- Name: id; Type: DEFAULT; Schema: docmgr; Owner: postgres
++-- Name: id; Type: DEFAULT; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER TABLE keyword_option ALTER COLUMN id SET DEFAULT nextval('keyword_option_id_seq'::regclass);
+@@ -1844,7 +1795,7 @@ ALTER TABLE keyword_option ALTER COLUMN id SET DEFAULT nextval('keyword_option_i
+ SET search_path = logger, pg_catalog;
+ 
+ --
+--- Name: id; Type: DEFAULT; Schema: logger; Owner: postgres
++-- Name: id; Type: DEFAULT; Schema: logger; Owner: docmgr
+ --
+ 
+ ALTER TABLE logs ALTER COLUMN id SET DEFAULT nextval('logs_id_seq'::regclass);
+@@ -1853,21 +1804,21 @@ ALTER TABLE logs ALTER COLUMN id SET DEFAULT nextval('logs_id_seq'::regclass);
+ SET search_path = public, pg_catalog;
+ 
+ --
+--- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
++-- Name: id; Type: DEFAULT; Schema: public; Owner: docmgr
+ --
+ 
+ ALTER TABLE auth_accounts ALTER COLUMN id SET DEFAULT nextval('auth_accounts_id_seq'::regclass);
+ 
+ 
+ --
+--- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
++-- Name: id; Type: DEFAULT; Schema: public; Owner: docmgr
+ --
+ 
+ ALTER TABLE auth_groups ALTER COLUMN id SET DEFAULT nextval('auth_groups_id_seq'::regclass);
+ 
+ 
+ --
+--- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
++-- Name: id; Type: DEFAULT; Schema: public; Owner: docmgr
+ --
+ 
+ ALTER TABLE state ALTER COLUMN id SET DEFAULT nextval('state_id_seq'::regclass);
+@@ -1876,7 +1827,7 @@ ALTER TABLE state ALTER COLUMN id SET DEFAULT nextval('state_id_seq'::regclass);
+ SET search_path = task, pg_catalog;
+ 
+ --
+--- Name: id; Type: DEFAULT; Schema: task; Owner: postgres
++-- Name: id; Type: DEFAULT; Schema: task; Owner: docmgr
+ --
+ 
+ ALTER TABLE task ALTER COLUMN id SET DEFAULT nextval('task_id_seq'::regclass);
+@@ -1884,7 +1835,7 @@ ALTER TABLE task ALTER COLUMN id SET DEFAULT nextval('task_id_seq'::regclass);
+ SET search_path = public, pg_catalog;
+ 
+ --
+--- Data for Name: auth_accountperm; Type: TABLE DATA; Schema: public; Owner: postgres
++-- Data for Name: auth_accountperm; Type: TABLE DATA; Schema: public; Owner: docmgr
+ --
+ 
+ INSERT INTO auth_accountperm (account_id, bitset, enable, locked_time, failed_logins, failed_logins_locked, last_success_login, setup, last_activity,bitmask) 
+@@ -1893,7 +1844,7 @@ VALUES
+ 
+ 
+ --
+--- Data for Name: auth_accounts; Type: TABLE DATA; Schema: public; Owner: postgres
++-- Data for Name: auth_accounts; Type: TABLE DATA; Schema: public; Owner: docmgr
+ --
+ 
+ INSERT INTO auth_accounts (id, login, password, digest_hash, first_name, last_name, email, phone) 
+@@ -1901,7 +1852,7 @@ VALUES
+ ('1','admin','21232f297a57a5a743894a0e4a801fc3','87fd274b7b6c01e48d7c2f965da8ddf7','Administrator','Account','','');
+ 
+ --
+--- Data for Name: auth_grouplink; Type: TABLE DATA; Schema: public; Owner: postgres
++-- Data for Name: auth_grouplink; Type: TABLE DATA; Schema: public; Owner: docmgr
+ --
+ 
+ INSERT INTO auth_grouplink (accountid, groupid) 
+@@ -1910,7 +1861,7 @@ VALUES
+ 
+ 
+ --
+--- Data for Name: auth_groupperm; Type: TABLE DATA; Schema: public; Owner: postgres
++-- Data for Name: auth_groupperm; Type: TABLE DATA; Schema: public; Owner: docmgr
+ --
+ 
+ INSERT INTO auth_groupperm (group_id, bitset,bitmask) 
+@@ -1918,7 +1869,7 @@ VALUES
+ ('1','1','00000000000000000000000000000001');
+ 
+ --
+--- Data for Name: auth_groups; Type: TABLE DATA; Schema: public; Owner: postgres
++-- Data for Name: auth_groups; Type: TABLE DATA; Schema: public; Owner: docmgr
+ --
+ 
+ INSERT INTO auth_groups (id, name) 
+@@ -1926,7 +1877,7 @@ VALUES
+ ('1','Admin');
+ 
+ --
+--- Data for Name: state; Type: TABLE DATA; Schema: public; Owner: postgres
++-- Data for Name: state; Type: TABLE DATA; Schema: public; Owner: docmgr
+ --
+ 
+ INSERT INTO state (id,abbr,name) VALUES ('1','AK','Alaska');
+@@ -1998,7 +1949,7 @@ INSERT INTO state (id,abbr,name) VALUES ('61','AA','Armed Forces Americas');
+ SET search_path = docmgr, pg_catalog;
+ 
+ --
+--- Name: dm_discussion_pkey; Type: CONSTRAINT; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_discussion_pkey; Type: CONSTRAINT; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ ALTER TABLE ONLY dm_discussion
+@@ -2006,7 +1957,7 @@ ALTER TABLE ONLY dm_discussion
+ 
+ 
+ --
+--- Name: dm_file_history_pkey; Type: CONSTRAINT; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_file_history_pkey; Type: CONSTRAINT; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ ALTER TABLE ONLY dm_file_history
+@@ -2014,7 +1965,7 @@ ALTER TABLE ONLY dm_file_history
+ 
+ 
+ --
+--- Name: dm_index_pkey; Type: CONSTRAINT; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_index_pkey; Type: CONSTRAINT; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ ALTER TABLE ONLY dm_index
+@@ -2024,70 +1975,70 @@ ALTER TABLE ONLY dm_index
+ SET search_path = addressbook, pg_catalog;
+ 
+ --
+--- Name: contact_account_account_id_idx; Type: INDEX; Schema: addressbook; Owner: postgres; Tablespace: 
++-- Name: contact_account_account_id_idx; Type: INDEX; Schema: addressbook; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX contact_account_account_id_idx ON contact_account USING btree (account_id);
+ 
+ 
+ --
+--- Name: contact_account_contact_id_idx; Type: INDEX; Schema: addressbook; Owner: postgres; Tablespace: 
++-- Name: contact_account_contact_id_idx; Type: INDEX; Schema: addressbook; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX contact_account_contact_id_idx ON contact_account USING btree (contact_id);
+ 
+ 
+ --
+--- Name: contact_address_idx; Type: INDEX; Schema: addressbook; Owner: postgres; Tablespace: 
++-- Name: contact_address_idx; Type: INDEX; Schema: addressbook; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX contact_address_idx ON contact USING btree (lower(address));
+ 
+ 
+ --
+--- Name: contact_city_idx; Type: INDEX; Schema: addressbook; Owner: postgres; Tablespace: 
++-- Name: contact_city_idx; Type: INDEX; Schema: addressbook; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX contact_city_idx ON contact USING btree (lower(city));
+ 
+ 
+ --
+--- Name: contact_first_name_idx; Type: INDEX; Schema: addressbook; Owner: postgres; Tablespace: 
++-- Name: contact_first_name_idx; Type: INDEX; Schema: addressbook; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX contact_first_name_idx ON contact USING btree (lower(first_name));
+ 
+ 
+ --
+--- Name: contact_id_idx; Type: INDEX; Schema: addressbook; Owner: postgres; Tablespace: 
++-- Name: contact_id_idx; Type: INDEX; Schema: addressbook; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE UNIQUE INDEX contact_id_idx ON contact USING btree (id);
+ 
+ 
+ --
+--- Name: contact_last_name_idx; Type: INDEX; Schema: addressbook; Owner: postgres; Tablespace: 
++-- Name: contact_last_name_idx; Type: INDEX; Schema: addressbook; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX contact_last_name_idx ON contact USING btree (lower(last_name));
+ 
+ 
+ --
+--- Name: contact_middle_name_idx; Type: INDEX; Schema: addressbook; Owner: postgres; Tablespace: 
++-- Name: contact_middle_name_idx; Type: INDEX; Schema: addressbook; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX contact_middle_name_idx ON contact USING btree (lower(middle_name));
+ 
+ 
+ --
+--- Name: contact_state_idx; Type: INDEX; Schema: addressbook; Owner: postgres; Tablespace: 
++-- Name: contact_state_idx; Type: INDEX; Schema: addressbook; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX contact_state_idx ON contact USING btree (state);
+ 
+ 
+ --
+--- Name: contact_zip_idx; Type: INDEX; Schema: addressbook; Owner: postgres; Tablespace: 
++-- Name: contact_zip_idx; Type: INDEX; Schema: addressbook; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX contact_zip_idx ON contact USING btree (zip);
+@@ -2096,181 +2047,181 @@ CREATE INDEX contact_zip_idx ON contact USING btree (zip);
+ SET search_path = docmgr, pg_catalog;
+ 
+ --
+--- Name: dm_dirlevel_object_id_idx; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_dirlevel_object_id_idx; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_dirlevel_object_id_idx ON dm_dirlevel USING btree (object_id);
+ 
+ 
+ --
+--- Name: dm_discussion_id_key; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_discussion_id_key; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE UNIQUE INDEX dm_discussion_id_key ON dm_discussion USING btree (id);
+ 
+ 
+ --
+--- Name: dm_discussion_object_id_key; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_discussion_object_id_key; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_discussion_object_id_key ON dm_discussion USING btree (object_id);
+ 
+ 
+ --
+--- Name: dm_file_history_id_key; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_file_history_id_key; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE UNIQUE INDEX dm_file_history_id_key ON dm_file_history USING btree (id);
+ 
+ 
+ --
+--- Name: dm_file_history_object_id_key; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_file_history_object_id_key; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_file_history_object_id_key ON dm_file_history USING btree (object_id);
+ 
+ 
+ --
+--- Name: dm_keyword_field_idx; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_keyword_field_idx; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_keyword_field_idx ON dm_keyword USING btree (field1, field2, field3, field4, field5, field6);
+ 
+ 
+ --
+--- Name: dm_object_id_key; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_object_id_key; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE UNIQUE INDEX dm_object_id_key ON dm_object USING btree (id);
+ 
+ 
+ --
+--- Name: dm_object_log_object_id_key; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_object_log_object_id_key; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_object_log_object_id_key ON dm_object_log USING btree (object_id);
+ 
+ 
+ --
+--- Name: dm_object_object_type_idx; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_object_object_type_idx; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_object_object_type_idx ON dm_object USING btree (object_type);
+ 
+ 
+ --
+--- Name: dm_object_parent_search_key; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_object_parent_search_key; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_object_parent_search_key ON dm_object_parent USING btree (object_id, parent_id);
+ 
+ 
+ --
+--- Name: dm_object_perm_id_key; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_object_perm_id_key; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_object_perm_id_key ON dm_object_perm USING btree (object_id);
+ 
+ 
+ --
+--- Name: dm_object_related_object_id_idx; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_object_related_object_id_idx; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_object_related_object_id_idx ON dm_object_related USING btree (object_id);
+ 
+ 
+ --
+--- Name: dm_object_related_related_id_idx; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_object_related_related_id_idx; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_object_related_related_id_idx ON dm_object_related USING btree (related_id);
+ 
+ 
+ --
+--- Name: dm_object_search_key; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_object_search_key; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_object_search_key ON dm_object USING btree (name, summary);
+ 
+ 
+ --
+--- Name: dm_search_idx; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_search_idx; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_search_idx ON dm_search USING btree (object_id);
+ 
+ --
+--- Name: dm_subscribe_info_key; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_subscribe_info_key; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_subscribe_info_key ON dm_subscribe USING btree (object_id, account_id);
+ 
+ 
+ --
+--- Name: dm_tag_account_id_idx; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_tag_account_id_idx; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_tag_account_id_idx ON dm_tag USING btree (account_id);
+ 
+ 
+ --
+--- Name: dm_tag_id_idx; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_tag_id_idx; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_tag_id_idx ON dm_tag USING btree (id);
+ 
+ 
+ --
+--- Name: dm_tag_link_tag_id_idx; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_tag_link_tag_id_idx; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_tag_link_tag_id_idx ON dm_tag_link USING btree (tag_id);
+ 
+ 
+ --
+--- Name: dm_tag_object_id_idx; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_tag_object_id_idx; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_tag_object_id_idx ON dm_tag_link USING btree (object_id);
+ 
+ 
+ --
+--- Name: dm_task_account_id_key; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_task_account_id_key; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_task_account_id_key ON dm_task USING btree (account_id);
+ 
+ 
+ --
+--- Name: dm_url_object_id; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_url_object_id; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_url_object_id ON dm_url USING btree (object_id);
+ 
+ 
+ --
+--- Name: dm_workflow_id_key; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_workflow_id_key; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE UNIQUE INDEX dm_workflow_id_key ON dm_workflow USING btree (id);
+ 
+ 
+ --
+--- Name: dm_workflow_object_id_key; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_workflow_object_id_key; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dm_workflow_object_id_key ON dm_workflow USING btree (object_id);
+ 
+ 
+ --
+--- Name: dm_workflow_route_id_key; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: dm_workflow_route_id_key; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE UNIQUE INDEX dm_workflow_route_id_key ON dm_workflow_route USING btree (id);
+ 
+ 
+ --
+--- Name: idxfti_idx; Type: INDEX; Schema: docmgr; Owner: postgres; Tablespace: 
++-- Name: idxfti_idx; Type: INDEX; Schema: docmgr; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX idxfti_idx ON dm_index USING gin (idxfti);
+@@ -2279,56 +2230,56 @@ CREATE INDEX idxfti_idx ON dm_index USING gin (idxfti);
+ SET search_path = public, pg_catalog;
+ 
+ --
+--- Name: auth_accountperm_pkey; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
++-- Name: auth_accountperm_pkey; Type: INDEX; Schema: public; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE UNIQUE INDEX auth_accountperm_pkey ON auth_accountperm USING btree (account_id);
+ 
+ 
+ --
+--- Name: auth_accounts_pkey; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
++-- Name: auth_accounts_pkey; Type: INDEX; Schema: public; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE UNIQUE INDEX auth_accounts_pkey ON auth_accounts USING btree (id);
+ 
+ 
+ --
+--- Name: dashboard_account_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
++-- Name: dashboard_account_id_idx; Type: INDEX; Schema: public; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dashboard_account_id_idx ON dashboard USING btree (account_id);
+ 
+ 
+ --
+--- Name: dashboard_module_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
++-- Name: dashboard_module_idx; Type: INDEX; Schema: public; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dashboard_module_idx ON dashboard USING btree (module);
+ 
+ 
+ --
+--- Name: dashboard_sort_order_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
++-- Name: dashboard_sort_order_idx; Type: INDEX; Schema: public; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX dashboard_sort_order_idx ON dashboard USING btree (sort_order);
+ 
+ 
+ --
+--- Name: group_dashboard_account_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
++-- Name: group_dashboard_account_id_idx; Type: INDEX; Schema: public; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX group_dashboard_account_id_idx ON group_dashboard USING btree (group_id);
+ 
+ 
+ --
+--- Name: group_dashboard_module_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
++-- Name: group_dashboard_module_idx; Type: INDEX; Schema: public; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX group_dashboard_module_idx ON group_dashboard USING btree (module);
+ 
+ 
+ --
+--- Name: group_dashboard_sort_order_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
++-- Name: group_dashboard_sort_order_idx; Type: INDEX; Schema: public; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX group_dashboard_sort_order_idx ON group_dashboard USING btree (sort_order);
+@@ -2337,84 +2288,84 @@ CREATE INDEX group_dashboard_sort_order_idx ON group_dashboard USING btree (sort
+ SET search_path = task, pg_catalog;
+ 
+ --
+--- Name: task_account_account_id_idx; Type: INDEX; Schema: task; Owner: postgres; Tablespace: 
++-- Name: task_account_account_id_idx; Type: INDEX; Schema: task; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX task_account_account_id_idx ON task_account USING btree (account_id);
+ 
+ 
+ --
+--- Name: task_account_task_id_idx; Type: INDEX; Schema: task; Owner: postgres; Tablespace: 
++-- Name: task_account_task_id_idx; Type: INDEX; Schema: task; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX task_account_task_id_idx ON task_account USING btree (task_id);
+ 
+ 
+ --
+--- Name: task_completed_idx; Type: INDEX; Schema: task; Owner: postgres; Tablespace: 
++-- Name: task_completed_idx; Type: INDEX; Schema: task; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX task_completed_idx ON task USING btree (completed);
+ 
+ 
+ --
+--- Name: task_date_due_idx; Type: INDEX; Schema: task; Owner: postgres; Tablespace: 
++-- Name: task_date_due_idx; Type: INDEX; Schema: task; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX task_date_due_idx ON task USING btree (date_due);
+ 
+ 
+ --
+--- Name: task_id_idx; Type: INDEX; Schema: task; Owner: postgres; Tablespace: 
++-- Name: task_id_idx; Type: INDEX; Schema: task; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX task_id_idx ON task USING btree (id);
+ 
+ 
+ --
+--- Name: task_idxfti_idx; Type: INDEX; Schema: task; Owner: postgres; Tablespace: 
++-- Name: task_idxfti_idx; Type: INDEX; Schema: task; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX task_idxfti_idx ON task USING gist (idxfti);
+ 
+ 
+ --
+--- Name: task_notes_lower_idx; Type: INDEX; Schema: task; Owner: postgres; Tablespace: 
++-- Name: task_notes_lower_idx; Type: INDEX; Schema: task; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX task_notes_lower_idx ON task USING btree (lower(notes));
+ 
+ 
+ --
+--- Name: task_role_child_location_id_idx; Type: INDEX; Schema: task; Owner: postgres; Tablespace: 
++-- Name: task_role_child_location_id_idx; Type: INDEX; Schema: task; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX task_role_child_location_id_idx ON task_role USING btree (child_location_id);
+ 
+ 
+ --
+--- Name: task_role_role_id_idx; Type: INDEX; Schema: task; Owner: postgres; Tablespace: 
++-- Name: task_role_role_id_idx; Type: INDEX; Schema: task; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX task_role_role_id_idx ON task_role USING btree (role_id);
+ 
+ 
+ --
+--- Name: task_role_task_id_idx; Type: INDEX; Schema: task; Owner: postgres; Tablespace: 
++-- Name: task_role_task_id_idx; Type: INDEX; Schema: task; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX task_role_task_id_idx ON task_role USING btree (task_id);
+ 
+ 
+ --
+--- Name: task_title_idx; Type: INDEX; Schema: task; Owner: postgres; Tablespace: 
++-- Name: task_title_idx; Type: INDEX; Schema: task; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX task_title_idx ON task USING btree (title);
+ 
+ 
+ --
+--- Name: task_title_lower_idx; Type: INDEX; Schema: task; Owner: postgres; Tablespace: 
++-- Name: task_title_lower_idx; Type: INDEX; Schema: task; Owner: docmgr; Tablespace: 
+ --
+ 
+ CREATE INDEX task_title_lower_idx ON task USING btree (lower(title));
+@@ -2423,7 +2374,7 @@ CREATE INDEX task_title_lower_idx ON task USING btree (lower(title));
+ SET search_path = docmgr, pg_catalog;
+ 
+ --
+--- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: postgres
++-- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER TABLE ONLY dm_alert
+@@ -2431,7 +2382,7 @@ ALTER TABLE ONLY dm_alert
+ 
+ 
+ --
+--- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: postgres
++-- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER TABLE ONLY dm_discussion
+@@ -2439,7 +2390,7 @@ ALTER TABLE ONLY dm_discussion
+ 
+ 
+ --
+--- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: postgres
++-- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER TABLE ONLY dm_file_history
+@@ -2447,7 +2398,7 @@ ALTER TABLE ONLY dm_file_history
+ 
+ 
+ --
+--- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: postgres
++-- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER TABLE ONLY dm_index
+@@ -2455,7 +2406,7 @@ ALTER TABLE ONLY dm_index
+ 
+ 
+ --
+--- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: postgres
++-- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER TABLE ONLY dm_keyword
+@@ -2463,7 +2414,7 @@ ALTER TABLE ONLY dm_keyword
+ 
+ 
+ --
+--- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: postgres
++-- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER TABLE ONLY dm_object_parent
+@@ -2471,7 +2422,7 @@ ALTER TABLE ONLY dm_object_parent
+ 
+ 
+ --
+--- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: postgres
++-- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER TABLE ONLY dm_object_perm
+@@ -2479,7 +2430,7 @@ ALTER TABLE ONLY dm_object_perm
+ 
+ 
+ --
+--- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: postgres
++-- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER TABLE ONLY dm_subscribe
+@@ -2487,7 +2438,7 @@ ALTER TABLE ONLY dm_subscribe
+ 
+ 
+ --
+--- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: postgres
++-- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER TABLE ONLY dm_url
+@@ -2495,7 +2446,7 @@ ALTER TABLE ONLY dm_url
+ 
+ 
+ --
+--- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: postgres
++-- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER TABLE ONLY dm_workflow
+@@ -2503,7 +2454,7 @@ ALTER TABLE ONLY dm_workflow
+ 
+ 
+ --
+--- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: postgres
++-- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER TABLE ONLY dm_workflow_route
+@@ -2511,7 +2462,7 @@ ALTER TABLE ONLY dm_workflow_route
+ 
+ 
+ --
+--- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: postgres
++-- Name: $1; Type: FK CONSTRAINT; Schema: docmgr; Owner: docmgr
+ --
+ 
+ ALTER TABLE ONLY dm_task
+@@ -2519,12 +2470,12 @@ ALTER TABLE ONLY dm_task
+ 
+ 
+ --
+--- Name: public; Type: ACL; Schema: -; Owner: postgres
++-- Name: public; Type: ACL; Schema: -; Owner: docmgr
+ --
+ 
+ REVOKE ALL ON SCHEMA public FROM PUBLIC;
+-REVOKE ALL ON SCHEMA public FROM postgres;
+-GRANT ALL ON SCHEMA public TO postgres;
++REVOKE ALL ON SCHEMA public FROM docmgr;
++GRANT ALL ON SCHEMA public TO docmgr;
+ GRANT ALL ON SCHEMA public TO PUBLIC;
+ 
+ 
+@@ -2557,7 +2508,10 @@ CREATE INDEX object_view_object_account_id_idx ON docmgr.object_view USING btree
+ 
+ 
+ 
+-CREATE OR REPLACE FUNCTION docmgr.get_all_paths( objid integer ) RETURNS SETOF text AS $$
++CREATE OR REPLACE FUNCTION docmgr.get_all_paths( objid integer ) RETURNS SETOF text 
++    LANGUAGE plpgsql
++    AS
++$dm$
+ DECLARE
+ 	path TEXT;
+ 	res RECORD;
+@@ -2571,10 +2525,13 @@ BEGIN
+   RETURN NEXT path;
+ 	END LOOP;
+ END;
+-$$
+-LANGUAGE 'plpgsql';
++$dm$;
+ 
+-CREATE OR REPLACE FUNCTION docmgr.get_all_pathnames( objid integer ) RETURNS SETOF text AS $$
++
++CREATE OR REPLACE FUNCTION docmgr.get_all_pathnames( objid integer ) RETURNS SETOF text 
++    LANGUAGE plpgsql
++    AS
++$dm$
+ DECLARE
+ 	path TEXT;
+ 	res RECORD;
+@@ -2591,8 +2548,8 @@ BEGIN
+     RETURN NEXT path;
+ 	END LOOP;
+ END;
+-$$
+-LANGUAGE 'plpgsql';
++$dm$;
++
+ 
+ SET search_path = public, pg_catalog;
+ 
+diff --git a/install/install.php b/install/install.php
+index ffa9286..492fca0 100644
+--- a/install/install.php
++++ b/install/install.php
+@@ -3,6 +3,67 @@
+ //required files
+ include("lib/pgsql.php");
+ include("lib/misc.php");
++require_once("classes/step.php");
++
++function aLabel($name, $url, $urlText = null) {
++  $string = "<label class=\"column\">$name</label><a href=\"$url\">" . ($urlText ? $urlText : $url) .  "</a>";
++}
++
++function aField(&$conf, $field, $text, $type = "text", $value = "", $onclick = '') {
++  static $radioCount = 0;
++  $string = "";
++  if( $type != "" ) {
++    $xtype = "type=\"$type\"";
++  } else {
++    $xtype = "";
++  }
++
++  $id = $field;
++  $nolabel = ($type == "radio") || ($type == "hidden");
++
++  if ($type == 'radio')
++    $id .= $radioCount++;
++
++  if( !$nolabel ) {
++    $string .= "<label class='column' for=\"$id\">$text</label>";
++  }
++
++  if(($type == "radio" && $value == $conf[$field]) || ($type == "checkbox" && $conf[$field] == true)) {
++    $checked = "checked='checked'";
++  } else {
++    $checked = "";
++  }
++
++  $string .= "<input $xtype name=\"$field\" id=\"$id\" class=\"iput-$type\" $checked ";
++  if ($onclick) {
++    $string .= " onclick='$onclick' " ;
++  }
++  $string .= "value=\"";
++  if( $type == "radio" ) {
++    $string .= htmlspecialchars( $value );
++  } else {
++    $string .= htmlspecialchars( $conf[$field] );
++  }
++
++  $string .= "\" />";
++  if( $nolabel ) {
++    $string .= "<label for=\"$id\">$text</label>";
++  }
++
++  global $errors;
++  if(array_key_exists($field, $errors)) {
++    //FIXME: ihk, this newline hack is fugly..
++    $newline = false;
++    if(strlen($errors[$field]) > 25)
++      $newline = true;
++    if($newline)
++      $string .= "<div class='config-error'>\n";
++    $string .= "<span class='error'>" . htmlspecialchars( $errors[$field] ) . "</span>\n";
++    if($newline)
++      $string .= "</div>";
++  }
++  return $string;
++}
+ 
+ //which step are we on
+ session_start();
+@@ -13,13 +74,6 @@ $_SESSION["installInProgress"] = 1;
+ //our main theme
+ define("THEME_PATH","themes/default");
+ 
+-//start at the beginning
+-if (!$_POST["step"]) 
+-{
+-  $_POST["step"] = "0";
+-  $_POST["nextstep"] = "0";
+-}
+-
+ //setup our possible config classes
+ $steps = array();
+ $stepArr[] = "verify";
+@@ -34,12 +88,36 @@ foreach ($stepArr AS $file)
+   require_once("classes/".$file.".php");
+ }
+ 
++if(!array_key_exists("config", $_SESSION)) {
++  $_SESSION["config" ] = array();
++}
++//start at the beginning
++if (!array_key_exists("step", $_SESSION) || $_SESSION["step"] < 0)
++{
++  $_SESSION["step"] = 0;
++  $_SESSION["nextstep"] = 0;
++}
++else if($_SESSION["step"] >= count($stepArr))
++{
++  $_SESSION["step"] = count($stepArr)-1;
++}
++
+ //init our current class based on the step we're on
+-$curClass = $stepArr[$_POST["step"]];
++$curClass = $stepArr[$_SESSION["step"]];
+ $c = new $curClass();
++$finished = false;
++$errorMessage = "";
++$errors = array();
++
++// Keep all our settings with us for the session..
++foreach ($_POST AS $key => $value) {
++  if($key == "step" || $key == "nextstep" || $key == "action")
++    continue;
++  $_SESSION[$curClass][$key] = $value;
++}
+ 
+ //if there's a submitted process, handle it
+-if ($_POST["action"]=="next") 
++if (array_key_exists("action", $_POST) && $_POST["action"]=="next") 
+ {
+ 
+   $c->process();
+@@ -47,29 +125,22 @@ if ($_POST["action"]=="next")
+   //if no errors loads the next step
+   $err = $c->getError();
+   
+-  if (!$err) 
++  if (!$err && count($errors) == 0) 
+   {
+-    $_POST["step"]++;
++    $_SESSION["step"]++;
+ 
+     //if there's another class to load, load it.
+-    if ($stepArr[$_POST["step"]])
++    if ($stepArr[$_SESSION["step"]])
+     {
+ 
+-      $curClass = $stepArr[$_POST["step"]];
++      $curClass = $stepArr[$_SESSION["step"]];
+       $c = new $curClass();
+ 
+     }
+     //otherwise bail
+     else
+     {
+-
+-      $str = file_get_contents("install/install.php");
+-
+-      $str = preg_replace("/<\?php\n/","<?php\nreturn false;\n",$str);
+-      
+-      file_put_contents("install/install.php",$str);
+-
+-      $finished = 1;
++      $finished = true;
+     
+     }
+ 
+@@ -77,12 +148,13 @@ if ($_POST["action"]=="next")
+ 
+ }
+ //go back a page
+-else if ($_POST["action"]=="back")
++else if (array_key_exists("action", $_POST) && $_POST["action"]=="back")
+ {
+ 
+-  $_POST["step"]--;
++  if ($_SESSION["step"] > 0)
++    $_SESSION["step"]--;
+ 
+-  $curClass = $stepArr[$_POST["step"]];
++  $curClass = $stepArr[$_SESSION["step"]];
+   $c = new $curClass();
+ 
+ }
+@@ -90,7 +162,7 @@ else if ($_POST["action"]=="back")
+ //setup our main form
+ $siteContent = "
+ <form name=\"pageForm\" method=\"post\">
+-<input type=\"hidden\" name=\"step\" id=\"step\" value=\"".$_POST["step"]."\">
++<input type=\"hidden\" name=\"step\" id=\"step\" value=\"".$_SESSION["step"]."\">
+ <input type=\"hidden\" name=\"action\" id=\"action\" value=\"\">
+ ";
+ 
+@@ -100,10 +172,22 @@ if ($finished)
+ 
+   $siteContent .= "<div style=\"padding:10px;width:600px;\">
+                     <h3>Your setup is complete.</h3>
+-                    <p>
+-                      If you want to run setup again, just remove the \"return false;\" 
+-                      line at the top of the install/install.php file.  You may also
+-                      safely remove the entire install/ directory if you are done with setup.
++		    <p> To complete the installation, please do the following:
++		    <ol>
++	    	      <li>Download config/local/tmp/*.php with your FTP client or file manager</li>
++		      <li>Upload the files to the parent directory</li>
++		      <li>Delete config/local/tmp/*.php</li>
++		      <li>Start using <a href='". SITE_URL ."'>your DocMGR</a>!
++		      </ol>
++		    <p>If you are in a shared hosting environment, do <strong>not</strong> just move config/local/tmp/*.php
++		      remotely. config/local/tmp/*.php is currently owned by the user your webserver is running under,
++		      which means that anyone on the same server can modify your configuration! Downloading
++		      it and uploading it again will hopefully change the ownership to a user ID specific to you.</p>
++		    </p>
++		    <p>
++		      If you want to run setup again, remove your local configuration files (config/local/*.php) and/or
++		      temporary configuration files (config/local/tmp/*.php.
++                      You may also safely remove the entire install/ directory if you are done with setup.
+                     </p>
+                     <p>
+                       If this is a new installation, the default username and password is admin/admin.
+@@ -123,7 +207,7 @@ else
+   $siteContent .= "<div class=\"toolbar\">";
+ 
+   //give us a back button if not on first page
+-  if ($_POST["step"]!=0) 
++  if ($_SESSION["step"]!=0) 
+   {
+     $siteContent .= "<div class=\"toolbarCell\" onclick=\"document.pageForm.action.value='back';document.pageForm.submit();\">
+                       <img src=\"".THEME_PATH."/images/icons/back.png\" align=\"left\"> Back
+@@ -135,9 +219,14 @@ else
+   $siteContent .= "		<div class=\"toolbarCell\" onclick=\"document.pageForm.action.value='next';document.pageForm.submit();\">
+                         <img src=\"".THEME_PATH."/images/icons/next.png\" align=\"left\"> Next
+                       </div>
+-                    </div>
+-                    <div class=\"errorMessage\">".$errorMessage."</div>
+-                    <div style=\"width:600px;padding-left:10px;\">
++		      </div>
++		      ";
++  if ($errorMessage)
++    $siteContent .= '<div class="errorMessage">' . htmlspecialchars($errorMessage) . '</div>';
++  else if (count($errors))
++    $siteContent .= '<div class="errorMessage">Errors occured, make sure everything below is filled out correctly</div>';
++
++  $siteContent .= "<div style=\"width:600px;padding-left:10px;\">
+                       ".$c->display()."
+                     </div>
+                     ";
+diff --git a/install/normal.php b/install/normal.php
+index 31b8b3c..3452ddc 100755
+--- a/install/normal.php
++++ b/install/normal.php
+@@ -23,19 +23,109 @@ else echo $siteModInfo[$module]["module_name"]." - ".SITE_TITLE;
+ 
+ <meta http-equiv="Content-Type" content="text/html; charset=<?echo VIEW_CHARSET;?>">
+ 
++<style type="text/css">
++	.env-check {
++		font-size: 90%;
++		margin: 1em 0 1em 2.5em;
++	}
++
++	.config-section {
++		margin-top: 2em;
++	}
++
++	.config-section label.column {
++		clear: left;
++		font-weight: bold;
++		width: 13em;
++		float: left;
++		text-align: right;
++		padding-right: 1em;
++		padding-top: .2em;
++	}
++
++	.config-input {
++		clear: left;
++		zoom: 100%; /* IE hack */
++	}
++
++	.config-section .config-desc {
++		clear: left;
++		margin: 0 0 2em 18em;
++		padding-top: 1em;
++		font-size: 85%;
++	}
++
++	.config-section .config-error {
++		clear: left;
++		margin: 0 0 2em 14em;
++	}
++
++	.iput-text, .iput-password {
++		width: 14em;
++		margin-right: 1em;
++	}
++
++	.error {
++		color: red;
++		background-color: #fff;
++		font-weight: bold;
++		left: 1em;
++		font-size: 100%;
++	}
++
++	.error-top {
++		color: red;
++		background-color: #FFF0F0;
++		border: 2px solid red;
++		font-size: 130%;
++		font-weight: bold;
++		padding: 1em 1.5em;
++		margin: 2em 0 1em;
++	}
++
++	ul.plain {
++		list-style-type: none;
++		list-style-image: none;
++		float: left;
++		margin: 0;
++		padding: 0;
++	}
++
++	.btn-install {
++		font-weight: bold;
++		font-size: 110%;
++		padding: .2em .3em;
++	}
++
++	.license {
++		font-size: 85%;
++		padding-top: 3em;
++	}
++		
++	span.success-message {
++		font-weight: bold;
++		font-size: 110%;
++		color: green;
++	}
++	.success-box {
++		font-size: 130%;
++	}
++</style>
++
+ <?
+ /****************************************************
+ 	our stylesheets and javascript files
+ ****************************************************/
+ $css = THEME_PATH."/css/core.css;";
+ $css .= THEME_PATH."/css/toolbar.css;";
+-if ($modStylesheet) $css .= $modStylesheet;
+-if ($modCss) $css .= $modCss;
++if (isset($modStylesheet)) $css .= $modStylesheet;
++if (isset($modCss)) $css .= $modCss;
+ includeStylesheet($css);
+ 
++if (!isset($js)) $js = "";
+ $js .= "jslib/core.js;";
+ 
+-if ($modJs) $js .= $modJs;
++if (isset($modJs)) $js .= $modJs;
+ includeJavascript($js);
+ $maintbclass = "siteMainToolbar";
+ 
+diff --git a/lib/misc.php b/lib/misc.php
+index c4bc0d9..c2b493c 100755
+--- a/lib/misc.php
++++ b/lib/misc.php
+@@ -442,3 +442,39 @@ function uuid($prefix = '')
+   return strtoupper($prefix . $uuid);
+ 
+ }
++
++function importVar(&$var, $name, $default = "") {
++  if (isset($var[$name])) {
++    $retval = $var[$name];
++    if (get_magic_quotes_gpc()) {
++      $retval = stripslashes($retval);
++    }
++  } else {
++    $retval = $default;
++  }
++  return $retval;
++}
++
++function importPost($name, $default = "") {
++  return importVar($_POST, $name, $default);
++}
++
++function importPostC($name, $default = "") {
++  $constant = strtoupper($name);
++  if (defined($constant))
++    $default = constant($constant);
++  return importPost($name, $default);
++}
++
++function importSession($name, $default = "") {
++  global $curClass;
++  return importVar($_SESSION[$curClass], $name, $default);
++}
++
++function importSessionC($name, $default = "") {
++  $constant = strtoupper($name);
++  if (defined($constant))
++    $default = constant($constant);
++  return importSession($name, $default);
++}
++
+diff --git a/lib/pgsql.php b/lib/pgsql.php
+index 86b798e..105db6a 100755
+--- a/lib/pgsql.php
++++ b/lib/pgsql.php
+@@ -25,7 +25,6 @@ CLASS POSTGRESQL {
+ 							dbname -> name of database
+ 	***********************************************************/
+ 	function __construct($dbhost,$dbuser,$dbpassword,$dbport,$dbname) {
+-	
+ 		$this->conn = pg_connect("host='$dbhost' port='$dbport' user='$dbuser' password='$dbpassword' dbname='$dbname'") or die('unable to connect to postgresql!');
+ 
+ 		//init the error handler
+@@ -64,8 +63,17 @@ CLASS POSTGRESQL {
+ 		RETURNS:	pg_query result
+ 	****************************************************************/
+ 	function query($sql,$nolog=null) {
+-
+ 		if (!$sql) return false;
++
++		if (function_exists('mb_convert_encoding')) {
++			$sql = mb_convert_encoding($sql,DB_CHARSET);
++		}		
++
++		$multi = NULL;
++		if (preg_match("/^COPY.* FROM stdin/i", $sql)) {
++			$multi = explode( "\n", $sql );
++			$sql = $multi[0] . "\n";
++		}
+ 		
+ 		if (!$result = pg_query($this->conn,$sql)) {
+ 
+@@ -74,6 +82,14 @@ CLASS POSTGRESQL {
+ 			if (!$nolog) $this->logger->logerror($sql);
+ 		}
+ 
++		if ($multi) {
++			for ($i = 1; $i < sizeof( $multi ); $i++) {
++				$line = $multi[$i] . "\n";
++				pg_put_line( $this->conn, $line );
++			}
++			pg_end_copy( $this->conn );
++		}		
++
+ 		return $result;
+ 	
+ 	}
+@@ -429,6 +445,381 @@ CLASS POSTGRESQL {
+ 		return $arr["server"];
+ 	
+ 	}
+-	
++
++	function initial_setup($wgDBname, $wgDBuser, $wgDBpassword, $schemas, $wgDBsuperuser=null, $wgDBsuperpass=null, $dbName=null) {
++		// If this is the initial connection, setup the schema stuff and possibly create the user
++		print "<li>Checking the version of Postgres...";
++		$version = $this->version();
++		$PGMINVER = '8.4';
++		if ($version < $PGMINVER) {
++			die("<b>FAILED</b>. Required version is $PGMINVER. You have " . htmlspecialchars( $version ) . "</li>\n");
++		}
++		print "version $version is OK.</li>\n";
++
++		$safeuser = $this->quote_ident($wgDBuser);
++		// Are we connecting as a superuser for the first time?
++		if ($wgDBsuperuser) {
++			// Are we really a superuser? Check out our rights
++			$SQL = "SELECT
++				CASE WHEN usesuper IS TRUE THEN
++				CASE WHEN usecreatedb IS TRUE THEN 3 ELSE 1 END
++				ELSE CASE WHEN usecreatedb IS TRUE THEN 2 ELSE 0 END
++				END AS rights
++				FROM pg_catalog.pg_user WHERE usename = " . $this->addQuotes($wgDBsuperuser);
++			$rows = pg_num_rows($res = $this->query($SQL));
++			if (!$rows) {
++				die("<li>ERROR: Could not read permissions for user \"" . htmlspecialchars( $wgDBsuperuser ) . "\"</li>\n");
++			}
++			$perms = pg_fetch_result($res, 0, 0);
++
++			$SQL = "SELECT 1 FROM pg_catalog.pg_user WHERE usename = " . $this->addQuotes($wgDBuser);
++			$rows = pg_num_rows($this->query($SQL));
++			if ($rows) {
++				print "<li>User \"" . htmlspecialchars( $wgDBuser ) . "\" already exists, skipping account creation.</li>\n";
++			}
++			else {
++				if ($perms != 1 and $perms != 3) {
++					die("<li>ERROR: the user \"" . htmlspecialchars( $wgDBsuperuser ) . "\" cannot create other users. Please use a different Postgres user.</li>");
++				}
++				print "<li>Creating user <b>" . htmlspecialchars( $wgDBuser ) . "</b>...";
++				$safepass = $this->addQuotes($wgDBpassword);
++				$SQL = "CREATE USER $safeuser NOCREATEDB PASSWORD $safepass";
++				$this->query($SQL);
++				print "OK</li>\n";
++			}
++			// User now exists, check out the database
++			if ($dbName != $wgDBname) {
++				$SQL = "SELECT 1 FROM pg_catalog.pg_database WHERE datname = " . $this->addQuotes($wgDBname);
++				$rows = pg_num_rows($this->query($SQL));
++				if ($rows) {
++					print "<li>Database \"" . htmlspecialchars( $wgDBname ) . "\" already exists, skipping database creation.</li>\n";
++				}
++				else {
++					if ($perms < 1) {
++						die("<li>ERROR: the user \"" . htmlspecialchars( $wgDBsuperuser ) . "\" cannot create databases. Please use a different Postgres user.</li>");
++					}
++					print "<li>Creating database <b>" . htmlspecialchars( $wgDBname ) . "</b>...";
++					$safename = $this->quote_ident($wgDBname);
++					$SQL = "CREATE DATABASE $safename OWNER $safeuser ";
++					$this->query($SQL);
++					print "OK</li>\n";
++					// Hopefully tsearch2 and plpgsql are in template1...
++				}
++
++				// Reconnect to check out tsearch2 rights for this user
++				print "<li>Connecting to \"" . htmlspecialchars( $wgDBname ) . "\" as superuser \"" .
++					htmlspecialchars( $wgDBsuperuser ) . "\" to check rights...";
++
++				@$this->conn = pg_connect("host='". pg_host($this->conn) . "' port='". pg_port($this->conn) ."' user='$wgDBsuperuser' password='$wgDBsuperpass' dbname='$wgDBname'");
++				if ( $this->conn == false ) {
++					die("<b>FAILED TO CONNECT!</b></li>");
++				}
++				print "OK</li>\n";
++			}
++
++			// Setup the schema for this user if needed
++
++			for(reset($schemas); current($schemas); next($schemas)) {
++				$curschema = current($schemas);
++
++				$result = $this->schemaExists($curschema);
++				$safeschema = $this->quote_ident($curschema);
++				if (!$result) {
++					print "<li>Creating schema <b>" . htmlspecialchars( $curschema ) . "</b> ...";
++					$result = $this->query("CREATE SCHEMA $safeschema AUTHORIZATION $safeuser");
++					if (!$result) {
++						die("<b>FAILED</b>.</li>\n");
++					}
++					print "OK</li>\n";
++				}
++				else {
++					print "<li>Schema <b>" . htmlspecialchars( $curschema ) . "</b> already exists, explicitly granting rights...";
++					$safeschema2 = $this->addQuotes($curschema);
++					$SQL = "SELECT 'GRANT ALL ON '||pg_catalog.quote_ident(relname)||' TO $safeuser;'\n".
++						"FROM pg_catalog.pg_class p, pg_catalog.pg_namespace n\n".
++						"WHERE relnamespace = n.oid AND n.nspname = $safeschema2\n".
++						"AND p.relkind IN ('r','S','v')\n";
++					$SQL .= "UNION\n";
++					$SQL .= "SELECT 'GRANT ALL ON FUNCTION '||pg_catalog.quote_ident(proname)||'('||\n".
++						"pg_catalog.oidvectortypes(p.proargtypes)||') TO $safeuser;'\n".
++						"FROM pg_catalog.pg_proc p, pg_catalog.pg_namespace n\n".
++						"WHERE p.pronamespace = n.oid AND n.nspname = $safeschema2";
++					$res = $this->query($SQL);
++					if (!$res) {
++						die("<b>FAILED</b>. Could not set rights for the user.</li>\n");
++					}
++					$this->query("SET search_path = $safeschema");
++					$rows = pg_num_rows($res);
++					while ($rows) {
++						$rows--;
++						$this->query(pg_fetch_result($res, $rows, 0));
++					}
++					print "OK</li>\n";
++				}
++			}
++
++			// Install plpgsql if needed
++			$this->setup_plpgsql();
++
++			$wgDBsuperuser = '';
++
++			return true; // Reconnect as regular user
++
++		} // end superuser
++
++		if (!defined('POSTGRES_SEARCHPATH')) {
++
++			// Install plpgsql if needed
++			$this->setup_plpgsql();
++
++			for(reset($schemas); current($schemas); next($schemas)) {
++				$curschema = current($schemas);
++
++				// Does the schema already exist? Who owns it?
++				$result = $this->schemaExists($curschema);
++				if (!$result) {
++					print "<li>Creating schema <b>" . htmlspecialchars( $curschema ) . "</b> ...";
++					error_reporting( 0 );
++					$safeschema = $this->quote_ident($curschema);
++					$result = $this->query("CREATE SCHEMA $safeschema");
++					error_reporting( E_ALL );
++					if (!$result) {
++						die("<b>FAILED</b>. The user \"" . htmlspecialchars( $wgDBuser ) . 
++							"\" must be able to access the schema. ".
++							"You can try making them the owner of the database, or try creating the schema with a ".
++							"different user, and then grant access to the \"" . 
++							htmlspecialchars( $wgDBuser ) . "\" user.</li>\n");
++					}
++					print "OK</li>\n";
++				}
++				else if ($result != $wgDBuser) {
++					print "<li>Schema \"" . htmlspecialchars( $curschema ) . "\" exists but is not owned by \"" . 
++						htmlspecialchars( $wgDBuser ) . "\". Not ideal.</li>\n";
++				}
++				else {
++					print "<li>Schema \"" . htmlspecialchars( $curschema ) . "\" exists and is owned by \"" . 
++						htmlspecialchars( $wgDBuser ) . "\". Excellent.</li>\n";
++				}
++			}
++
++			// Always return GMT time to accomodate the existing integer-based timestamp assumption
++			print "<li>Setting the timezone to GMT for user \"" . htmlspecialchars( $wgDBuser ) . "\" ...";
++			$SQL = "ALTER USER $safeuser SET timezone = 'GMT'";
++			$result = pg_query($this->conn, $SQL);
++			if (!$result) {
++				die("<b>FAILED</b>.</li>\n");
++			}
++			print "OK</li>\n";
++			// Set for the rest of this session
++			$SQL = "SET timezone = 'GMT'";
++			$result = pg_query($this->conn, $SQL);
++			if (!$result) {
++				die("<li>Failed to set timezone</li>\n");
++			}
++
++			print "<li>Setting the datestyle to ISO, YMD for user \"" . htmlspecialchars( $wgDBuser ) . "\" ...";
++			$SQL = "ALTER USER $safeuser SET datestyle = 'ISO, YMD'";
++			$result = pg_query($this->conn, $SQL);
++			if (!$result) {
++				die("<b>FAILED</b>.</li>\n");
++			}
++			print "OK</li>\n";
++			// Set for the rest of this session
++			$SQL = "SET datestyle = 'ISO, YMD'";
++			$result = pg_query($this->conn, $SQL);
++			if (!$result) {
++				die("<li>Failed to set datestyle</li>\n");
++			}
++
++			// Fix up the search paths if needed
++			print "<li>Setting the search path for user \"" . htmlspecialchars( $wgDBuser ) . "\" ...";
++			$path = "";
++			for(reset($schemas); current($schemas); next($schemas)) {
++				if($path) $path .= ", ";
++				$path .= $this->quote_ident(current($schemas));
++			}
++
++			$SQL = "ALTER USER $safeuser SET search_path = $path";
++			$result = pg_query($this->conn, $SQL);
++			if (!$result) {
++				die("<b>FAILED</b>.</li>\n");
++			}
++			print "OK</li>\n";
++			// Set for the rest of this session
++			$SQL = "SET search_path = $path";
++			$result = pg_query($this->conn, $SQL);
++			if (!$result) {
++				die("<li>Failed to set search_path</li>\n");
++			}
++			define( "POSTGRES_SEARCHPATH", $path );
++		}
++	}
++
++	function addQuotes( $s ) {
++		if ( is_null( $s ) ) {
++			return 'NULL';
++		} else if ( is_bool( $s ) ) {
++			return intval( $s );
++		}
++		return "'" . pg_escape_string($s) . "'";
++	}
++
++	function quote_ident( $s ) {
++		return '"' . preg_replace( '/"/', '""', $s) . '"';
++	}
++
++	function schemaExists( $schema ) {
++		$owner = false;
++		$eschema = preg_replace("/'/", "''", $schema);
++		$SQL = "SELECT rolname FROM pg_catalog.pg_namespace n, pg_catalog.pg_roles r "
++			."WHERE n.nspowner=r.oid AND n.nspname = '$eschema'";
++		$res = $this->single( $SQL );
++		if( $res && array_key_exists("rolname", $res) )
++			$owner = $res["rolname"];
++		return $owner;
++	}
++
++	function setup_plpgsql() {
++		print "<li>Checking for Pl/Pgsql ...";
++		$SQL = "SELECT 1 FROM pg_catalog.pg_language WHERE lanname = 'plpgsql'";
++		$rows = pg_num_rows($this->query($SQL));
++		if ($rows < 1) {
++			// plpgsql is not installed, but if we have a pg_pltemplate table, we should be able to create it
++			print "not installed. Attempting to install Pl/Pgsql ...";
++			$SQL = "SELECT 1 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON (n.oid = c.relnamespace) ".
++				"WHERE relname = 'pg_pltemplate' AND nspname='pg_catalog'";
++			$rows = pg_num_rows($this->query($SQL));
++			if ($rows >= 1) {
++				$olde = error_reporting(0);
++				error_reporting($olde - E_WARNING);
++				$result = $this->query("CREATE LANGUAGE plpgsql");
++				error_reporting($olde);
++				if (!$result) {
++					die("<b>FAILED</b>. You need to install the language plpgsql in the database <tt>" . 
++						htmlspecialchars( $wgDBname ) . "</tt></li>");
++				}
++			}
++			else {
++				die("<b>FAILED</b>. You need to install the language plpgsql in the database <tt>" . 
++					htmlspecialchars( $wgDBname ) . "</tt></li>");
++			}
++		}
++		print "OK</li>\n";
++	}
++
++	function setup_database($user, $schemas) {
++
++		// Make sure that we can write to the correct schema
++		// If not, Postgres will happily and silently go to the next search_path item
++		for(reset($schemas); current($schemas); next($schemas)) {
++			$curschema = current($schemas);
++
++			$ctest = "docmgr_test_table";
++			$safeschema = $this->quote_ident($curschema);
++			if ($this->tableExists($ctest, $curschema)) {
++				$this->query("DROP TABLE $safeschema.$ctest");
++			}
++			$SQL = "CREATE TABLE $safeschema.$ctest(a int)";
++			$olde = error_reporting( 0 );
++			$res = $this->query($SQL);
++			error_reporting( $olde );
++			if (!$res) {
++				die("<b>FAILED</b>. Make sure that the user \"" . htmlspecialchars( $user ) . 
++					"\" can write to the schema \"" . htmlspecialchars( $curschema ) . "\"</li>\n");
++			}
++			$this->query("DROP TABLE $safeschema.$ctest");
++		}
++
++		$this->query("BEGIN");
++		$res = $this->sourceFile("install/docmgr.pgsql");
++
++		$this->query("COMMIT");
++	}
++
++	function relationExists( $table, $types, $schema ) {
++		if ( !is_array( $types ) )
++			$types = array( $types );
++		$etable = $this->addQuotes( $table );
++		$eschema = $this->addQuotes( $schema );
++		$SQL = "SELECT 1 FROM pg_catalog.pg_class c, pg_catalog.pg_namespace n "
++			. "WHERE c.relnamespace = n.oid AND c.relname = $etable AND n.nspname = $eschema "
++			. "AND c.relkind IN ('" . implode("','", $types) . "')";
++		$res = $this->query( $SQL );
++		$count = $res ? pg_num_rows($res) : 0;
++		if ($res)
++			pg_free_result( $res );
++		return $count ? true : false;
++	}
++
++	function tableExists( $table, $schema ) {
++		return $this->relationExists( $table, array( 'r', 'v' ), $schema );
++	}
++
++	function sourceFile( $filename, $lineCallback = false, $resultCallback = false ) {
++		$fp = fopen( $filename, 'r' );
++		$cmd = "";
++		$done = false;
++		$dollarquote = false;
++		$copystdin = false;
++
++		while ( ! feof( $fp ) ) {
++			if ( $lineCallback ) {
++				call_user_func( $lineCallback );
++			}
++			## Strip away all the regular characters except for tabs which are used as delimiter needed for copystdin
++			$line = trim( fgets( $fp, 1024 ), "\x20\x0A\x0D\x00\x0B");
++			$sl = strlen( $line ) - 1;
++
++			if ( $sl < 0 ) { continue; }
++			if ( '-' == $line{0} && '-' == $line{1} ) { continue; }
++
++				## Allow dollar quoting for function declarations
++				if (substr($line,0,4) == '$dm$') {
++					if ($dollarquote) {
++						$dollarquote = false;
++						$done = true;
++					}
++					else {
++						$dollarquote = true;
++					}
++				}
++				else if (preg_match("/^COPY.* FROM stdin/i", $line)) {
++					$copystdin = true;
++				}
++				else if (!$dollarquote && !$copystdin) {
++					if ( ';' == $line{$sl} && ($sl < 2 || ';' != $line{$sl - 1})) {
++						$done = true;
++						$line = substr( $line, 0, $sl );
++					}
++				}
++
++			if ( '' != $cmd && !$copystdin ) { $cmd .= ' '; }
++				$cmd .= "$line\n";
++
++			if ($copystdin && substr($line,0,2) == '\.') {
++				$copystdin = false;
++				$done = true;
++			}
++
++			if ( $done ) {
++				$cmd = str_replace(';;', ";", $cmd);
++				$res = $this->query( $cmd, __METHOD__ );
++				if ( $resultCallback ) {
++					call_user_func( $resultCallback, $res, $this );
++				}
++
++				if ( false === $res ) {
++					$err = pg_last_error();
++					fclose($fp);
++					return "Query \"{$cmd}\" failed with error code \"$err\".\n";
++				}
++
++				$cmd = '';
++				$done = false;
++			}
++		}
++		fclose($fp);
++		return true;
++	}		
++
+ }
+-		

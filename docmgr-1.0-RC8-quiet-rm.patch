@@ -1,0 +1,60 @@
+diff --git a/apilib/lib/docmgr/pdf.php b/apilib/lib/docmgr/pdf.php
+index 4062dcb..8be0547 100644
+--- a/apilib/lib/docmgr/pdf.php
++++ b/apilib/lib/docmgr/pdf.php
+@@ -109,7 +109,7 @@ class DOCMGR_PDF extends DOCMGR
+     //setup our temp directory and make sure it's empty
+     $tmp = TMP_DIR."/".USER_LOGIN."/docmgradvedit";
+     recurmkdir($tmp);
+-    $cmd = "rm -r ".$tmp."/*";
++    $cmd = "rm -rf ".$tmp."/*";
+     `$cmd`;
+ 
+     //we'll have several copies of files.  tiffs that we can actually work on, and pngs that we will see in the browser
+@@ -262,7 +262,7 @@ class DOCMGR_PDF extends DOCMGR
+     }
+ 
+     //remove old directories and replace with newly renamed files
+-    `rm -r $tifftmp; rm -r $pngtmp`;
++    `rm -rf $tifftmp; rm -rf $pngtmp`;
+     `mv $tiffrename $tifftmp; mv $pngrename $pngtmp`;      
+ 
+   }
+diff --git a/apilib/lib/docmgr/util/.fileindex.php.swp b/apilib/lib/docmgr/util/.fileindex.php.swp
+index 96849a2..333cd50 100644
+Binary files a/apilib/lib/docmgr/util/.fileindex.php.swp and b/apilib/lib/docmgr/util/.fileindex.php.swp differ
+diff --git a/apilib/lib/docmgr/util/fileindex.php b/apilib/lib/docmgr/util/fileindex.php
+index 8292b9e..324ac85 100644
+--- a/apilib/lib/docmgr/util/fileindex.php
++++ b/apilib/lib/docmgr/util/fileindex.php
+@@ -39,7 +39,7 @@ class DOCMGR_UTIL_FILEINDEX
+ 			$content = DOCMGR_OBJINDEX::removeTags($oo->getFileContents());
+ 
+ 			//remove temp directory
+-			$cmd = "rm -r ".$worker;
++			$cmd = "rm -rf ".$worker;
+ 			`$cmd`;
+ 			
+ 		//the old way	
+diff --git a/modules/center/docmgr/docmgrimport/diprocess/function.php b/modules/center/docmgr/docmgrimport/diprocess/function.php
+index 48aa0ad..216c71e 100644
+--- a/modules/center/docmgr/docmgrimport/diprocess/function.php
++++ b/modules/center/docmgr/docmgrimport/diprocess/function.php
+@@ -343,7 +343,7 @@ class IMPORT
+     //setup our temp directory and make sure it's empty
+     $tmp = TMP_DIR."/".USER_LOGIN."/docmgradvedit";
+     recurmkdir($tmp);
+-    $cmd = "rm -r ".$tmp."/*";
++    $cmd = "rm -rf ".$tmp."/*";
+     `$cmd`;
+ 
+     //we'll have several copies of files.  tiffs that we can actually work on, and pngs that we will see in the browser
+@@ -489,7 +489,7 @@ class IMPORT
+     }
+ 
+     //remove old directories and replace with newly renamed files
+-    `rm -r $tifftmp; rm -r $pngtmp`;
++    `rm -rf $tifftmp; rm -rf $pngtmp`;
+     `mv $tiffrename $tifftmp; mv $pngrename $pngtmp`;      
+ 
+   }

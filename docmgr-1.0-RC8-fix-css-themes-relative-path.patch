@@ -1,0 +1,41 @@
+diff --git a/modules/center/admin/groupadmin/groupdashboard/groupdashboardadmin/stylesheet.css b/modules/center/admin/groupadmin/groupdashboard/groupdashboardadmin/stylesheet.css
+index d3a9727..c107f88 100644
+--- a/modules/center/admin/groupadmin/groupdashboard/groupdashboardadmin/stylesheet.css
++++ b/modules/center/admin/groupadmin/groupdashboard/groupdashboardadmin/stylesheet.css
+@@ -29,7 +29,7 @@
+ 	padding-left:3px;
+   font-family: "Verdana","Arial","Sans Serif";
+   font-size:13px;
+-  background-image:url("/themes/default/images/sitenavselect.png");
++  background-image:url("../../../../../../themes/default/images/sitenavselect.png");
+   color:white;
+ 
+-}
+\ No newline at end of file
++}
+diff --git a/modules/center/docmgr/proplib/permissions.css b/modules/center/docmgr/proplib/permissions.css
+index 44725e2..1279cc3 100644
+--- a/modules/center/docmgr/proplib/permissions.css
++++ b/modules/center/docmgr/proplib/permissions.css
+@@ -57,7 +57,7 @@
+ 
+ /********* obj search *********/
+ #agSearch {
+-  background-image:url("/themes/default/images/icons/search-field.gif");
++  background-image:url("../../../../themes/default/images/icons/search-field.gif");
+   width:182px;
+   height:20px;
+   margin-top:-1px;
+diff --git a/modules/center/managetasks/stylesheet.css b/modules/center/managetasks/stylesheet.css
+index 461ee01..0d0163e 100644
+--- a/modules/center/managetasks/stylesheet.css
++++ b/modules/center/managetasks/stylesheet.css
+@@ -145,7 +145,7 @@
+ 
+ /********* obj search *********/
+ #messageSearch {
+-  background-image:url("/themes/default/images/icons/search-field.gif");
++  background-image:url("../../../themes/default/images/icons/search-field.gif");
+   width:182px;
+   height:20px;
+   margin-top:1px;

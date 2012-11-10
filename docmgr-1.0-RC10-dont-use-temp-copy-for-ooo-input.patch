@@ -1,0 +1,123 @@
+diff -p -up docmgr/apilib/lib/docmgr/util/fileindex.php.notemp~ docmgr/apilib/lib/docmgr/util/fileindex.php
+--- docmgr/apilib/lib/docmgr/util/fileindex.php.notemp~	2010-05-10 16:55:44.705498460 +0200
++++ docmgr/apilib/lib/docmgr/util/fileindex.php	2010-05-10 16:55:59.131614513 +0200
+@@ -29,8 +29,8 @@ class DOCMGR_UTIL_FILEINDEX
+ 			recurmkdir($tmp);
+ 			$worker = $tmp."/worker.".$ext;
+ 
+-			//copy the file to there with the right extension
+-			copy($this->filepath,$worker);
++			// create a symlink to the file for format detection based on suffix to succeed..
++			symlink($this->filepath,$worker);
+ 
+ 			//start openoffice.  it will convert to oo if it's not an openoffice file
+ 			$oo = new OPENOFFICE($worker);
+@@ -38,10 +38,9 @@ class DOCMGR_UTIL_FILEINDEX
+ 			//return the file contents minus xml tags
+ 			$content = DOCMGR_OBJINDEX::removeTags($oo->getFileContents());
+ 
+-			//remove temp directory
+-			$cmd = "rm -rf ".$worker;
+-			`$cmd`;
+-			
++			//remove worker symlink
++			@unlink($worker);
++
+ 		//the old way	
+ 		} else {
+ 
+@@ -284,4 +283,4 @@ class DOCMGR_UTIL_FILEINDEX
+ 	}
+ 	
+ 	
+-}
+\ No newline at end of file
++}
+diff -p -up docmgr/apilib/lib/docmgr/util/filethumb.php.notemp~ docmgr/apilib/lib/docmgr/util/filethumb.php
+--- docmgr/apilib/lib/docmgr/util/filethumb.php.notemp~	2010-03-14 21:45:32.000000000 +0100
++++ docmgr/apilib/lib/docmgr/util/filethumb.php	2010-05-10 16:56:08.264498430 +0200
+@@ -47,19 +47,19 @@ class DOCMGR_UTIL_FILETHUMB
+ 			recurmkdir($tmp);
+ 			$worker = $tmp."/worker.".$ext;
+ 
+-			//copy the file to there with the right extension
+-			copy($this->filepath,$worker);
++			// create a symlink to the file for format detection based on suffix to succeed..
++			symlink($this->filepath,$worker);
+ 
+ 			//start openoffice.  it will convert to oo if it's not an openoffice file
+ 			$oo = new OPENOFFICE($worker);
+ 			$thumb = $oo->getThumbnail();
+ 
+-			//remove worker file
+-			@unlink($worker);
+-
+ 			//write to our destination
+ 			file_put_contents($this->thumb,$thumb);
+ 
++			//remove worker symlink
++			@unlink($worker);
++
+ 		//the old way	
+ 		} else {
+ 
+diff -p -up docmgr/app/openoffice.php.notemp~ docmgr/app/openoffice.php
+--- docmgr/app/openoffice.php.notemp~	2010-04-23 22:09:09.000000000 +0200
++++ docmgr/app/openoffice.php	2010-05-10 16:55:44.716511942 +0200
+@@ -118,7 +118,12 @@ class OPENOFFICE {
+     
+     //get our file's current name and extension
+     $convname = array_pop(explode("/",$convfile));
+-    $ext = fileExtension($convname);
++    $oldext = $ext = fileExtension($convname);
++    if ($ext == "docmgr") {
++	$info = fileInfo($convfile);
++	$ext = $info["extension"];
++    }
++
+ 
+     //if our old extension equals our new extension, stop here
+     if ($newext==$ext) $dest = $convfile;
+@@ -130,7 +135,7 @@ class OPENOFFICE {
+       if ($ext=="html" && $newext!="html") $this->fixHtmlImages($convfile);
+ 
+       //add the new extension and put it in our oo temp directory
+-      $dest = str_replace(".".$ext,".".$newext,$convname);
++      $dest = str_replace(".".$oldext,".".$newext,$convname);
+       $dest = $this->tmpdir."/".$dest;
+ 
+ 
+diff -p -up docmgr/lib/filefunctions.php.notemp~ docmgr/lib/filefunctions.php
+--- docmgr/lib/filefunctions.php.notemp~	2010-03-14 21:46:53.000000000 +0100
++++ docmgr/lib/filefunctions.php	2010-05-10 16:55:44.716511942 +0200
+@@ -206,6 +206,30 @@ function fileInfo($file) {
+     }
+     
+   }
++  if (!$fileinfo and file_exists($file)) {
++    if (phpversion() < "5.3.0") $mime_constant = FILEINFO_MIME;
++    else $mime_constant = FILEINFO_MIME_TYPE;
++    $mime_info = new finfo($mime_constant);
++    $name_info = new finfo(FILEINFO_NONE);
++
++    $mime_type = $mime_info->file($file);
++    $proper_name = $name_info->file($file);
++    for ($i=0;$i<$num;$i++) {
++
++      //if this extension matches the passed one, stop
++      if ($_SESSION["extensions"][$i]["mime_type"]==$mime_type) {
++	if ($mime_type == "application/octet-stream") {
++	  if ($_SESSION["extensions"][$i]["proper_name"] == $proper_name) {
++	    $fileinfo = $_SESSION["extensions"][$i];
++	    break;
++	  }
++	} else {
++	  $fileinfo = $_SESSION["extensions"][$i];
++	  break;
++	}
++      }
++    }
++  }
+ 
+   return $fileinfo;
+   

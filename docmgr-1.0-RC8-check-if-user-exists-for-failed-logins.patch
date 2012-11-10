@@ -1,0 +1,25 @@
+diff -p -up docmgr/apilib/auth.php.failed_logins~ docmgr/apilib/auth.php
+--- docmgr/apilib/auth.php.failed_logins~	2010-03-13 16:07:39.000000000 +0100
++++ docmgr/apilib/auth.php	2010-03-29 16:46:13.578675600 +0200
+@@ -130,14 +130,15 @@ class AUTH 
+ 	function update_failed_login_attempts()
+ 	{
+ 
+-		$ACCOUNT = new ACCOUNT();
+-    $aid = $ACCOUNT->getId($this->login);    
++	  $ACCOUNT = new ACCOUNT();
++	  $aid = $ACCOUNT->getId($this->login);    
+ 
+-    $sql = "UPDATE auth_accountperm SET failed_logins=(failed_logins+1) WHERE account_id='$aid'";
+-    $this->DB->query($sql);
+-
+-    if (defined("ENABLE_ACCOUNT_LOCKOUT")) $this->lock_account($aid);	
++	  if ($aid) {
++	    $sql = "UPDATE auth_accountperm SET failed_logins=failed_logins+1 WHERE account_id='$aid'";
++	    $this->DB->query($sql);
+ 
++	    if (defined("ENABLE_ACCOUNT_LOCKOUT")) $this->lock_account($aid);	
++	  }
+ 	}
+ 	
+ 	// this function will lock an account if the number of failed logins exceeds

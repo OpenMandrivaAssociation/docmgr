@@ -1,0 +1,15 @@
+diff -p -up docmgr/apilib/lib/docmgr/lib/search_function.inc.php.prefix_search~ docmgr/apilib/lib/docmgr/lib/search_function.inc.php
+--- docmgr/apilib/lib/docmgr/lib/search_function.inc.php.prefix_search~	2010-04-06 10:19:51.250344776 +0200
++++ docmgr/apilib/lib/docmgr/lib/search_function.inc.php	2010-04-06 10:24:39.235468134 +0200
+@@ -465,9 +465,9 @@ function createTsearch2Sql($opt) {
+ 
+ 		//translate our string into the corresponding word ids
+ 		$wordString = formatTsearch2String($string,$search_option);
+-		$criteria = "idxfti ".$lexeme." to_tsquery('".TSEARCH2_PROFILE."','$wordString') ";
++		$criteria = "idxfti ".$lexeme." to_tsquery('".TSEARCH2_PROFILE."','$wordString:*') ";
+ 
+-		$rank = "ts_rank(idxfti,to_tsquery('".TSEARCH2_PROFILE."','$wordString'))";
++		$rank = "ts_rank(idxfti,to_tsquery('".TSEARCH2_PROFILE."','$wordString:*'))";
+ 		$sql = "SELECT id,$rank FROM docmgr.dm_view_search WHERE $criteria "; 
+ 
+ 	}

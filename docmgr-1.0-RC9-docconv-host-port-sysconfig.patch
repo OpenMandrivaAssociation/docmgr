@@ -1,0 +1,66 @@
+diff -p -up docmgr/bin/DocumentConverter.py.hostport~ docmgr/bin/DocumentConverter.py
+--- docmgr/bin/DocumentConverter.py.hostport~	2010-04-21 18:46:15.144740066 +0200
++++ docmgr/bin/DocumentConverter.py	2010-04-21 18:47:04.245724484 +0200
+@@ -8,6 +8,7 @@
+ # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl-2.1.html
+ # - or any later version.
+ #
++DEFAULT_OPENOFFICE_HOST = "localhost"
+ DEFAULT_OPENOFFICE_PORT = 8100
+ 
+ import sys
+@@ -148,14 +149,14 @@ class DocumentConversionException(Except
+ 
+ class DocumentConverter:
+     
+-    def __init__(self, port=DEFAULT_OPENOFFICE_PORT):
++    def __init__(self, host=DEFAULT_OPENOFFICE_HOST, port=DEFAULT_OPENOFFICE_PORT):
+         self.localContext = uno.getComponentContext()
+         self.serviceManager = self.localContext.ServiceManager
+         resolver = self.serviceManager.createInstanceWithContext("com.sun.star.bridge.UnoUrlResolver", self.localContext)
+         try:
+-            context = resolver.resolve("uno:socket,host=localhost,port=%s;urp;StarOffice.ComponentContext" % port)
++            context = resolver.resolve("uno:socket,host=%s,port=%s;urp;StarOffice.ComponentContext" % (host, port))
+         except NoConnectException:
+-            raise DocumentConversionException, "failed to connect to OpenOffice.org on port %s" % port
++            raise DocumentConversionException, "failed to connect to OpenOffice.org at %s:%s" % (host, port)
+         self.desktop = context.ServiceManager.createInstanceWithContext("com.sun.star.frame.Desktop", context)
+ 
+     def convert(self, inputFile, outputFile):
+@@ -248,6 +249,7 @@ class DocumentConverter:
+ 
+ if __name__ == "__main__":
+     from sys import argv, exit
++    from os import getenv
+     
+     if len(argv) < 3:
+         print "USAGE: python %s <input-file> <output-file>" % argv[0]
+@@ -257,7 +259,9 @@ if __name__ == "__main__":
+         exit(1)
+ 
+     try:
+-        converter = DocumentConverter()    
++        oohost = getenv("OOFFICE_HOST", DEFAULT_OPENOFFICE_HOST)
++        ooport = getenv("OOFFICE_PORT", DEFAULT_OPENOFFICE_PORT)
++        converter = DocumentConverter(host=oohost, port=ooport)
+         converter.convert(argv[1], argv[2])
+     except DocumentConversionException, exception:
+         print "ERROR! " + str(exception)
+diff -p -up docmgr/bin/fileconvert.php.hostport~ docmgr/bin/fileconvert.php
+--- docmgr/bin/fileconvert.php.hostport~	2010-04-21 18:46:05.935472632 +0200
++++ docmgr/bin/fileconvert.php	2010-04-21 18:46:30.973723196 +0200
+@@ -14,5 +14,13 @@ else if (file_exists(OPENOFFICE_PATH."/b
+ else
+ 	$cmd = "sh --login -c 'python ".$args."'";
+ 
+-$res = `$cmd`;
++# Get host & port that OOo is running at if available
++$sysconf = "/etc/sysconfig/docmgr";
++$ooenv = `if [ -r "$sysconf" ]; then
++	. $sysconf
++	[ -n "\$OOFFICE_HOST" ] && echo -n "OOFFICE_HOST=\$OOFFICE_HOST "
++	[ -n "\$OOFFICE_PORT" ] && echo -n "OOFFICE_PORT=\$OOFFICE_PORT "
++	fi`;
++
++$res = `$ooenv $cmd`;
+ echo $res."\n";

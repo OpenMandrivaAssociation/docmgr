@@ -1,0 +1,28 @@
+diff -p -up docmgr/modules/center/docmgr/display.php.restricted~ docmgr/modules/center/docmgr/display.php
+--- docmgr/modules/center/docmgr/display.php.restricted~	2010-04-13 22:02:37.000000000 +0200
++++ docmgr/modules/center/docmgr/display.php	2010-04-28 10:11:46.288334415 +0200
+@@ -79,10 +79,10 @@ if (!PERM::check(GUEST_ACCOUNT,1))
+   $content .= "
+       <div class=\"toolbarCell\" onClick=\"moveObjects()\">
+         <img align=\"left\" src=\"".THEME_PATH."/images/icons/move.png\" border=\"0\"> Move
+-      </div>
++      </div>". (!(!PERM::check(ADMIN) && defined("RESTRICTED_DELETE") && RESTRICTED_DELETE) ? "" : "
+       <div class=\"toolbarCell\" onClick=\"".$delFunc."\">
+         <img align=\"left\" src=\"".THEME_PATH."/images/icons/".$delIcon."\" border=\"0\"> Delete
+-      </div>
++      </div>") . "
+       <div class=\"toolbarDivider\">|</div>
+     ";
+     
+diff -p -up docmgr/modules/center/docmgr/function.php.restricted~ docmgr/modules/center/docmgr/function.php
+--- docmgr/modules/center/docmgr/function.php.restricted~	2010-03-14 06:21:17.000000000 +0100
++++ docmgr/modules/center/docmgr/function.php	2010-04-28 10:11:46.289332587 +0200
+@@ -41,7 +41,7 @@ function buildMenu()
+ 
+   }
+           
+-  if (defined("USE_TRASH"))
++  if ((!(!PERM::check(ADMIN) && defined("RESTRICTED_DELETE") && RESTRICTED_DELETE)) && defined("USE_TRASH"))
+   {
+ 
+     $str .= "

@@ -1,0 +1,22 @@
+diff -p -up docmgr/bin/fileconvert.php.ooo~ docmgr/bin/fileconvert.php
+--- docmgr/bin/fileconvert.php.ooo~	2010-04-26 04:40:51.000000000 +0200
++++ docmgr/bin/fileconvert.php	2010-04-28 10:28:29.405312115 +0200
+@@ -2,6 +2,17 @@
+ 
+ include("config/app-config.php");
+ 
+-$cmd = OPENOFFICE_PATH."/program/python bin/DocumentConverter.py \"".$argv[1]."\" \"".$argv[2]."\" 1>/tmp/convert1 2>/tmp/convert2";
++$args = "bin/DocumentConverter.py \"".$argv[1]."\" \"".$argv[2]."\" 1>".TMP_DIR."/doc_conv.out 2>".TMP_DIR."/doc_conv.err";
++if (file_exists(OPENOFFICE_PATH."/program/python"))
++	$cmd = OPENOFFICE_PATH."/program/python ".$args;
++# Try see if the directory where we expect the python module to be located exists,
++# if it does we add it to $PYTHONPATH and run it with system python
++else if (file_exists(OPENOFFICE_PATH."/basis-link/program"))
++	$cmd = "PYTHONPATH=".OPENOFFICE_PATH."/basis-link/program python ".$args;
++# Execute a shell to have all profile scripts loaded which is where most
++# distributions adds OOo to $PYTHONPATH through
++else
++	$cmd = "sh --login -c 'python ".$args."'";
++
+ $res = `$cmd`;
+ echo $res."\n";
