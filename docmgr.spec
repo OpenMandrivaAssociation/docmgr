@@ -303,3 +303,147 @@ rm -rf %{buildroot}
 %attr(-,apache,apache) %{_localstatedir}/lib/%{name}/files
 %config(noreplace) %{_sysconfdir}/logrotate.d/docmgr-rsync
 %attr(700,apache,apache) %{_var}/log/docmgr
+
+
+%changelog
+* Wed Oct 06 2010 Per Øyvind Karlsen <peroyvind@mandriva.org> 1.0-0.RC10.2mdv2011.0
++ Revision: 583623
+- add a rsync script with logging for use with crontabs..
+- be sure to own 'config/vendor' & 'config/local'
+- add default 'config/vendor/app-config.php' for proper OOo defaults
+- add 'php-cli' to dependencies
+- add webapp scriptlet and corresponding rpm-helper dependencies
+- drop user creation, docmgr no longer requires it's own as the OOo daemon runs
+  under another user from another package now..
+- get rid of internal DocumentConverter.py completely
+- fix a typo in file-convert.php
+- split out OOo conversion service and into 'python-odconverter' package
+
+* Tue Jun 08 2010 Per Øyvind Karlsen <peroyvind@mandriva.org> 1.0-0.RC10.1mdv2010.1
++ Revision: 547254
+- strip path from binary for checking..
+- fix lock & subsys files..
+- use new, external pyodconverter
+- * more enhancements for installer:
+ o all errors now gets printed at right places
+ o configuration will now be stored in session without reloading
+ o improved formatting etcetc..
+- override DBPASSWORD to be empty, so that we don't get a default password
+- force https through rewrite in apache config
+- fix database creation & permission checks
+- default to 'GMT' timezone if none set
+- fix ghost file creation of config files
+- clean up and assemble all configuration related patches into one
+- ditch utf-8 patch, it's now dealt with in database initialization functions
+- "steal" mediawiki's functions for initializing and setting up database(P40)
+- make "/Users" protected
+- add back check-bitset-not-bitmask patch, evidently it wasn't fixed after all..
+- make sure that OPENOFFICE object actaully uses the symlink created...
+- make installer use separate local/vendor configuration layout
+- package is now noarch again and OOo dependencies has been moved out
+- enable local & vendor configuration again
+- change behaviour to create a symlink with the corresponding suffix to properly detect format based on it as mime type isn't always available... :/
+- replace python code within script with external
+- be sure to quote variables that's customizable when checking them in initscript
+- add php-mbstring to requires
+- new release: 1.0RC10
+- regenerate or drop relevant patches
+- Use host & port specified in /etc/sysconfig/docmgr if available for doc conversion (P37)
+- properly exit with (verbosive) error when unable to connect to running instance
+- add -nolockcheck to ooffice options
+- add '-invisible -nodefault -nologo' to ooffice's options
+- connect to postgresql through unix sockets by default rather than tcp/ip
+- make pg_connect accept empty variables for it to fall back to defaults (P36)
+- give a more verbosive status message when unable to connect
+- remove init option from usage help as the plans for it were abandoned
+- make python script more robust
+- add service scriptlets
+- replace hacky shell function to check if soffice.bin is running with a more pyuno based script
+- start soffice.bin with '-norestore -nofirststartwizard'
+- don't prefix pid file with docmgr- anymore as it's in it's own docmgr directory
+- fix so that we get the right date printed for date due of tasks
+- display recipient notes for workflow tasks
+- set comment for workflow route properly
+- add missing objectId to edittask query
+- fix so that account gets updated when selecting it from drop down under "Reset
+  Password" as well
+- Split date and time in php for workflow to get it localized format correct (P0)
+- redo user list patch to be in javascript so it'll be updated on the fly
+- set default permissions to INSERT_OBJECTS for new users (P31)
+- fix accidentally commited part of patch
+- we really need postgresql 8.4 as prefix searching with tsearch2 and also
+  plpgsql functions requires it
+- new release: 1.0RC9
+- fix init script to properly check status
+- fix finfo() backwards compatibility with php < 5.3.0
+- install all scripts
+- add a couple of more dependencies on OOo to support more formats
+- fix relative path for some backgrounds in css files..
+- update restricted patch to work with RC8
+- check that bitset (which actually exists in the table) and not bitmask is null
+- fix setting of bitmask (P28)
+- add a user list to the account manager (P27)
+- update to ckeditor 3.2 (P26)
+- add support for prefix search with tsearch2 (P25)
+- remove part of patch that originates from other patch applied later
+- update no_temp patch to check file types based on mime type rather than file extension
+- Print out the actual error message during first login (P24)
+- set baseUri for webdav to work without a "reserved domain" by default
+- run indexer as admin (P22)
+- use utf-8 for client_encoding (P21)
+- update to 1.0RC8
+- regenerate patches needed and drop those we no longer need
+- check exit status of OOo converter (P20)
+- update more mimetypes...
+- reenable P8
+- make sure that we're looking for our config files in the right directories...
+- Add absolute path to include_path (P19)
+- fix incorrect mime_type used for .docx documents
+- disable P8 for now...
+- * process correct document file from the correct location (updates P8)
+  * don't use temp ("worker") file for for thumbnails either (updates P8)
+- fix a typo (P17)
+- fix path used used in process.php (P16)
+- fix setting of include_path (updates P0)
+- implement missing RESTRICTED_DELETE functionality
+- Check that user actually exists before trying to update failed_logins for it (P14)
+- set default timezone if defined (P13)
+- adjust dependencies
+- add dependency on openoffice.org-writer for doc conversion
+- fix path to IMPORT_DIR
+- change attributes for local configuration directory to be more restrictive
+- fix OOo dependency for 2009.0/MES5 backport...
+- docmgr needs a writable home directory
+- pass home dir & shell to %%_pre_useradd
+- if no config found, add a link or instructions on front page
+- die if unable to connect to postgresql (P12)
+- add php header to vendor configuration
+- add a conditionalInclude() function to avoid dependencies getting added (P11)
+- ditch unused functions for mediawiki derived installer
+- %{webroot}/config/vendor/config.php should of course not be a ghost file
+- improve work on tracing the process started and whether it's succesful or not
+  (WIP)
+- don't exit init script if sysconfig file is missing, default variables are
+  carried in init script anyways now
+- give init script a bit more descriptive name to use when printing messages
+- add initial progress with a web ui based installer based on mediawiki's
+- remove any attempts on doing initialization & configuration from init script
+- * define TMP_DIR only once in config/config.php
+  * use require_once() rather than include() to avoid conflicts
+- * add support for a vendor provided configuration
+  * use require_once() rather than include() to avoid config file conflicts
+- Use LC_TIME for date & time format if LOCALE is set (P9)
+- start on setup script
+- fix %%config in %%files
+- cosmetics
+- make it possible to override all configuration files with a local version (P0)
+- in stead of editing config file with our own settings, load them from an
+  optional config/localconfig.php file in stead (replaces P0)
+- try look for OOo python module directory in OPENOFFICE_PATH (updates P6)
+- don't use a temporary copy of input document for conversion (P8)
+- fix so that relative site_url is used for closeKeepAlive() (P7)
+- import docmgr
+
+
+* Mon Feb 22 2010 Per Øyvind Karlsen <peroyvind@mandriva.org> 1.0-0.RC6.1
+- initial release (work in progress...)
