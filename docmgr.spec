@@ -172,13 +172,11 @@ install -d %{buildroot}%{webappconfdir}
 tee %{buildroot}%{webappconfdir}/%{name}.conf << EOF
 Alias /%{name} %{webroot}
 <Directory "%{webroot}">
-  Order allow,deny
-  Allow from All
+  Require all granted
 </Directory>
 
 <Directory "%{webroot}/bin">
-  Order allow,deny
-  Deny from All
+  Require all denied
 </Directory>
 
 <IfModule mod_ssl.c>
