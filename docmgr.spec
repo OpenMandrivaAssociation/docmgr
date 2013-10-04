@@ -3,7 +3,7 @@
 
 Name:		docmgr
 Version:	1.0
-Release:	%mkrel 0.%{prerel}.2
+Release:	0.%{prerel}.3
 License:	GPLv2
 Group:		System/Servers
 Summary:	Web based DMS - Document Management System
@@ -86,13 +86,34 @@ Patch39:	docmgr-1.0-RC10-make-users-directory-protected.patch
 Patch41:	docmgr-1.0-RC10-enhanced-setup-and-config.patch
 Patch42:	docmgr-1.0-RC10-use-improved-external-documentconverter.patch
 
-Requires:	mod_php mod_ssl php-pgsql php-iconv php-cli
-Requires:	php-zip php-imap php-fileinfo php-mbstring
-Requires:	postgresql-server >= 8.4 postgresql-contrib-virtual postgresql-plpgsql-virtual
-Requires:	gocr ocrad imagemagick libtiff-progs sendmail-command
-Requires:	xpdf xpdf-tools enscript wget zip clamav
-Requires:	wget poppler file
+Requires:	clamav
+Requires:	enscript
+Requires:	file
+Requires:	gocr
+Requires:	imagemagick
+Requires:	libtiff-progs
+Requires:	ocrad
+Requires:	poppler
 Requires:	python-odconverter
+Requires:	sendmail-command
+Requires:	xpdf
+Requires:	xpdf-tools
+Requires:	wget
+Requires:	zip
+
+Requires:	apache-mod_ssl
+Requires:	mod_php
+Requires:	php-cli
+Requires:	php-iconv
+Requires:	php-imap
+Requires:	php-fileinfo
+Requires:	php-mbstring
+Requires:	php-pgsql
+Requires:	php-zip
+
+Requires:	postgresql-server >= 8.4
+Requires:	postgresql-contrib-virtual
+Requires:	postgresql-plpgsql-virtual
 Requires(post,preun):	rpm-helper
 
 BuildArch:	noarch
