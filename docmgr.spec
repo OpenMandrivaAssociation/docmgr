@@ -97,7 +97,6 @@ Requires:	poppler
 Requires:	python-odconverter
 Requires:	sendmail-command
 Requires:	xpdf
-Requires:	xpdf-tools
 Requires:	wget
 Requires:	zip
 
