@@ -3,7 +3,7 @@
 
 Name:		docmgr
 Version:	1.0
-Release:	0.%{prerel}.3
+Release:	0.%{prerel}.4
 License:	GPLv2
 Group:		System/Servers
 Summary:	Web based DMS - Document Management System
@@ -188,8 +188,8 @@ cp -r */ *.php %{buildroot}%{webroot}
 rm -rf %{buildroot}%{webroot}/{DOCS,sd}
 mv %{buildroot}%{webroot}/files %{buildroot}%{_var}/lib/%{name}
 
-install -d %{buildroot}%{webappconfdir}
-tee %{buildroot}%{webappconfdir}/%{name}.conf << EOF
+install -d %{buildroot}%{_webappconfdir}
+tee %{buildroot}%{_webappconfdir}/%{name}.conf << EOF
 Alias /%{name} %{webroot}
 <Directory "%{webroot}">
   Require all granted
@@ -272,13 +272,10 @@ install -m700 -d %{buildroot}%{_var}/log/docmgr
 %postun
 %_postun_webapp
 
-%clean
-rm -rf %{buildroot}
-
 %files
 %defattr(644,root,root,755)
 %doc DOCS/AUTHORS 
-%config %{webappconfdir}/%{name}.conf
+%config %{_webappconfdir}/%{name}.conf
 %dir %{webroot}
 %{webroot}/apilib
 %{webroot}/app
