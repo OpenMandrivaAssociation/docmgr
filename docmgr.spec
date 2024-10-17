@@ -7,7 +7,7 @@ Release:	0.%{prerel}.4
 License:	GPLv2
 Group:		System/Servers
 Summary:	Web based DMS - Document Management System
-URL:		http://docmgr.org/
+URL:		https://docmgr.org/
 
 Source0:	%{name}-%{version}%{?prerel:-%{prerel}}.tar.gz
 Source1:	docmgr-rsync.sh
